@@ -1,0 +1,41 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  main:
+    allow-circular-references: true
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    # HikariCP连接池配置
+    hikari:
+      # 最小空闲连接数量
+      minimum-idle: 5
+      # 空闲连接存活最大时间，默认600000（10分钟）
+      idle-timeout: 180000
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 10
+      # 控制从池返回的链接的默认自动提交行为，默认值：true
+      auto-commit: true
+      # 连接池名称
+      pool-name: MyHikariCP
+      # 控制池中链接的最长生命周期，值0表示无限生命周期，默认1800000，即30分钟
+      max-lifetime: 1800000
+      # 数据库链接超时时间，默认30秒，即30000
+      connection-timeout: 30000
+  messages:
+    basename: i18n/messages
+    encoding: utf-8
+  web:
+    resources:
+      add-mappings: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    property-naming-strategy: SNAKE_CASE
+  thymeleaf:
+    mode: HTML5
+    encoding: UTF-8
+    prefix: classpath:/templates
