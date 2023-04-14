@@ -1,6 +1,6 @@
 package com.mybatiseasy.core.consts;
 
-public interface MethodConst {
+public interface Method {
 
     String INSERT = "insert";
     String INSERT_BATCH = "insertBatch";

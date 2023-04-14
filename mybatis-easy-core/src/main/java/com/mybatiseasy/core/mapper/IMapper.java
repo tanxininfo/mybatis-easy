@@ -1,13 +1,15 @@
 package com.mybatiseasy.core.mapper;
 
-import com.mybatiseasy.core.consts.MethodConst;
-import com.mybatiseasy.core.consts.ParamConst;
+import com.mybatiseasy.core.consts.Method;
+import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.provider.SqlProvider;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.DeleteProvider;
+import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectProvider;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 所有Entity对应Mapper通过继承该接口取得CRUD功能。
@@ -18,8 +20,8 @@ public interface IMapper<T> {
      * @param entity 实例
      * @return 插入行数
      */
-    @InsertProvider(type = SqlProvider.class, method = MethodConst.INSERT)
-    int insert(@Param(ParamConst.ENTITY) T entity);
+    @InsertProvider(type = SqlProvider.class, method = Method.INSERT)
+    int insert(@Param(MethodParam.ENTITY) T entity);
 
 
     /**
@@ -27,22 +29,22 @@ public interface IMapper<T> {
      * @param entityList 实例列表
      * @return 插入行数
      */
-    @InsertProvider(type = SqlProvider.class, method = MethodConst.INSERT_BATCH)
-    int insertBatch(@Param(ParamConst.ENTITY_LIST) List<T> entityList);
+    @InsertProvider(type = SqlProvider.class, method = Method.INSERT_BATCH)
+    int insertBatch(@Param(MethodParam.ENTITY_LIST) List<T> entityList);
 
     /**
      * 根据 主键删除行
      * @param id 主键值
      * @return
      */
-    @DeleteProvider(type = SqlProvider.class, method = MethodConst.DELETE_BY_ID)
-    int deleteById(@Param(ParamConst.PRIMARY_KEY) Serializable id);
+    @DeleteProvider(type = SqlProvider.class, method = Method.DELETE_BY_ID)
+    int deleteById(@Param(MethodParam.PRIMARY_KEY) Serializable id);
 
     /**
      * 根据 主键删除行
      * @param id 主键值
      * @return
      */
-    @SelectProvider(type = SqlProvider.class, method = MethodConst.GET_BY_ID)
-    T getById(@Param(ParamConst.PRIMARY_KEY) Serializable id);
+    @SelectProvider(type = SqlProvider.class, method = Method.GET_BY_ID)
+    T getById(@Param(MethodParam.PRIMARY_KEY) Serializable id);
 }
