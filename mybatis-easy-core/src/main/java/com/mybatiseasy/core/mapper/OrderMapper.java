@@ -1,8 +1,8 @@
 package com.mybatiseasy.core.mapper;
 
-import com.mybatiseasy.core.entity.User;
+import com.mybatiseasy.core.entity.Order;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface UserMapper extends IMapper<User> {
+public interface OrderMapper extends IMapper<Order> {
 }

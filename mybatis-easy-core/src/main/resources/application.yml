@@ -39,3 +39,7 @@ spring:
     mode: HTML5
     encoding: UTF-8
     prefix: classpath:/templates
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

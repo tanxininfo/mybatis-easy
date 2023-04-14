@@ -1,11 +1,11 @@
 package com.mybatiseasy.core;
 
-import com.mybatiseasy.core.entity.User;
-import com.mybatiseasy.core.mapper.UserMapper;
+import com.mybatiseasy.core.session.MyConfiguration;
+import com.mybatiseasy.core.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,6 +35,12 @@ public class MybatisEasyCoreApplication {
     @Bean
     public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource){
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+//        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        MyConfiguration configuration = new MyConfiguration();
+        configuration.setLogImpl(StdOutImpl.class);//标准输出日志
+        configuration.setMapUnderscoreToCamelCase(true);// 开启驼峰命名
+        log.info("configuration={}", ObjectUtil.beanToMap(configuration, false, false));
+        sqlSessionFactoryBean.setConfiguration(configuration);
         sqlSessionFactoryBean.setDataSource(dataSource);
         return sqlSessionFactoryBean;
     }
