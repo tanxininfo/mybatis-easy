@@ -10,7 +10,6 @@ import java.lang.annotation.*;
 /**
  * 标识数据表字段
  *
- * @author darui.wu
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
