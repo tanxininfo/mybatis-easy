@@ -2,7 +2,6 @@ package com.mybatiseasy.core.session;
 
 import com.mybatiseasy.core.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMap;
