@@ -2,18 +2,52 @@ package com.mybatiseasy.core.session;
 
 import com.mybatiseasy.core.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.binding.MapperRegistry;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMap;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.session.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.mybatiseasy.core.utils.TypeUtil.ArrayToDelimitedString;
 
 @Slf4j
 public class MyConfiguration extends Configuration {
+
+    protected final Map<String, ResultMap> entityMaps;
+
+    public MyConfiguration(Environment environment) {
+        super(environment);
+        entityMaps = new StrictMap<ResultMap>("Entity Maps collection");
+    }
+
+    public MyConfiguration() {
+        entityMaps = new StrictMap<ResultMap>("Entity Maps collection");
+    }
+
+    public void addEntityMap(ResultMap rm) {
+        resultMaps.put(rm.getId(), rm);
+        checkLocallyForDiscriminatedNestedResultMaps(rm);
+        checkGloballyForDiscriminatedNestedResultMaps(rm);
+    }
+
+    public Collection<String> getEntityMapNames() {
+        return entityMaps.keySet();
+    }
+
+    public Collection<ResultMap> getEntityMaps() {
+        return entityMaps.values();
+    }
+
+    public ResultMap getEntityMap(String id) {
+        return entityMaps.get(id);
+    }
+
+    public boolean hasEntityMap(String id) {
+        return entityMaps.containsKey(id);
+    }
 
     /**
      * 生成数据表的ResultMap
@@ -22,6 +56,7 @@ public class MyConfiguration extends Configuration {
      */
     private void buildResultMap(String msId) {
         String entityName = getEntityType(msId);
+        log.info("entityName={}",entityName);
         if(entityName==null) return;
     }
 
@@ -35,7 +70,7 @@ public class MyConfiguration extends Configuration {
         try {
             Class<?> mapperClass = Class.forName(mapperName);
             String classType = mapperClass.getGenericInterfaces()[0].getTypeName();
-            return  classType.split("[\\<\\>]")[1];
+            return  classType.split("[<>]")[1];
         } catch (Exception ignored) {
             return null;
         }
