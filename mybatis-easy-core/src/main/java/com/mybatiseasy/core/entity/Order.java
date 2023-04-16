@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import com.mybatiseasy.core.annotations.Table;
 import com.mybatiseasy.core.annotations.TableField;
 import com.mybatiseasy.core.annotations.TableId;
+import com.mybatiseasy.core.base.BaseEntity;
 import com.mybatiseasy.core.enums.TableIdType;
 import com.mybatiseasy.core.temp.GoodsPriceTypeHandler;
 import lombok.Data;
@@ -22,7 +23,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Table("order")
-public class Order{
+public class Order extends BaseEntity<Order> {
 
     @TableId( idType = TableIdType.AUTO)
     private Long id;

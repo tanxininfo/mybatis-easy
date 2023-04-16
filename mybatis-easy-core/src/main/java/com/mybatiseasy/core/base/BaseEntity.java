@@ -7,7 +7,10 @@ import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,6 +22,9 @@ public class BaseEntity<T> {
      * 旧数据,用以比较是否更新了数据
      */
     protected T oldData;
+
+    @Autowired
+    public SqlSessionFactory sqlSessionFactory;
 
     protected void setOldData(T data){
         oldData = data;
