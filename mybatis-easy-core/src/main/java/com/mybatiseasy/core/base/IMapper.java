@@ -3,6 +3,7 @@ package com.mybatiseasy.core.base;
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.provider.SqlProvider;
+import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
@@ -41,10 +42,19 @@ public interface IMapper<T> {
     int deleteById(@Param(MethodParam.PRIMARY_KEY) Serializable id);
 
     /**
-     * 根据 主键删除行
+     * 根据主键查询一条实例
      * @param id 主键值
-     * @return
+     * @return 实体对象
      */
     @SelectProvider(type = SqlProvider.class, method = Method.GET_BY_ID)
     T getById(@Param(MethodParam.PRIMARY_KEY) Serializable id);
+
+
+    /**
+     * 根据组合条件查询一条实例
+     * @param id 主键值
+     * @return 实体对象
+     */
+    @SelectProvider(type = SqlProvider.class, method = Method.GET_BY_CONDITIONS)
+    T getByConditions(@Param(MethodParam.CONDITIONS) QueryWrapper fieldType);
 }

@@ -1,6 +1,7 @@
 package com.mybatiseasy.core.controller;
 
 import com.mybatiseasy.core.entity.Order;
+import com.mybatiseasy.core.structure.ORDER;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,15 @@ public class OrderController {
     public void get(){
 
         Order one = orderMapper.getById(2301010015420437L);
+        log.info("one.sqlSessionFactory={}",one.sqlSessionFactory);
+        log.info("one={}", one);
+    }
+
+
+    @GetMapping("/query")
+    public void query(){
+
+        Order one = orderMapper.getByConditions(ORDER._id.eq(2301010015420437L).and(ORDER._createTime.gt("2023-01-01")));
         log.info("one.sqlSessionFactory={}",one.sqlSessionFactory);
         log.info("one={}", one);
     }

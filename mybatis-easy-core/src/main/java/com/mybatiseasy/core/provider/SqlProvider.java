@@ -48,13 +48,25 @@ public class SqlProvider {
     }
 
     /**
-     * 插入一个实体
+     * 根据Id查询一个实体
      * @param map
      * @param context
      * @return
      */
     public static String getById(Map map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        return "SELECT * FROM "+ entityMap.getName()+" where id="+map.get(MethodParam.PRIMARY_KEY).toString();
+    }
+
+    /**
+     * 根据组合条件查询一个实体
+     * @param map
+     * @param context
+     * @return
+     */
+    public static String getByConditions(Map map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        log.info("map={}",map);
         return "SELECT * FROM "+ entityMap.getName()+" where id="+map.get(MethodParam.PRIMARY_KEY).toString();
     }
 
