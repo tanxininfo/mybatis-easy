@@ -26,7 +26,7 @@ public class Order{
 
     @TableId( idType = TableIdType.AUTO)
     private Long id;
-    @TableField(typeHandler = GoodsPriceTypeHandler.class)
+    @TableField(column="price_info", typeHandler = GoodsPriceTypeHandler.class)
     private GoodsPrice priceInfo;
 
     private Long goodsId;

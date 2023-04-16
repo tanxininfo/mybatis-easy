@@ -1,31 +1,8 @@
-/*
- *    Copyright 2009-2023 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       https://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package com.mybatiseasy.core.session;
 
-import org.apache.ibatis.mapping.ResultFlag;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 /**
  * 实体类字段映射成对象
@@ -36,6 +13,15 @@ public class EntityFieldMap {
    * 字段的name
    */
   private String name;
+
+  /**
+   * 是否主键
+   */
+  private boolean isId;
+  /**
+   * 数据表中的字段名
+   */
+  private String column;
   /**
    * 字段的desc
    */
@@ -57,6 +43,10 @@ public class EntityFieldMap {
    */
   private JdbcType jdbcType;
   /**
+   * 字段的javaType
+   */
+  private Class<?> javaType;
+  /**
    * 字段的TypeHandler
    */
   private Class<? extends TypeHandler> typeHandler;
@@ -71,24 +61,28 @@ public class EntityFieldMap {
   public static class Builder {
     private final EntityFieldMap entityFieldMap = new EntityFieldMap();
 
-    public Builder(String name, String desc) {
+    public Builder(String name, String column) {
       entityFieldMap.name = name;
-      entityFieldMap.desc = desc;
+      entityFieldMap.column = column;
     }
 
-    public Builder(String name, String desc, boolean isLarge) {
-      this(name, desc);
+    public Builder(String name, String column, boolean isLarge) {
+      this(name, column);
       entityFieldMap.isLarge = isLarge;
     }
 
-    public Builder(String name, String desc, String insertDefault, String updateDefault) {
-      this(name, desc);
+    public Builder(String name, String column, String insertDefault, String updateDefault) {
+      this(name, column);
       entityFieldMap.insertDefault = insertDefault;
       entityFieldMap.updateDefault = updateDefault;
     }
 
     public Builder name(String name) {
       entityFieldMap.name = name;
+      return this;
+    }
+    public Builder column(String column) {
+      entityFieldMap.column = column;
       return this;
     }
     public Builder desc(String desc) {
@@ -111,18 +105,40 @@ public class EntityFieldMap {
       entityFieldMap.jdbcType = jdbcType;
       return this;
     }
+    public Builder javaType(Class<?> javaType) {
+      entityFieldMap.javaType = javaType;
+      return this;
+    }
     public Builder numericScale(String numericScale) {
       entityFieldMap.numericScale = numericScale;
+      return this;
+    }
+    public Builder isId(boolean isId) {
+      entityFieldMap.isId = isId;
       return this;
     }
     public Builder typeHandler(Class<? extends TypeHandler> typeHandler) {
       entityFieldMap.typeHandler = typeHandler;
       return this;
     }
+
+    public EntityFieldMap build() {
+      if(entityFieldMap.desc == null) entityFieldMap.desc = "";
+      if(entityFieldMap.typeHandler == null) entityFieldMap.typeHandler = UnknownTypeHandler.class;
+      if(entityFieldMap.jdbcType == null) entityFieldMap.jdbcType = JdbcType.UNDEFINED;
+      if(entityFieldMap.insertDefault == null) entityFieldMap.insertDefault = "";
+      if(entityFieldMap.updateDefault == null) entityFieldMap.updateDefault = "";
+      if(entityFieldMap.numericScale == null) entityFieldMap.numericScale = "";
+      return entityFieldMap;
+    }
   }
 
   public String getName() {
     return name;
+  }
+
+  public String getColumn() {
+    return column;
   }
 
   public String getDesc() {
@@ -145,6 +161,12 @@ public class EntityFieldMap {
   public JdbcType  getJdbcType() {
     return jdbcType;
   }
+  public boolean  getIsId() {
+    return isId;
+  }
+  public Class<?>  getJavaType() {
+    return javaType;
+  }
   public Class<? extends TypeHandler>  getTypeHandler() {
     return typeHandler;
   }
@@ -166,15 +188,18 @@ public class EntityFieldMap {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("EntityFieldMap{");
+    final StringBuilder sb = new StringBuilder("{");
     sb.append("name='").append(name).append('\'');
+    sb.append(", column='").append(column).append('\'');
+    sb.append(", isId='").append(isId).append('\'');
     sb.append(", desc='").append(desc).append('\'');
-    sb.append(", typeHandler=").append(typeHandler).append('\'');
-    sb.append(", jdbcType=").append(jdbcType).append('\'');
-    sb.append(", insertDefault=").append(insertDefault).append('\'');
-    sb.append(", updateDefault=").append(updateDefault).append('\'');
-    sb.append(", isLarge=").append(isLarge).append('\'');
-    sb.append(", numericScale=").append(numericScale).append('\'');
+    sb.append(", typeHandler='").append(typeHandler).append('\'');
+    sb.append(", jdbcType='").append(jdbcType).append('\'');
+    sb.append(", javaType='").append(javaType).append('\'');
+    sb.append(", insertDefault='").append(insertDefault).append('\'');
+    sb.append(", updateDefault='").append(updateDefault).append('\'');
+    sb.append(", isLarge='").append(isLarge).append('\'');
+    sb.append(", numericScale='").append(numericScale).append('\'');
     sb.append('}');
     return sb.toString();
   }

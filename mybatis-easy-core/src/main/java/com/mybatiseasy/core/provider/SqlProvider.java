@@ -50,7 +50,9 @@ public class SqlProvider {
      * @return
      */
     public static String getById(Map map, ProviderContext context) {
-        log.info("getById={}", map, context);
+
+        Class<?> mapperClass = context.getMapperType();
+        log.info("mapperClass={},{}", mapperClass.getName(), context.getMapperMethod().getName(), mapperClass.getGenericInterfaces()[0]);
         return "select * from `order` where id=2301010015420437";
     }
 
