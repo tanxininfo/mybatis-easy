@@ -24,6 +24,7 @@ public class OrderController {
     public void get(){
 
         Order one = orderMapper.getById(2301010015420437L);
+        log.info("one.sqlSessionFactory={}",one.sqlSessionFactory);
         log.info("one={}", one);
     }
 
