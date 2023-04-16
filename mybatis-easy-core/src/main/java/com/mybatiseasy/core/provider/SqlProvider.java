@@ -1,5 +1,9 @@
 package com.mybatiseasy.core.provider;
 
+import com.mybatiseasy.core.consts.MethodParam;
+import com.mybatiseasy.core.session.EntityMap;
+import com.mybatiseasy.core.session.EntityMapKids;
+import com.mybatiseasy.core.session.MyConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 
@@ -50,10 +54,8 @@ public class SqlProvider {
      * @return
      */
     public static String getById(Map map, ProviderContext context) {
-
-        Class<?> mapperClass = context.getMapperType();
-        log.info("mapperClass={},{}", mapperClass.getName(), context.getMapperMethod().getName(), mapperClass.getGenericInterfaces()[0]);
-        return "select * from `order` where id=2301010015420437";
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        return "SELECT * FROM "+ entityMap.getName()+" where id="+map.get(MethodParam.PRIMARY_KEY).toString();
     }
 
 }

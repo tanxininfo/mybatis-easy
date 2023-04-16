@@ -4,7 +4,7 @@ import com.mybatiseasy.core.annotations.Table;
 import lombok.Data;
 
 @Data
-@Table
+@Table("u_user")
 public class User {
 
     private Long id;

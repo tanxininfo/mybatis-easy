@@ -1,4 +1,4 @@
-package com.mybatiseasy.core.mapper;
+package com.mybatiseasy.core.base;
 
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
