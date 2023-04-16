@@ -1,12 +1,14 @@
 package com.mybatiseasy.core.session;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import com.mybatiseasy.core.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMap;
-import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.util.*;
 
@@ -15,57 +17,82 @@ import static com.mybatiseasy.core.utils.TypeUtil.ArrayToDelimitedString;
 @Slf4j
 public class MyConfiguration extends Configuration {
 
-    protected final Map<String, ResultMap> entityMaps;
+    /**
+     * 存放实体类
+     */
+    protected final Map<String, EntityMap> entityMaps;
 
     public MyConfiguration(Environment environment) {
         super(environment);
-        entityMaps = new StrictMap<ResultMap>("Entity Maps collection");
+        entityMaps = new StrictMap<EntityMap>("Entity Maps collection");
     }
 
     public MyConfiguration() {
-        entityMaps = new StrictMap<ResultMap>("Entity Maps collection");
+        entityMaps = new StrictMap<EntityMap>("Entity Maps collection");
     }
 
-    public void addEntityMap(ResultMap rm) {
-        resultMaps.put(rm.getId(), rm);
-        checkLocallyForDiscriminatedNestedResultMaps(rm);
-        checkGloballyForDiscriminatedNestedResultMaps(rm);
+    public void addEntityMap(String entityName, EntityMap entityMap) {
+        entityMaps.put(entityName, entityMap);
     }
 
     public Collection<String> getEntityMapNames() {
         return entityMaps.keySet();
     }
 
-    public Collection<ResultMap> getEntityMaps() {
+    public Collection<EntityMap> getEntityMaps() {
         return entityMaps.values();
     }
 
-    public ResultMap getEntityMap(String id) {
-        return entityMaps.get(id);
+    public EntityMap getEntityMap(String entityName) {
+        if (!hasEntityMap(entityName)) {
+            EntityMap entityMap = EntityMapKids.reflectEntity(entityName);
+            if (entityMap == null) return null;
+            addEntityMap(entityName, entityMap);
+        }
+        return entityMaps.get(entityName);
     }
 
-    public boolean hasEntityMap(String id) {
-        return entityMaps.containsKey(id);
+    public boolean hasEntityMap(String entityName) {
+        return entityMaps.containsKey(entityName);
     }
 
     /**
      * 生成数据表的ResultMap
-     * @param msId MappedStatement.getId
+     * @param mapperName mapperName
      * @return ResultMap
      */
-    private void buildResultMap(String msId) {
-        String entityName = getEntityType(msId);
-        log.info("entityName={}",entityName);
+    private void buildResultMap(String mapperName) {
+        if(hasResultMap(mapperName)) return;
+
+        String entityName = getEntityType(mapperName);
+
         if(entityName==null) return;
+        EntityMap entityMap = getEntityMap(entityName);
+
+        if(entityMap==null) return;
+        try {
+            List<ResultMapping> resultMappingList = new ArrayList<>();
+            for (EntityFieldMap fieldMap: entityMap.getEntityFieldMapList()
+                 ) {
+                ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, fieldMap.getName(), fieldMap.getColumn(), fieldMap.getJavaType());
+                Class<? extends  TypeHandler> typeHandlerClass = fieldMap.getTypeHandler();
+                if (typeHandlerClass != null && typeHandlerClass != UnknownTypeHandler.class) {
+                    TypeHandlerRegistry typeHandlerRegistry = getTypeHandlerRegistry();
+                    TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), fieldMap.getTypeHandler());
+                    resultMapping.typeHandler(typeHandler);
+                }
+
+                if(fieldMap.getIsId()) resultMapping.flags(List.of(ResultFlag.ID));
+                resultMappingList.add(resultMapping.build());
+            }
+             ResultMap newMap = new ResultMap.Builder(this, mapperName, Class.forName(entityName), resultMappingList).build();
+            addResultMap(newMap);
+        }catch (Exception ex){
+            log.error("ResultMap format error:{}",ex.getMessage());
+        }
     }
 
-    private void getEntityInfo(String entity){
-
-    }
-
-    private String getEntityType(String msId) {
-        int dottedIndex = msId.lastIndexOf(".");
-        String mapperName = msId.substring(0, dottedIndex);
+    private String getEntityType(String mapperName) {
         try {
             Class<?> mapperClass = Class.forName(mapperName);
             String classType = mapperClass.getGenericInterfaces()[0].getTypeName();
@@ -78,13 +105,15 @@ public class MyConfiguration extends Configuration {
     @Override
     public void addMappedStatement(MappedStatement ms) {
 
-        log.info("ms={},{}", ms.getId(), ObjectUtil.toJsonString(ms.getResultMaps()));
-
         String keyProperty = ArrayToDelimitedString(ms.getKeyProperties());
         String keyColumn = ArrayToDelimitedString(ms.getKeyColumns());
         String resultSets = ArrayToDelimitedString(ms.getResultSets());
-        List<ResultMap> resultMaps = new ArrayList<>();   //getStatementResultMaps(resultMap, resultType, id);
-        buildResultMap(ms.getId());
+
+        int dottedIndex = ms.getId().lastIndexOf(".");
+        String mapperName = ms.getId().substring(0, dottedIndex);
+
+        buildResultMap(mapperName);
+        List<ResultMap> resultMaps = hasResultMap(mapperName)? List.of(getResultMap(mapperName)):new ArrayList<>();
 
         MappedStatement.Builder statementBuilder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId(), ms.getSqlSource(), ms.getSqlCommandType())
                 .resource(ms.getResource()).fetchSize(ms.getFetchSize()).timeout(ms.getTimeout()).statementType(ms.getStatementType())

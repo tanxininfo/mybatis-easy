@@ -18,11 +18,11 @@ public @interface TableField {
     /**
      * 数据库字段名称，不填则默认为名称转下划线
      */
-    @AliasFor("name")
+    @AliasFor("column")
     String value() default "";
 
     @AliasFor("value")
-    String name() default "";
+    String column() default "";
 
     /**
      * update的时候自动填充默认值
