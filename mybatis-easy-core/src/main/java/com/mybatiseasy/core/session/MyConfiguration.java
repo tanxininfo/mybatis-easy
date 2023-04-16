@@ -1,8 +1,6 @@
 package com.mybatiseasy.core.session;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.json.JSONUtil;
-import com.mybatiseasy.core.utils.ObjectUtil;
+import com.mybatiseasy.core.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
@@ -17,43 +15,12 @@ import static com.mybatiseasy.core.utils.TypeUtil.ArrayToDelimitedString;
 @Slf4j
 public class MyConfiguration extends Configuration {
 
-    /**
-     * 存放实体类
-     */
-    protected final Map<String, EntityMap> entityMaps;
-
     public MyConfiguration(Environment environment) {
         super(environment);
-        entityMaps = new StrictMap<EntityMap>("Entity Maps collection");
     }
 
     public MyConfiguration() {
-        entityMaps = new StrictMap<EntityMap>("Entity Maps collection");
-    }
 
-    public void addEntityMap(String entityName, EntityMap entityMap) {
-        entityMaps.put(entityName, entityMap);
-    }
-
-    public Collection<String> getEntityMapNames() {
-        return entityMaps.keySet();
-    }
-
-    public Collection<EntityMap> getEntityMaps() {
-        return entityMaps.values();
-    }
-
-    public EntityMap getEntityMap(String entityName) {
-        if (!hasEntityMap(entityName)) {
-            EntityMap entityMap = EntityMapKids.reflectEntity(entityName);
-            if (entityMap == null) return null;
-            addEntityMap(entityName, entityMap);
-        }
-        return entityMaps.get(entityName);
-    }
-
-    public boolean hasEntityMap(String entityName) {
-        return entityMaps.containsKey(entityName);
     }
 
     /**
@@ -64,18 +31,18 @@ public class MyConfiguration extends Configuration {
     private void buildResultMap(String mapperName) {
         if(hasResultMap(mapperName)) return;
 
-        String entityName = getEntityType(mapperName);
-
+        String entityName = EntityMapKids.getEntityName(mapperName);
         if(entityName==null) return;
-        EntityMap entityMap = getEntityMap(entityName);
 
+        EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
         if(entityMap==null) return;
+
         try {
             List<ResultMapping> resultMappingList = new ArrayList<>();
             for (EntityFieldMap fieldMap: entityMap.getEntityFieldMapList()
                  ) {
-                ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, fieldMap.getName(), fieldMap.getColumn(), fieldMap.getJavaType());
-                Class<? extends  TypeHandler> typeHandlerClass = fieldMap.getTypeHandler();
+                ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, fieldMap.getName(), StringUtil.removeBackquote(fieldMap.getColumn()), fieldMap.getJavaType());
+                Class<? extends TypeHandler> typeHandlerClass = fieldMap.getTypeHandler();
                 if (typeHandlerClass != null && typeHandlerClass != UnknownTypeHandler.class) {
                     TypeHandlerRegistry typeHandlerRegistry = getTypeHandlerRegistry();
                     TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), fieldMap.getTypeHandler());
@@ -92,15 +59,6 @@ public class MyConfiguration extends Configuration {
         }
     }
 
-    private String getEntityType(String mapperName) {
-        try {
-            Class<?> mapperClass = Class.forName(mapperName);
-            String classType = mapperClass.getGenericInterfaces()[0].getTypeName();
-            return  classType.split("[<>]")[1];
-        } catch (Exception ignored) {
-            return null;
-        }
-    }
 
     @Override
     public void addMappedStatement(MappedStatement ms) {

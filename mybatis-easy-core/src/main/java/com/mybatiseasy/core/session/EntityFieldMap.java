@@ -1,5 +1,7 @@
 package com.mybatiseasy.core.session;
 
+import com.mybatiseasy.core.utils.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
@@ -7,6 +9,7 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 /**
  * 实体类字段映射成对象
  */
+@Slf4j
 public class EntityFieldMap {
 
   /**
@@ -123,6 +126,8 @@ public class EntityFieldMap {
     }
 
     public EntityFieldMap build() {
+      entityFieldMap.column = StringUtil.addBackquote(entityFieldMap.column);
+      log.info("entityFieldMap.column ={}",entityFieldMap.column );
       if(entityFieldMap.desc == null) entityFieldMap.desc = "";
       if(entityFieldMap.typeHandler == null) entityFieldMap.typeHandler = UnknownTypeHandler.class;
       if(entityFieldMap.jdbcType == null) entityFieldMap.jdbcType = JdbcType.UNDEFINED;

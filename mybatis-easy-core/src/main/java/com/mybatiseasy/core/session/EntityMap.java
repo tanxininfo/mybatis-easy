@@ -1,5 +1,7 @@
 package com.mybatiseasy.core.session;
 
+import com.mybatiseasy.core.utils.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +66,7 @@ public class EntityMap {
     }
 
     public EntityMap build() {
+      entityMap.name = StringUtil.addBackquote(entityMap.name);
       return entityMap;
     }
   }
