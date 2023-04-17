@@ -112,14 +112,18 @@ public class EntityMapKids {
             Table table = AnnotationUtils.findAnnotation(entityClass, Table.class);
             if (table == null) return null;
 
+            String primary = "";
+
             List<EntityFieldMap> entityFieldMapList = new ArrayList<>();
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {
-                entityFieldMapList.add(reflectEntityMap(field));
+                EntityFieldMap fieldMap = reflectEntityMap(field);
+                if(fieldMap.getIsId()) primary = StringUtil.addBackquote(fieldMap.getColumn());
+                entityFieldMapList.add(fieldMap);
             }
 
             String tableName = StringUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
-            return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList).build();
+            return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList).primary(primary).build();
         } catch (Exception ignored) {
             return null;
         }

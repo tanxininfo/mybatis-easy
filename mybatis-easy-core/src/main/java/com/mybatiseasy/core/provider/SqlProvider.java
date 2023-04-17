@@ -1,6 +1,7 @@
 package com.mybatiseasy.core.provider;
 
 import com.mybatiseasy.core.consts.MethodParam;
+import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
@@ -57,7 +58,10 @@ public class SqlProvider {
      */
     public static String getById(Map map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        return "SELECT * FROM "+ entityMap.getName()+" where id="+map.get(MethodParam.PRIMARY_KEY).toString();
+        return "SELECT * FROM" + Sql.SPACE +
+                entityMap.getName() + Sql.SPACE +
+                "where" + Sql.SPACE + entityMap.getPrimary() + "=" + Sql.SPACE +
+                map.get(MethodParam.PRIMARY_KEY).toString();
     }
 
     /**
@@ -70,10 +74,10 @@ public class SqlProvider {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
 
-        return "SELECT * FROM " +
-                entityMap.getName() +
-                " WHERE " +
-                condition.sql;
+        return "SELECT * FROM" + Sql.SPACE +
+                entityMap.getName() + Sql.SPACE +
+                " WHERE " + Sql.SPACE +
+                condition.getSql();
     }
 
     /**
@@ -85,10 +89,9 @@ public class SqlProvider {
     public static String listByCondition(Map map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
-        return "SELECT * FROM " +
+        return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() +
-                " WHERE " +
-                condition.sql;
+                Sql.SPACE + "WHERE" + condition.getSql();
     }
 
     /**

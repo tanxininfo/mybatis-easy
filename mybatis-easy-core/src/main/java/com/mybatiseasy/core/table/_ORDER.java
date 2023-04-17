@@ -2,6 +2,7 @@ package com.mybatiseasy.core.table;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 
 public class _ORDER {
-        public static Condition ID = new Condition("`order`", "`id`");
-        public static Condition CREATE_TIME = new Condition("`order`", "`create_time`");
+        public static String _name = "`order`";
+        public static Condition ID = new Condition(_name, "`id`");
+        public static Condition CREATE_TIME = new Condition(_name, "`create_time`");
     }

@@ -23,6 +23,10 @@ public class EntityMap {
    */
   private String schema;
   /**
+   * 主键
+   */
+  private String primary;
+  /**
    * 实体的字段映射
    */
   private List<EntityFieldMap> entityFieldMapList;
@@ -60,6 +64,11 @@ public class EntityMap {
       entityMap.schema = schema;
       return this;
     }
+
+    public Builder primary(String primary) {
+      entityMap.primary = primary;
+      return this;
+    }
     public Builder entityFieldMapList(List<EntityFieldMap> entityFieldMapList) {
       entityMap.entityFieldMapList = entityFieldMapList;
       return this;
@@ -81,6 +90,10 @@ public class EntityMap {
 
   public String  getSchema() {
     return schema;
+  }
+
+  public String  getPrimary() {
+    return primary;
   }
 
   public List<EntityFieldMap> getEntityFieldMapList() {
@@ -107,13 +120,14 @@ public class EntityMap {
     sb.append("name='").append(name).append('\'');
     sb.append(", desc='").append(desc).append('\'');
     sb.append(", schema='").append(schema).append('\'');
+    sb.append(", primary='").append(primary).append('\'');
     sb.append(", fieldList=[");
 
     for(int i = 0;i < entityFieldMapList.size(); i++) {
       if (i > 0) sb.append(",");
       sb.append(entityFieldMapList.get(i).toString());
     }
-    sb.append("]").append(schema);
+    sb.append("]");
     sb.append('}');
     return sb.toString();
   }
