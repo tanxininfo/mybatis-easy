@@ -1,5 +1,7 @@
 package com.mybatiseasy.core.sqlbuilder;
 
+import com.mybatiseasy.core.consts.Sql;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.AbstractSQL;
 import org.apache.ibatis.mapping.SqlCommandType;
 
@@ -8,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+@Slf4j
 public class QueryWrapper implements Serializable {
 
 
@@ -54,6 +56,7 @@ public class QueryWrapper implements Serializable {
     }
 
 
+
     public QueryWrapper update(String table) {
         sqlStatement.statementType = SQLStatement.StatementType.UPDATE;
         sqlStatement.tables.add(table);
@@ -63,6 +66,19 @@ public class QueryWrapper implements Serializable {
 
     public QueryWrapper set(String... sets) {
         sqlStatement.sets.addAll(Arrays.asList(sets));
+        return this;
+    }
+
+    public String getSql(){
+        return sqlStatement.sql(new StringBuilder());
+    }
+
+    public QueryWrapper from(Table... tables) {
+        sqlStatement.tableList.addAll(Arrays.asList(tables));
+        for (Table table: tables
+             ) {
+            sqlStatement.tables.add(table.getName()+ Sql.SPACE+ table.getAs());
+        }
         return this;
     }
 
@@ -90,9 +106,15 @@ public class QueryWrapper implements Serializable {
         public boolean isEmpty() {
             return empty;
         }
-
     }
 
+    public boolean hasSelect(){
+        return sqlStatement.select.size()>0;
+    }
+
+    public boolean hasTable(){
+        return sqlStatement.tables.size()>0;
+    }
     private static class SQLStatement {
 
         public enum StatementType {
@@ -145,6 +167,7 @@ public class QueryWrapper implements Serializable {
         List<String> sets = new ArrayList<>();
         List<String> select = new ArrayList<>();
         List<String> tables = new ArrayList<>();
+        List<Table> tableList = new ArrayList<>();
         List<String> join = new ArrayList<>();
         List<String> innerJoin = new ArrayList<>();
         List<String> outerJoin = new ArrayList<>();
@@ -197,7 +220,7 @@ public class QueryWrapper implements Serializable {
             } else {
                 sqlClause(builder, "SELECT", select, "", "", ", ");
             }
-
+        log.info("aaaa");
             sqlClause(builder, "FROM", tables, "", "", ", ");
             joins(builder);
             sqlClause(builder, "WHERE", where, "(", ")", " AND ");
@@ -205,7 +228,8 @@ public class QueryWrapper implements Serializable {
             sqlClause(builder, "HAVING", having, "(", ")", " AND ");
             sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
             limitingRowsStrategy.appendClause(builder, offset, limit);
-            return builder.toString();
+            log.info("builder.toString()={}",builder.appendable.toString());
+            return builder.appendable.toString();
         }
 
         private void joins(SafeAppendable builder) {
