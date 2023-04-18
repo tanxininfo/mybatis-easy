@@ -70,6 +70,10 @@ public class SqlProvider {
                 map.get(MethodParam.PRIMARY_KEY).toString();
     }
 
+    private static String getConditionSql(Condition condition){
+       return condition.getSql().isEmpty()? "1 = 1": condition.getSql();
+    }
+
     /**
      * 根据组合条件查询一个实体
      *
@@ -80,11 +84,10 @@ public class SqlProvider {
     public static String getByCondition(Map map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
-
         return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
                 " WHERE " + Sql.SPACE +
-                condition.getSql();
+                getConditionSql(condition);
     }
 
     /**
@@ -98,8 +101,10 @@ public class SqlProvider {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         return "SELECT * FROM" + Sql.SPACE +
-                entityMap.getName() +
-                Sql.SPACE + "WHERE" + condition.getSql();
+                entityMap.getName() + Sql.SPACE +
+                "WHERE" + Sql.SPACE +
+                getConditionSql(condition);
+
     }
 
     /**
