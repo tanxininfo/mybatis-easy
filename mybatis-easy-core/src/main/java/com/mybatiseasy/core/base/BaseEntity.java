@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 所有Entity对应Mapp氏  er通过继承该接口取得CRUD功能。
+ * 所有Entity对应Mapper通过继承该接口取得CRUD功能。
  */
 public class BaseEntity<T> {
     /**

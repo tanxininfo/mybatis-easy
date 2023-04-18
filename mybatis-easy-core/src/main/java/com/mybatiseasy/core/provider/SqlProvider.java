@@ -6,6 +6,8 @@ import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.sqlbuilder.Table;
+import com.mybatiseasy.core.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 
@@ -19,17 +21,19 @@ public class SqlProvider {
 
     /**
      * 插入一个实体
+     *
      * @param map
      * @param context
      * @return
      */
     public static String insert(Map map, ProviderContext context) {
-      log.info("map={}", map);
-       return "insert into u_user(id, username) values(1234, 'hahaha')";
+        log.info("map={}", map);
+        return "insert into u_user(id, username) values(1234, 'hahaha')";
     }
 
     /**
      * 插入一个实体
+     *
      * @param map
      * @param context
      * @return
@@ -41,6 +45,7 @@ public class SqlProvider {
 
     /**
      * 插入一个实体
+     *
      * @param map
      * @param context
      * @return
@@ -52,6 +57,7 @@ public class SqlProvider {
 
     /**
      * 根据Id查询一个实体
+     *
      * @param map
      * @param context
      * @return
@@ -66,8 +72,9 @@ public class SqlProvider {
 
     /**
      * 根据组合条件查询一个实体
-     * @param map 条件
-     * @param context  上下文
+     *
+     * @param map     条件
+     * @param context 上下文
      * @return String
      */
     public static String getByCondition(Map map, ProviderContext context) {
@@ -82,8 +89,9 @@ public class SqlProvider {
 
     /**
      * 根据组合条件查询实体列表
-     * @param map 条件
-     * @param context  上下文
+     *
+     * @param map     条件
+     * @param context 上下文
      * @return String
      */
     public static String listByCondition(Map map, ProviderContext context) {
@@ -96,13 +104,18 @@ public class SqlProvider {
 
     /**
      * 根据组合条件查询实体列表
-     * @param map 条件
-     * @param context  上下文
+     *
+     * @param map     条件
+     * @param context 上下文
      * @return String
      */
     public static String listByWrapper(Map map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
-        return wrapper.generateSql();
+
+        if (!wrapper.hasSelect()) wrapper.select("*");
+        if (!wrapper.hasTable()) wrapper.from(new Table(entityMap.getName()));
+
+        return wrapper.getSql();
     }
 }
