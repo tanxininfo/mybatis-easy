@@ -6,6 +6,7 @@ import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.table.$;
 import com.mybatiseasy.core.table._ORDER;
 import com.mybatiseasy.core.table._T;
+import com.mybatiseasy.core.table._USER;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,10 @@ public class OrderController {
 
 
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.select(_ORDER.ID).from(_T._ORDER);
-
+        wrapper.selectFrom("son").column(_USER.ID, _USER.NAME, _USER.AGE);
+        wrapper.selectFrom("parent").column(_USER.NAME.as("parentName"));
+        wrapper.from($._USER.as("son"), $._USER.as("parent"));
+        wrapper.where(_USER.PARENT_ID.of("son").eq(_USER.ID.of("parent")));
         log.info("aaa={}", wrapper.getSql());
 
         List<Order> list = orderMapper.listByWrapper(wrapper);
