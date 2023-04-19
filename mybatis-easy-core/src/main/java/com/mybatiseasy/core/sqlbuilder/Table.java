@@ -5,18 +5,27 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Data
 public class Table {
-    private String name;
-    private String as;
+    private final String name;
+    private String alias = "";
 
     public Table(String name){
         this.name = name;
-        this.as = "";
     }
 
-    public Table(String name, String as) {
+    private Table(String name, String alias){
         this.name = name;
-        this.as = as;
+        this.alias = alias;
+    }
+    public Table as(String alias){
+        return new Table(name, alias);
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public String getAlias(){
+        return this.alias;
     }
 }

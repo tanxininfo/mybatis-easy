@@ -38,8 +38,8 @@ public class QueryWrapper implements Serializable {
         String columnName = "";
         for (Object column: columns
              ) {
-            if(column instanceof  Condition){
-                columnName = ((Condition) column).getColumn();
+            if(column instanceof  Column){
+                columnName = ((Column) column).getFullColumn();
             }else{
                 columnName = column.toString();
             }
@@ -77,9 +77,12 @@ public class QueryWrapper implements Serializable {
 
     public QueryWrapper from(Table... tables) {
         sqlStatement.tableList.addAll(Arrays.asList(tables));
-        for (Table table: tables
-             ) {
-            sqlStatement.tables.add(table.getName()+ Sql.SPACE+ table.getAs());
+        for (Table table : tables
+        ) {
+            String tableStr = table.getName();
+            if (!table.getAlias().isEmpty())
+                tableStr += Sql.SPACE + "AS" + Sql.SPACE + table.getAlias();
+            sqlStatement.tables.add(tableStr);
         }
         return this;
     }

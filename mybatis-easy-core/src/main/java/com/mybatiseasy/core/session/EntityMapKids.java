@@ -3,7 +3,9 @@ package com.mybatiseasy.core.session;
 import com.mybatiseasy.core.annotations.Table;
 import com.mybatiseasy.core.annotations.TableField;
 import com.mybatiseasy.core.annotations.TableId;
+import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.StringUtil;
+import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -118,11 +120,11 @@ public class EntityMapKids {
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {
                 EntityFieldMap fieldMap = reflectEntityMap(field);
-                if(fieldMap.getIsId()) primary = StringUtil.addBackquote(fieldMap.getColumn());
+                if(fieldMap.getIsId()) primary = SqlUtil.addBackquote(fieldMap.getColumn());
                 entityFieldMapList.add(fieldMap);
             }
 
-            String tableName = StringUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
+            String tableName = TypeUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
             return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList).primary(primary).build();
         } catch (Exception ignored) {
             return null;

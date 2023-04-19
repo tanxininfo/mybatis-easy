@@ -7,11 +7,9 @@ import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.sqlbuilder.Table;
-import com.mybatiseasy.core.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 
-import javax.management.Query;
 import java.util.Map;
 
 @Slf4j
