@@ -184,6 +184,7 @@ public class QueryWrapper implements Serializable {
         List<String> orderBy = new ArrayList<>();
         List<String> lastList = new ArrayList<>();
         List<String> columns = new ArrayList<>();
+        List<String> tableAlia = new ArrayList<>();
         List<List<String>> valuesList = new ArrayList<>();
         boolean distinct;
         String offset;
