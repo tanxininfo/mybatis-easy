@@ -40,10 +40,16 @@ public class OrderController {
         // (id=1 or id=2) and (id=3 or id=4)
         //Order one = orderMapper.getByConditions(ORDER._id.eq(1).or(ORDER._id.eq(2)).and(ORDER._id.eq(3).or(ORDER._id.eq(4))));
         //Condition condition = _ORDER.ID.gt(1).and(_ORDER.ID.gt(2).and(_ORDER.ID.ne(3)));
-        Condition condition = _ORDER.ID.gt(false, 1).and(_ORDER.ID.gt(false, 2).and(_ORDER.ID.ne(true, 3)));
+        Condition condition = _ORDER.ID.gt(true, 1).and(_ORDER.ID.gt(true, 2).and(false, _ORDER.ID.ne(true, 3)));
         //Condition condition =  _ORDER.ID.gt(true, 2).and(_ORDER.ID.ne(true, 3));
         log.info("condition={}", condition.getSql());
+
         QueryWrapper wrapper = new QueryWrapper();
+        wrapper.select(_ORDER.ID,_ORDER.CREATE_TIME)
+                .where(_ORDER.ID.ge(1))
+                .where(_ORDER.ID.lt(18).or(_ORDER.ID.ge(65)));
+
+
         List<Order> list = orderMapper.listByWrapper(wrapper);
         log.info("list={}", list);
     }

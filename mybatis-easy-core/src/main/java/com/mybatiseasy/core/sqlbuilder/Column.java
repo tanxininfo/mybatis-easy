@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Data
-public class Condition {
+public class Column {
     private StringBuilder sql = new StringBuilder();
     private String table;
     private String column;
@@ -16,15 +16,15 @@ public class Condition {
         return sql.toString();
     }
 
-    public Condition() {
+    public Column() {
     }
 
-    public Condition(String table, String column) {
+    public Column(String table, String column) {
         this.table = table;
         this.column = column;
     }
 
-    public Condition(String sql) {
+    public Column(String sql) {
         this.sql = new StringBuilder(sql);
     }
 
@@ -36,34 +36,34 @@ public class Condition {
      * @param symbol 比较符，如: =,<,<=,>,>=,!=
      * @return Condition
      */
-    private Condition compare(boolean apply, Object val, String symbol) {
-        if (!apply) return new Condition();
+    private Column compare(boolean apply, Object val, String symbol) {
+        if (!apply) return new Column();
         log.info("compare={}", symbol);
         sql = new StringBuilder().append(column).append(Sql.SPACE).append(symbol).append(Sql.SPACE).append(val.toString());
-        return new Condition(sql.toString());
+        return new Column(sql.toString());
     }
 
-    public Condition eq(Object val) {
+    public Column eq(Object val) {
         return compare(true, val, "=");
     }
 
-    public Condition lt(Object val) {
+    public Column lt(Object val) {
         return compare(true, val, "<");
     }
 
-    public Condition le(Object val) {
+    public Column le(Object val) {
         return compare(true, val, "<=");
     }
 
-    public Condition gt(Object val) {
+    public Column gt(Object val) {
         return compare(true, val, ">");
     }
 
-    public Condition ge(Object val) {
+    public Column ge(Object val) {
         return compare(true, val, ">=");
     }
 
-    public Condition ne(Object val) {
+    public Column ne(Object val) {
         return compare(true, val, "!=");
     }
 
@@ -73,36 +73,36 @@ public class Condition {
      * @param val   值
      * @return Condition
      */
-    public Condition eq(boolean apply, Object val) {
+    public Column eq(boolean apply, Object val) {
         return compare(apply, val, "=");
     }
 
-    public Condition lt(boolean apply, Object val) {
+    public Column lt(boolean apply, Object val) {
         return compare(apply, val, "<");
     }
 
-    public Condition le(boolean apply, Object val) {
+    public Column le(boolean apply, Object val) {
         return compare(apply, val, "<=");
     }
 
-    public Condition gt(boolean apply, Object val) {
+    public Column gt(boolean apply, Object val) {
         return compare(apply, val, ">");
     }
 
-    public Condition ge(boolean apply, Object val) {
+    public Column ge(boolean apply, Object val) {
         return compare(apply, val, ">=");
     }
 
-    public Condition ne(boolean apply, Object val) {
+    public Column ne(boolean apply, Object val) {
         return compare(apply, val, "!=");
     }
 
-    public Condition logic(boolean apply, Condition nextCondition, String keyword) {
-        if (!apply) return new Condition(sql.toString());
+    public Column logic(boolean apply, Column nextCondition, String keyword) {
+        if (!apply) return new Column(sql.toString());
 
         boolean preEmpty = sql.isEmpty();
         boolean nextEmpty = nextCondition.getSql().isEmpty();
-        if (preEmpty && nextEmpty) return new Condition();
+        if (preEmpty && nextEmpty) return new Column();
         else {
             log.info("nextCondition.sql={}",nextCondition.sql);
             boolean need = SqlUtil.needBracket(nextCondition.sql);
@@ -120,22 +120,22 @@ public class Condition {
             }
         }
 
-        return new Condition(sql.toString());
+        return new Column(sql.toString());
     }
 
-    public Condition and(Condition nextCondition) {
+    public Column and(Column nextCondition) {
         return logic(true, nextCondition, "AND");
     }
 
-    public Condition or(Condition nextCondition) {
+    public Column or(Column nextCondition) {
         return logic(true, nextCondition, "OR");
     }
 
-    public Condition and(boolean apply, Condition nextCondition) {
+    public Column and(boolean apply, Column nextCondition) {
         return logic(apply, nextCondition, "AND");
     }
 
-    public Condition or(boolean apply, Condition nextCondition) {
+    public Column or(boolean apply, Column nextCondition) {
         return logic(apply, nextCondition, "OR");
     }
 }

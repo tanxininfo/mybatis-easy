@@ -1,9 +1,11 @@
 package com.mybatiseasy.core.sqlbuilder;
 
 import com.mybatiseasy.core.consts.Sql;
+import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.AbstractSQL;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.tomcat.util.buf.StringUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -220,10 +222,10 @@ public class QueryWrapper implements Serializable {
             } else {
                 sqlClause(builder, "SELECT", select, "", "", ", ");
             }
-        log.info("aaaa");
+
             sqlClause(builder, "FROM", tables, "", "", ", ");
             joins(builder);
-            sqlClause(builder, "WHERE", where, "(", ")", " AND ");
+            wheres(builder);
             sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
             sqlClause(builder, "HAVING", having, "(", ")", " AND ");
             sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
@@ -238,6 +240,16 @@ public class QueryWrapper implements Serializable {
             sqlClause(builder, "OUTER JOIN", outerJoin, "", "", "\nOUTER JOIN ");
             sqlClause(builder, "LEFT OUTER JOIN", leftOuterJoin, "", "", "\nLEFT OUTER JOIN ");
             sqlClause(builder, "RIGHT OUTER JOIN", rightOuterJoin, "", "", "\nRIGHT OUTER JOIN ");
+        }
+
+        private void wheres(SafeAppendable builder) {
+            if (where.isEmpty()) return;
+            builder.append(" WHERE ");
+            for (int i = 0; i < where.size(); i++) {
+                String condition = where.get(i);
+                if (i > 0) builder.append(Sql.SPACE).append("AND").append(Sql.SPACE);
+                builder.append(SqlUtil.needBracket(condition) ? "(" + condition + ")" : condition);
+            }
         }
 
         private String insertSQL(SafeAppendable builder) {
