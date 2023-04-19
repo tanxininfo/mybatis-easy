@@ -2,14 +2,6 @@ package com.mybatiseasy.core.utils;
 
 public class StringUtil {
 
-    public static boolean isEmpty(String str){
-        return (str== null) || str.isEmpty();
-    }
-
-    public static boolean isNotEmpty(String str){
-        return (str!= null) && !str.isEmpty();
-    }
-
     /**
      * 驼峰命名法转为下划线命名
      *
@@ -55,25 +47,6 @@ public class StringUtil {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * 用于sql语句中，给表或字段名添加`号，避免和sql关键字冲突
-     * @param str 表名或列名
-     * @return 加上`号的表名或列名
-     */
-    public static String addBackquote(String str){
-        return str.startsWith("`")? str: "`"+str+"`";
-    }
-
-
-    /**
-     * 用于sql语句中，给表或字段名去除`号
-     * @param str 表名或列名
-     * @return 去除`号的表名或列名
-     */
-    public static String removeBackquote(String str){
-        return str.replace("`","");
     }
 
 }

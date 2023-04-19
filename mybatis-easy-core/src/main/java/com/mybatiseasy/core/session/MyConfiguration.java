@@ -1,6 +1,8 @@
 package com.mybatiseasy.core.session;
 
+import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.StringUtil;
+import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
@@ -41,7 +43,7 @@ public class MyConfiguration extends Configuration {
             List<ResultMapping> resultMappingList = new ArrayList<>();
             for (EntityFieldMap fieldMap: entityMap.getEntityFieldMapList()
                  ) {
-                ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, fieldMap.getName(), StringUtil.removeBackquote(fieldMap.getColumn()), fieldMap.getJavaType());
+                ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, fieldMap.getName(), SqlUtil.removeBackquote(fieldMap.getColumn()), fieldMap.getJavaType());
                 Class<? extends TypeHandler> typeHandlerClass = fieldMap.getTypeHandler();
                 if (typeHandlerClass != null && typeHandlerClass != UnknownTypeHandler.class) {
                     TypeHandlerRegistry typeHandlerRegistry = getTypeHandlerRegistry();

@@ -3,7 +3,10 @@ package com.mybatiseasy.core.controller;
 import com.mybatiseasy.core.entity.Order;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.table.$;
 import com.mybatiseasy.core.table._ORDER;
+import com.mybatiseasy.core.table._T;
+import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.mybatiseasy.core.mapper.OrderMapper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author dudley
@@ -44,11 +50,11 @@ public class OrderController {
         //Condition condition =  _ORDER.ID.gt(true, 2).and(_ORDER.ID.ne(true, 3));
         log.info("condition={}", condition.getSql());
 
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.select(_ORDER.ID,_ORDER.CREATE_TIME)
-                .where(_ORDER.ID.ge(1))
-                .where(_ORDER.ID.lt(18).or(_ORDER.ID.ge(65)));
 
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.select(_ORDER.ID).from(_T._ORDER);
+
+        log.info("aaa={}", wrapper.getSql());
 
         List<Order> list = orderMapper.listByWrapper(wrapper);
         log.info("list={}", list);
