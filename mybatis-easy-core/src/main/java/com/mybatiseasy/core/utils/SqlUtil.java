@@ -110,4 +110,8 @@ public class SqlUtil {
     public static String removeSymbol(String str, String leftSymbol, String rightSymbol){
         return str.replace(leftSymbol,"").replace(rightSymbol, "");
     }
+
+    public static String addSingQuote(String str){
+        return addSymbol(str, "'", "'");
+    }
 }

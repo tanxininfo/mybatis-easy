@@ -1,12 +1,12 @@
 package com.mybatiseasy.core.provider;
 
+import com.mybatiseasy.core.cols.UserColumn;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
-import com.mybatiseasy.core.sqlbuilder.Table;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 
@@ -117,7 +117,7 @@ public class SqlProvider {
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
 
         if (!wrapper.hasSelect()) wrapper.select("*");
-        if (!wrapper.hasTable()) wrapper.from(new Table(entityMap.getName()));
+        if (!wrapper.hasTable()) wrapper.from(new UserColumn(entityMap.getName()));
 
         return wrapper.getSql();
     }
