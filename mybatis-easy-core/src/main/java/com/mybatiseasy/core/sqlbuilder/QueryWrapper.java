@@ -1,11 +1,9 @@
 package com.mybatiseasy.core.sqlbuilder;
 
+import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.jdbc.AbstractSQL;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.tomcat.util.buf.StringUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,6 +13,8 @@ import java.util.List;
 @Slf4j
 public class QueryWrapper implements Serializable {
 
+    public QueryWrapper(){
+    }
 
     public static QueryWrapper create(){
         return new QueryWrapper();
@@ -22,6 +22,45 @@ public class QueryWrapper implements Serializable {
 
     private final SQLStatement sqlStatement = new SQLStatement();
 
+
+    public QueryWrapper orderBy(Column column, boolean isDesc){
+        sqlStatement.orderBy.add(column.getTableColumn()+ Sql.SPACE + (isDesc? "DESC":"ASC"));
+        return this;
+    }
+
+    private String formatJoin(Column column, Condition condition) {
+        return column.getFullTable()+ Sql.SPACE + "ON" + Sql.SPACE + condition.getSql();
+    }
+
+    public QueryWrapper join(Column column, Condition condition){
+        sqlStatement.join.add(formatJoin(column, condition));
+        return this;
+    }
+
+    public QueryWrapper innerJoin(Column column, Condition condition){
+        sqlStatement.innerJoin.add(formatJoin(column, condition));
+        return this;
+    }
+
+    public QueryWrapper leftJoin(Column column, Condition condition){
+        sqlStatement.leftOuterJoin.add(formatJoin(column, condition));
+        return this;
+    }
+
+    public QueryWrapper rightJoin(Column column, Condition condition){
+        sqlStatement.rightOuterJoin.add(formatJoin(column, condition));
+        return this;
+    }
+
+    public QueryWrapper union(QueryWrapper unionWrapper){
+        sqlStatement.union.add(unionWrapper.getSql());
+        return this;
+    }
+
+    public QueryWrapper unionAll(QueryWrapper unionWrapper){
+        sqlStatement.unionAll.add(unionWrapper.getSql());
+        return this;
+    }
 
     public QueryWrapper where(Condition condition){
         sqlStatement.where.add(condition.getSql());
@@ -33,20 +72,22 @@ public class QueryWrapper implements Serializable {
      * @param columns 数据列
      * @return QueryWrapper
      */
-    public QueryWrapper select(Object ...columns){
+    public QueryWrapper select(Object ...columns) {
         sqlStatement.statementType = SQLStatement.StatementType.SELECT;
         String columnName = "";
-        for (Object column: columns
-             ) {
-            if(column instanceof  Column){
-                columnName = ((Column) column).getFullColumn();
-            }else{
+        for (Object column : columns
+        ) {
+            if (column instanceof Column) {
+                List<String> columnList = ((Column) column).getAllColumns();
+                sqlStatement.select.addAll(columnList);
+            } else {
                 columnName = column.toString();
+                if (!sqlStatement.select.contains(columnName)) sqlStatement.select.add(columnName);
             }
-            if(!sqlStatement.select.contains(columnName)) sqlStatement.select.add(columnName);
         }
         return this;
     }
+
 
     /**
      * 去重
@@ -75,14 +116,11 @@ public class QueryWrapper implements Serializable {
         return sqlStatement.sql(new StringBuilder());
     }
 
-    public QueryWrapper from(Table... tables) {
+    public QueryWrapper from(Column... tables) {
         sqlStatement.tableList.addAll(Arrays.asList(tables));
-        for (Table table : tables
+        for (Column table : tables
         ) {
-            String tableStr = table.getName();
-            if (!table.getAlias().isEmpty())
-                tableStr += Sql.SPACE + "AS" + Sql.SPACE + table.getAlias();
-            sqlStatement.tables.add(tableStr);
+            sqlStatement.tables.add(table.getFullTable());
         }
         return this;
     }
@@ -172,7 +210,7 @@ public class QueryWrapper implements Serializable {
         List<String> sets = new ArrayList<>();
         List<String> select = new ArrayList<>();
         List<String> tables = new ArrayList<>();
-        List<Table> tableList = new ArrayList<>();
+        List<Column> tableList = new ArrayList<>();
         List<String> join = new ArrayList<>();
         List<String> innerJoin = new ArrayList<>();
         List<String> outerJoin = new ArrayList<>();
@@ -184,7 +222,9 @@ public class QueryWrapper implements Serializable {
         List<String> orderBy = new ArrayList<>();
         List<String> lastList = new ArrayList<>();
         List<String> columns = new ArrayList<>();
-        List<String> tableAlia = new ArrayList<>();
+        List<String> union = new ArrayList<>();
+        List<String> unionAll = new ArrayList<>();
+
         List<List<String>> valuesList = new ArrayList<>();
         boolean distinct;
         String offset;
@@ -234,7 +274,7 @@ public class QueryWrapper implements Serializable {
             sqlClause(builder, "HAVING", having, "(", ")", " AND ");
             sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
             limitingRowsStrategy.appendClause(builder, offset, limit);
-            log.info("builder.toString()={}",builder.appendable.toString());
+            unions(builder);
             return builder.appendable.toString();
         }
 
@@ -245,6 +285,12 @@ public class QueryWrapper implements Serializable {
             sqlClause(builder, "LEFT OUTER JOIN", leftOuterJoin, "", "", "\nLEFT OUTER JOIN ");
             sqlClause(builder, "RIGHT OUTER JOIN", rightOuterJoin, "", "", "\nRIGHT OUTER JOIN ");
         }
+
+        private void unions(SafeAppendable builder){
+            sqlClause(builder, "UNION", union, "(", ")", "\n) UNION (");
+            sqlClause(builder, "UNION ALL", unionAll, "(", ")", "\n) UNION ALL (");
+        }
+
 
         private void wheres(SafeAppendable builder) {
             if (where.isEmpty()) return;
