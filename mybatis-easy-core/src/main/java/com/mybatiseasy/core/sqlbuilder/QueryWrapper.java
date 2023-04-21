@@ -5,6 +5,7 @@ import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.management.Query;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -65,6 +66,10 @@ public class QueryWrapper implements Serializable {
     public QueryWrapper where(Condition condition){
         sqlStatement.where.add(condition.getSql());
         return this;
+    }
+
+    public QueryWrapper limit(String offset, String limit){
+        sqlStatement.offset = offset;
     }
 
     public QueryWrapper having(Condition condition){
