@@ -67,6 +67,10 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
+    public QueryWrapper having(Condition condition){
+        sqlStatement.having.add(condition.getSql());
+        return this;
+    }
     /**
      * 查询的数据字段列表
      * @param columns 数据列
@@ -88,6 +92,25 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
+    /**
+     * groupBy
+     * @param columns 数据列
+     * @return QueryWrapper
+     */
+    public QueryWrapper groupBy(Object ...columns) {
+        String columnName = "";
+        for (Object column : columns
+        ) {
+            if (column instanceof Column) {
+                List<String> columnList = ((Column) column).getAllColumns();
+                sqlStatement.groupBy.addAll(columnList);
+            } else {
+                columnName = column.toString();
+                if (!sqlStatement.groupBy.contains(columnName)) sqlStatement.groupBy.add(columnName);
+            }
+        }
+        return this;
+    }
 
     /**
      * 去重
@@ -291,12 +314,21 @@ public class QueryWrapper implements Serializable {
             sqlClause(builder, "UNION ALL", unionAll, "(", ")", "\n) UNION ALL (");
         }
 
-
         private void wheres(SafeAppendable builder) {
             if (where.isEmpty()) return;
-            builder.append(" WHERE ");
+            builder.append(Sql.SPACE + "WHERE" + Sql.SPACE);
             for (int i = 0; i < where.size(); i++) {
                 String condition = where.get(i);
+                if (i > 0) builder.append(Sql.SPACE).append("AND").append(Sql.SPACE);
+                builder.append(SqlUtil.needBracket(condition) ? "(" + condition + ")" : condition);
+            }
+        }
+
+        private void having(SafeAppendable builder) {
+            if (having.isEmpty()) return;
+            builder.append(Sql.SPACE + "HAVING" + Sql.SPACE);
+            for (int i = 0; i < having.size(); i++) {
+                String condition = having.get(i);
                 if (i > 0) builder.append(Sql.SPACE).append("AND").append(Sql.SPACE);
                 builder.append(SqlUtil.needBracket(condition) ? "(" + condition + ")" : condition);
             }
