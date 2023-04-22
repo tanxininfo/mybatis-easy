@@ -1,5 +1,8 @@
 package com.mybatiseasy.core.utils;
 
+import com.mybatiseasy.core.base.Column;
+import com.mybatiseasy.core.session.EntityMap;
+import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -41,7 +44,7 @@ public class SqlUtil {
      * @return in表达式
      */
     public static String formatArray(Object[] array) {
-        if (TypeUtil.isEmpty(array)) {
+        if (ObjectUtil.isEmpty(array)) {
             return "(NULL)";
         }
         return Arrays.stream(array).map(SqlUtil::formatInElement).collect(joining(",", "(", ")"));
@@ -54,7 +57,7 @@ public class SqlUtil {
      * @return in表达式
      */
     public static String formatArray(Collection<?> value) {
-        if (TypeUtil.isEmpty(value)) {
+        if (CollectionUtil.isEmpty(value)) {
             return "(NULL)";
         }
         return value.stream().map(SqlUtil::formatInElement).collect(joining(",", "(", ")"));
@@ -65,7 +68,6 @@ public class SqlUtil {
      * @return 如： 'a', 1
      */
     public static String formatInElement(Object obj){
-        log.info("obj={}", obj);
         if(obj instanceof String){
             return addSymbol(obj.toString(), "'", "'");
         } else return obj.toString();
@@ -113,5 +115,11 @@ public class SqlUtil {
 
     public static String addSingQuote(String str){
         return addSymbol(str, "'", "'");
+    }
+
+    public static QueryWrapper initWrapper(QueryWrapper wrapper, String entityName) {
+        if (!wrapper.hasSelect()) wrapper.select("*");
+        if (!wrapper.hasTable()) wrapper.from(new Column(entityName));
+        return wrapper;
     }
 }

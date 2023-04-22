@@ -70,4 +70,64 @@ public class UserColumn extends Column {
         super.columnAlias(columnAlias);
         return this;
     }
+
+    public UserColumn avg(String columnAlias) {
+        super.columnAlias(columnAlias);
+        super.setMethod("AVG");
+        return this;
+    }
+
+    public UserColumn max(String columnAlias) {
+        super.columnAlias(columnAlias);
+        super.setMethod("MAX");
+        return this;
+    }
+
+    public UserColumn min(String columnAlias) {
+        super.columnAlias(columnAlias);
+        super.setMethod("MIN");
+        return this;
+    }
+
+    public UserColumn sum(String columnAlias) {
+        super.columnAlias(columnAlias);
+        super.setMethod("SUM");
+        return this;
+    }
+
+    public UserColumn count(String columnAlias) {
+        super.setMethod("COUNT");
+        super.columnAlias(columnAlias);
+        return this;
+    }
+
+    public UserColumn avg() {
+        super.columnAlias(this.getColumn().getColumn());
+        super.setMethod("AVG");
+        return this;
+    }
+
+    public UserColumn max() {
+        super.columnAlias(this.getColumn().getColumn());
+        super.setMethod("MAX");
+        return this;
+    }
+
+    public UserColumn min() {
+        super.columnAlias(this.getColumn().getColumn());
+        super.setMethod("MIN");
+        return this;
+    }
+
+    public UserColumn sum() {
+        super.columnAlias(this.getColumn().getColumn());
+        super.setMethod("SUM");
+        return this;
+    }
+
+    public UserColumn count() {
+        super.columnAlias(this.getColumn().getColumn());
+        super.setMethod("COUNT");
+        return this;
+    }
 }

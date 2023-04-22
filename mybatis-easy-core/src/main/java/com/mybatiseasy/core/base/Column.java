@@ -10,79 +10,82 @@ import org.springframework.core.annotation.AliasFor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Column {
-    protected List<String> columns;
-    protected String tableAlias;
+    protected List<ColumnData> columns;
 
-    protected String table;
-
-    protected String column;
-
-    protected String columnAlias;
+    ColumnData column;
 
     public Column() {
-        this.columns = new ArrayList<>();
+        this("", "");
     }
 
     public Column(String table) {
-        this.columns = new ArrayList<>();
-        this.table = table;
+        this(table, "");
     }
 
     public Column(String table, String tableAlias) {
         this.columns = new ArrayList<>();
-        this.tableAlias = tableAlias;
-        this.table = table;
+        this.column = new ColumnData();
+        this.column.setTableAlias(tableAlias);
+        this.column.setTable(table);
     }
 
     public String getFullTable(){
-        String fullName = this.table;
-        if (TypeUtil.isNotEmpty(this.tableAlias)) fullName += Sql.SPACE + "AS" + Sql.SPACE + this.tableAlias;
+        String fullName = this.column.getTable();
+        if (TypeUtil.isNotEmpty(this.column.getTableAlias())) fullName += Sql.SPACE + "AS" + Sql.SPACE + SqlUtil.addBackquote(this.column.getTableAlias());
         return fullName;
     }
 
-    public void addColumn(String newColumn) {
-        String fullColumn = newColumn;
-        if (TypeUtil.isEmpty(this.columns)) this.columns = new ArrayList<>();
-        if (TypeUtil.isNotEmpty(this.tableAlias)) fullColumn = this.tableAlias + "." + newColumn;
-        this.columns.add(fullColumn);
-        this.column = newColumn;
+    public void addColumn(String columnName) {
+        this.addColumn(columnName, "");
     }
 
-    public void addColumn(String newColumn, String columnAlias) {
-        String fullColumn = newColumn;
-        if (TypeUtil.isEmpty(this.columns)) this.columns = new ArrayList<>();
-        if (TypeUtil.isNotEmpty(this.tableAlias)) fullColumn = this.tableAlias + "." + newColumn;
-        if (TypeUtil.isNotEmpty(columnAlias)) fullColumn += Sql.SPACE + "AS" + Sql.SPACE + columnAlias;
-        this.columns.add(fullColumn);
+    public void addColumn(String columnName, String columnAlias) {
+        ColumnData newColumn = new ColumnData();
+        newColumn.setColumn(columnName);
+        if (TypeUtil.isNotEmpty(this.column.getTableAlias())) newColumn.setTableAlias(this.column.getTableAlias());
+        if (TypeUtil.isNotEmpty(columnAlias)) newColumn.setColumnAlias(columnAlias);
+        this.columns.add(newColumn);
         this.column = newColumn;
-        this.columnAlias = columnAlias;
     }
 
     public void columnAlias(String columnAlias) {
         int lastIndex = this.columns.size() - 1;
-        this.columnAlias = columnAlias;
-        this.columns.set(lastIndex, this.columns.get(lastIndex) + Sql.SPACE + "AS" + Sql.SPACE + columnAlias);
+        this.column.setColumnAlias(columnAlias);
+        this.columns.get(lastIndex).setColumnAlias(columnAlias);
     }
 
     public List<String> getAllColumns() {
-        return this.columns;
+        return this.columns.stream().map(this::getFullColumn).collect(Collectors.toList());
     }
 
-    public String getColumn() {
+    public ColumnData getColumn() {
         return this.column;
     }
 
     public String getTableColumn() {
-        if (TypeUtil.isNotEmpty(this.tableAlias)) return this.tableAlias + "." + this.column;
-        return this.column;
+        if (TypeUtil.isNotEmpty(this.column.getTableAlias())) return this.column.getTableAlias() + "." + this.column;
+        return this.column.getColumn();
     }
 
     public String getFullColumn() {
         String fullName = this.getTableColumn();
-        if (TypeUtil.isNotEmpty(this.columnAlias)) fullName += Sql.SPACE + "AS" + Sql.SPACE + this.columnAlias;
+        if (TypeUtil.isNotEmpty(this.column.getColumnAlias())) fullName += Sql.SPACE + "AS" + Sql.SPACE + SqlUtil.addBackquote(this.column.getColumnAlias());
+        return fullName;
+    }
+
+    public String getTableColumn(ColumnData column) {
+        if (TypeUtil.isNotEmpty(column.getTableAlias())) return column.getTableAlias() + "." + column;
+        return column.getColumn();
+    }
+
+    public String getFullColumn(ColumnData column) {
+        String fullName = this.getTableColumn(column);
+        if(TypeUtil.isNotEmpty(column.getMethod())) fullName = column.getMethod() +"("+ fullName +")";
+        if (TypeUtil.isNotEmpty(column.getColumnAlias())) fullName += Sql.SPACE + "AS" + Sql.SPACE + SqlUtil.addBackquote(column.getColumnAlias());
         return fullName;
     }
 
@@ -94,7 +97,7 @@ public class Column {
      * @param symbol 比较符，如: =,<,<=,>,>=,!=
      * @return Condition
      */
-    private Condition compare(boolean apply, Object val, String symbol) {
+    private Condition compare(Object val, String symbol, boolean apply) {
         if (!apply) return new Condition();
         String nextConditionSql = "";
         if (val instanceof Condition) nextConditionSql = ((Condition) val).getSql();
@@ -104,19 +107,19 @@ public class Column {
         return new Condition(sql);
     }
 
-    private Condition compare(boolean apply, Object[] array, String symbol) {
+    private Condition compare(Object[] array, String symbol, boolean apply) {
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + SqlUtil.formatArray(array);
         return new Condition(sql);
     }
 
-    private Condition compare(boolean apply, Collection<?> collection, String symbol) {
+    private Condition compare(Collection<?> collection, String symbol, boolean apply) {
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + SqlUtil.formatArray(collection);
         return new Condition(sql);
     }
 
-    private Condition compareBetween(boolean apply, Object val1, Object val2) {
+    private Condition compareBetween(Object val1, Object val2, boolean apply) {
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + "BETWEEN" + Sql.SPACE + val1 + Sql.SPACE + "AND" + Sql.SPACE + val2;
         return new Condition(sql);
@@ -138,59 +141,59 @@ public class Column {
     }
 
     public Condition eq(Object val) {
-        return compare(true, val, "=");
+        return compare(val, "=", true);
     }
 
     public Condition lt(Object val) {
-        return compare(true, val, "<");
+        return compare(val, "<", true);
     }
 
     public Condition le(Object val) {
-        return compare(true, val, "<=");
+        return compare(val, "<=", true);
     }
 
     public Condition gt(Object val) {
-        return compare(true, val, ">");
+        return compare(val, ">", true);
     }
 
     public Condition ge(Object val) {
-        return compare(true, val, ">=");
+        return compare(val, ">=", true);
     }
 
     public Condition ne(Object val) {
-        return compare(true, val, "!=");
+        return compare(val, "!=", true);
     }
 
     public Condition in(Collection<?> collection) {
-        return compare(true, collection, "IN");
+        return compare(collection, "IN", true);
     }
 
     public Condition in(Object... array) {
-        return compare(true, array, "IN");
+        return compare(array, "IN", true);
     }
 
     public Condition notIn(Collection<?> collection) {
-        return compare(true, collection, "NOT IN");
+        return compare(collection, "NOT IN", true);
     }
 
     public Condition notIn(Object... array) {
-        return compare(true, array, "NOT IN");
+        return compare(array, "NOT IN", true);
     }
 
     public Condition between(Object val1, Object val2) {
-        return compareBetween(true, val1, val2);
+        return compareBetween(val1, val2, true);
     }
 
     public Condition like(Object val) {
-        return compare(true, formatLike(val.toString().trim()), "LIKE");
+        return compare(formatLike(val.toString().trim()), "LIKE", true);
     }
 
     public Condition notLike(Object val) {
-        return compare(true, formatLike(val.toString().trim()), "NOT LIKE");
+        return compare(formatLike(val.toString().trim()), "NOT LIKE", true);
     }
 
     public Condition leftLike(Object val) {
-        return compare(true, formatLeftLike(val.toString().trim()), "LIKE");
+        return compare(formatLeftLike(val.toString().trim()), "LIKE", true);
     }
 
     public Condition likeLeft(Object val) {
@@ -198,7 +201,7 @@ public class Column {
     }
 
     public Condition rightLike(Object val) {
-        return compare(true, formatRightLike(val.toString().trim()), "LIKE");
+        return compare(formatRightLike(val.toString().trim()), "LIKE", true);
     }
 
     public Condition likeRight(Object val) {
@@ -210,64 +213,70 @@ public class Column {
      * @param val   值
      * @return Condition
      */
-    public Condition eq(boolean apply, Object val) {
-        return compare(apply, val, "=");
+    public Condition eq(Object val, boolean apply) {
+        return compare(val, "=", apply);
     }
 
-    public Condition lt(boolean apply, Object val) {
-        return compare(apply, val, "<");
+    public Condition lt(Object val, boolean apply) {
+        return compare(val, "<", apply);
     }
 
-    public Condition le(boolean apply, Object val) {
-        return compare(apply, val, "<=");
+    public Condition le(Object val, boolean apply) {
+        return compare(val, "<=", apply);
     }
 
-    public Condition gt(boolean apply, Object val) {
-        return compare(apply, val, ">");
+    public Condition gt(Object val, boolean apply) {
+        return compare(val, ">", apply);
     }
 
-    public Condition ge(boolean apply, Object val) {
-        return compare(apply, val, ">=");
+    public Condition ge(Object val, boolean apply) {
+        return compare(val, ">=", apply);
     }
 
-    public Condition ne(boolean apply, Object val) {
-        return compare(apply, val, "!=");
+    public Condition ne(Object val, boolean apply) {
+        return compare(val, "!=", apply);
     }
 
-    public Condition in(boolean apply, Object... array) {
-        return compare(apply, array, "IN");
+    public Condition in(Object[] array, boolean apply) {
+        return compare(array, "IN", apply);
     }
 
-    public Condition in(boolean apply, Collection<?> collection) {
-        return compare(apply, collection, "IN");
+    public Condition in(Collection<?> collection, boolean apply) {
+        return compare(collection, "IN", apply);
     }
 
-    public Condition notIn(boolean apply, Object... array) {
-        return compare(apply, array, "NOT IN");
+    public Condition notIn(Object[] array, boolean apply) {
+        return compare(array, "NOT IN", apply);
     }
 
-    public Condition notIn(boolean apply, Collection<?> collection) {
-        return compare(apply, collection, "NOT IN");
+    public Condition notIn(Collection<?> collection, boolean apply) {
+        return compare(collection, "NOT IN", apply);
     }
 
-    public Condition between(boolean apply, Object val1, Object val2) {
-        return compareBetween(apply, val1, val2);
+    public Condition between(Object val1, Object val2, boolean apply) {
+        return compareBetween(val1, val2, apply);
     }
 
-    public Condition like(boolean apply, Object val) {return compare(apply, formatLike(val.toString().trim()), "LIKE");}
+    public Condition like(Object val, boolean apply) {return compare(formatLike(val.toString().trim()), "LIKE", apply);}
 
-    public Condition notLike(boolean apply, Object val) { return compare(apply, formatLike(val.toString().trim()), "NOT LIKE");}
+    public Condition notLike(Object val, boolean apply) { return compare(formatLike(val.toString().trim()), "NOT LIKE", apply);}
 
-    public Condition leftLike(boolean apply, Object val) { return compare(apply, formatLeftLike(val.toString().trim()), "LIKE");}
+    public Condition leftLike(Object val, boolean apply) { return compare(formatLeftLike(val.toString().trim()), "LIKE", apply);}
 
-    public Condition likeLeft(boolean apply, Object val) {
-        return leftLike(apply, val);
+    public Condition likeLeft(Object val, boolean apply) {
+        return leftLike(val, apply);
     }
 
-    public Condition rightLike(boolean apply, Object val) { return compare(apply, formatRightLike(val.toString().trim()), "LIKE");}
+    public Condition rightLike(Object val, boolean apply) { return compare(formatRightLike(val.toString().trim()), "LIKE", apply);}
 
-    public Condition likeRight(boolean apply, Object val) {
-        return leftLike(apply, val);
+    public Condition likeRight(Object val, boolean apply) {
+        return leftLike(val, apply);
     }
 
+    protected void setMethod(String method){
+        int lastIndex = this.columns.size() - 1;
+        this.column.setMethod(method);
+        this.columns.get(lastIndex).setMethod(method);
+
+    }
 }

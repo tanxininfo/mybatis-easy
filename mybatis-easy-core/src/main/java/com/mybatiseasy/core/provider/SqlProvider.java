@@ -1,12 +1,13 @@
 package com.mybatiseasy.core.provider;
 
-import com.mybatiseasy.core.cols.UserColumn;
+import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 
@@ -89,6 +90,22 @@ public class SqlProvider {
     }
 
     /**
+     * 根据包装类查询一条实体
+     *
+     * @param map     条件
+     * @param context 上下文
+     * @return String
+     */
+    public static String getByWrapper(Map map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+
+        SqlUtil.initWrapper(wrapper, entityMap.getName());
+
+        return wrapper.getSql();
+    }
+
+    /**
      * 根据组合条件查询实体列表
      *
      * @param map     条件
@@ -106,7 +123,7 @@ public class SqlProvider {
     }
 
     /**
-     * 根据组合条件查询实体列表
+     * 根据包装类查询实体列表
      *
      * @param map     条件
      * @param context 上下文
@@ -116,9 +133,55 @@ public class SqlProvider {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
 
-        if (!wrapper.hasSelect()) wrapper.select("*");
-        if (!wrapper.hasTable()) wrapper.from(new UserColumn(entityMap.getName()));
+        SqlUtil.initWrapper(wrapper, entityMap.getName());
 
         return wrapper.getSql();
+    }
+
+    /**
+     * 根据组合条件统计记录数
+     *
+     * @param map     条件
+     * @param context 上下文
+     * @return String
+     */
+    public static String countByCondition(Map map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        Condition condition = (Condition) map.get(MethodParam.CONDITION);
+        return "SELECT count(*) FROM" + Sql.SPACE +
+                entityMap.getName() + Sql.SPACE +
+                "WHERE" + Sql.SPACE +
+                getConditionSql(condition);
+    }
+
+    /**
+     * 根据组合条件统计记录数
+     *
+     * @param map     条件
+     * @param context 上下文
+     * @return String
+     */
+    public static String countByWrapper(Map map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+
+        SqlUtil.initWrapper(wrapper, entityMap.getName());
+        return wrapper.getSql();
+    }
+
+    /**
+     * 根据包装类分页查询
+     *
+     * @param map     条件
+     * @param context 上下文
+     * @return String
+     */
+    public static String paginateEasy(Map map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+
+        SqlUtil.initWrapper(wrapper, entityMap.getName());
+
+        return wrapper.getSql()+";select FOUND_ROWS() as total;";
     }
 }

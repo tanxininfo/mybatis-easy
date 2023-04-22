@@ -3,6 +3,7 @@ package com.mybatiseasy.core.sqlbuilder;
 import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.utils.SqlUtil;
+import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.management.Query;
@@ -68,8 +69,15 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
-    public QueryWrapper limit(String offset, String limit){
+    public QueryWrapper limit(Integer offset, Integer limit){
         sqlStatement.offset = offset;
+        sqlStatement.limit = limit;
+        return this;
+    }
+
+    public QueryWrapper limit(Integer limit){
+        sqlStatement.limit = limit;
+        return this;
     }
 
     public QueryWrapper having(Condition condition){
@@ -200,40 +208,6 @@ public class QueryWrapper implements Serializable {
 
         }
 
-        private enum LimitingRowsStrategy {
-            NOP {
-                @Override
-                protected void appendClause(SafeAppendable builder, String offset, String limit) {
-                    // NOP
-                }
-            },
-            ISO {
-                @Override
-                protected void appendClause(SafeAppendable builder, String offset, String limit) {
-                    if (offset != null) {
-                        builder.append(" OFFSET ").append(offset).append(" ROWS");
-                    }
-                    if (limit != null) {
-                        builder.append(" FETCH FIRST ").append(limit).append(" ROWS ONLY");
-                    }
-                }
-            },
-            OFFSET_LIMIT {
-                @Override
-                protected void appendClause(SafeAppendable builder, String offset, String limit) {
-                    if (limit != null) {
-                        builder.append(" LIMIT ").append(limit);
-                    }
-                    if (offset != null) {
-                        builder.append(" OFFSET ").append(offset);
-                    }
-                }
-            };
-
-            protected abstract void appendClause(SafeAppendable builder, String offset, String limit);
-
-        }
-
         SQLStatement.StatementType statementType;
         List<String> sets = new ArrayList<>();
         List<String> select = new ArrayList<>();
@@ -255,9 +229,8 @@ public class QueryWrapper implements Serializable {
 
         List<List<String>> valuesList = new ArrayList<>();
         boolean distinct;
-        String offset;
-        String limit;
-        SQLStatement.LimitingRowsStrategy limitingRowsStrategy = SQLStatement.LimitingRowsStrategy.NOP;
+        Integer offset;
+        Integer limit;
 
         public SQLStatement() {
             // Prevent Synthetic Access
@@ -299,11 +272,18 @@ public class QueryWrapper implements Serializable {
             joins(builder);
             wheres(builder);
             sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
-            sqlClause(builder, "HAVING", having, "(", ")", " AND ");
+            havings(builder);
             sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
-            limitingRowsStrategy.appendClause(builder, offset, limit);
+            limits(builder);
             unions(builder);
             return builder.appendable.toString();
+        }
+
+        private void limits(SafeAppendable builder) {
+            if (limit == null) return;
+            builder.append(Sql.SPACE).append("LIMIT").append(Sql.SPACE);
+            if (offset == null) builder.append(offset + "," + Sql.SPACE);
+            builder.append(limit.toString());
         }
 
         private void joins(SafeAppendable builder) {
@@ -329,7 +309,7 @@ public class QueryWrapper implements Serializable {
             }
         }
 
-        private void having(SafeAppendable builder) {
+        private void havings(SafeAppendable builder) {
             if (having.isEmpty()) return;
             builder.append(Sql.SPACE + "HAVING" + Sql.SPACE);
             for (int i = 0; i < having.size(); i++) {
@@ -351,7 +331,7 @@ public class QueryWrapper implements Serializable {
         private String deleteSQL(SafeAppendable builder) {
             sqlClause(builder, "DELETE FROM", tables, "", "", "");
             sqlClause(builder, "WHERE", where, "(", ")", " AND ");
-            limitingRowsStrategy.appendClause(builder, null, limit);
+            limits(builder);
             return builder.toString();
         }
 
@@ -360,7 +340,7 @@ public class QueryWrapper implements Serializable {
             joins(builder);
             sqlClause(builder, "SET", sets, "", "", ", ");
             sqlClause(builder, "WHERE", where, "(", ")", " AND ");
-            limitingRowsStrategy.appendClause(builder, null, limit);
+            limits(builder);
             return builder.toString();
         }
 
