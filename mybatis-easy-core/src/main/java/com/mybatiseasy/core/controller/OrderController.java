@@ -2,6 +2,7 @@ package com.mybatiseasy.core.controller;
 
 import com.mybatiseasy.core.entity.User;
 import com.mybatiseasy.core.mapper.UserMapper;
+import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.table._USER;
 import lombok.extern.slf4j.Slf4j;
@@ -50,8 +51,9 @@ public class OrderController {
                 wrapper.select("SQL_CALC_FOUND_ROWS id, name, age, sex");
 
         //通过 listByWrapper 方法使用QueryWrapper查询数据
-        List<List<Object>> object = userMapper.paginateEasy(wrapper);
-        log.info("object={}", object);
+        PageList<User> objList = userMapper.paginate(wrapper, 1, 2);
+        log.info("object0={}", objList);
+        //log.info("object1={}", object.get(1));
 
     }
 

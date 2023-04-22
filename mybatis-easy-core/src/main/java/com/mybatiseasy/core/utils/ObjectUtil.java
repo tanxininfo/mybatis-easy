@@ -43,7 +43,7 @@ public class ObjectUtil {
      * @param object 对象
      * @return json字符串
      */
-    public static <T> String toJsonString(T object){
+    public static <T> String toJson(T object){
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

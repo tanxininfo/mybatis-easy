@@ -12,5 +12,5 @@ public interface Method {
     String LIST_BY_WRAPPER = "listByWrapper";
     String COUNT_BY_CONDITION = "countByCondition";
     String COUNT_BY_WRAPPER = "countByWrapper";
-    String PAGINATE_EASY = "paginateEasy";
+    String QUERY_EASY = "queryEasy";
 }
