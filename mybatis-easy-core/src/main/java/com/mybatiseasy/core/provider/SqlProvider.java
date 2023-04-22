@@ -176,7 +176,7 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String paginateEasy(Map map, ProviderContext context) {
+    public static String queryEasy(Map map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
 

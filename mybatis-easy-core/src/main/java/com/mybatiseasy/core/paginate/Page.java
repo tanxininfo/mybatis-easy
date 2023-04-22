@@ -34,4 +34,11 @@ public class Page implements Serializable {
      * 页数
      */
     private long pages;
+
+    public Page(long total, long size, long current){
+        this.setCurrent(current);
+        this.setTotal(total);
+        this.setSize(size);
+        this.setPages( Math.ceilDiv(this.getTotal(), this.getSize()));
+    }
 }

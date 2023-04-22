@@ -25,4 +25,9 @@ public class PageList<T> implements Serializable {
      * 分页信息
      */
     private Page page;
+
+    public PageList(List<T> list, Page page){
+        this.setList(list);
+        this.setPage(page);
+    }
 }

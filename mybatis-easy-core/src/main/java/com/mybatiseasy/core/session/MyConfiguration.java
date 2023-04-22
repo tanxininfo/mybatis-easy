@@ -88,10 +88,12 @@ public class MyConfiguration extends Configuration {
         int dottedIndex = ms.getId().lastIndexOf(".");
         String mapperName = ms.getId().substring(0, dottedIndex);
         String methodName = ms.getId().substring(dottedIndex + 1);
-        String[] methods = {"getById", "getByCondition", "listByCondition", "listByWrapper", "paginateEasy"};
+        String[] methods = {"getById", "getByCondition", "listByCondition", "listByWrapper", "queryEasy"};
+        log.info("methodName={}", methodName);
 
 
         if(Arrays.asList(methods).contains(methodName)){
+            log.info("methodName={}", methodName);
             this.replaceMappedStatement(mapperName, methodName, ms);
             return;
         }
@@ -107,7 +109,7 @@ public class MyConfiguration extends Configuration {
         buildResultMap(mapperName);
         List<ResultMap> resultMaps = new ArrayList<>(hasResultMap(mapperName) ? List.of(getResultMap(mapperName)) : new ArrayList<>());
 
-        if(methodName.equals("paginateEasy")){
+        if(methodName.equals("queryEasy")){
             log.info("methodName={}", methodName);
             ResultMap map = getResultMap("com.mybatiseasy.core.paginate.Total");
             if(resultMaps.size() > 0 && map != null) resultMaps.add(map);

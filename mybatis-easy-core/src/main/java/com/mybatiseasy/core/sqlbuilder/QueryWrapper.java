@@ -69,13 +69,13 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
-    public QueryWrapper limit(Integer offset, Integer limit){
+    public QueryWrapper limit(Long offset, Long limit){
         sqlStatement.offset = offset;
         sqlStatement.limit = limit;
         return this;
     }
 
-    public QueryWrapper limit(Integer limit){
+    public QueryWrapper limit(Long limit){
         sqlStatement.limit = limit;
         return this;
     }
@@ -229,8 +229,8 @@ public class QueryWrapper implements Serializable {
 
         List<List<String>> valuesList = new ArrayList<>();
         boolean distinct;
-        Integer offset;
-        Integer limit;
+        Long offset;
+        Long limit;
 
         public SQLStatement() {
             // Prevent Synthetic Access
@@ -282,7 +282,7 @@ public class QueryWrapper implements Serializable {
         private void limits(SafeAppendable builder) {
             if (limit == null) return;
             builder.append(Sql.SPACE).append("LIMIT").append(Sql.SPACE);
-            if (offset == null) builder.append(offset + "," + Sql.SPACE);
+            if (offset != null) builder.append(offset + "," + Sql.SPACE);
             builder.append(limit.toString());
         }
 

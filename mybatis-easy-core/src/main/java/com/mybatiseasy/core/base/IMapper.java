@@ -2,10 +2,14 @@ package com.mybatiseasy.core.base;
 
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
+import com.mybatiseasy.core.paginate.Page;
+import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.paginate.Total;
 import com.mybatiseasy.core.provider.SqlProvider;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.utils.ObjectUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
@@ -16,6 +20,7 @@ import java.util.List;
 /**
  * 所有Entity对应Mapp氏  er通过继承该接口取得CRUD功能。
  */
+
 public interface IMapper<T> {
     /**
      * 插入一个实体
@@ -99,11 +104,42 @@ public interface IMapper<T> {
     Long countByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
 
     /**
-     * 根据包装类分页查询
+     * 根据包装类分页查询,故意命名为query,避免干扰paginate方法名
      * @param wrapper 查询包装类
      * @return List<T>
      */
-    @SelectProvider(type = SqlProvider.class, method = Method.PAGINATE_EASY)
-    List<List<Object>> paginateEasy(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+    @SelectProvider(type = SqlProvider.class, method = Method.QUERY_EASY)
+    List<Object> queryEasy(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+
+    /**
+     * 分页查询
+     * @param condition 组装条件
+     * @param size 页尺寸
+     * @param current 当前页
+     * @return PageList<T>
+     */
+    default PageList<T> paginate(Condition condition, int size, int current) {
+        return paginate(QueryWrapper.create().where(condition), size, current);
+    }
+
+    /**
+     * 分页查询
+     * @param queryWrapper 包装类
+     * @param size 页尺寸
+     * @param current 当前页
+     * @return PageList<T>
+     */
+    default PageList<T> paginate(QueryWrapper queryWrapper, int size, int current) {
+        long offset = size * (current - 1);
+        if(offset < 0) offset = 0L;
+
+        List<Object> objList = queryEasy(queryWrapper.limit(offset, (long)size));
+
+        List<T> list = (List<T>) objList.get(0);
+        Long total = ((List<Total>) objList.get(1)).get(0).getTotal();
+        Page page = new Page(total, size, current);
+
+        return new PageList<>(list, page);
+    }
 
 }
