@@ -8,5 +8,9 @@ public interface Method {
     String GET_BY_ID = "getById";
     String GET_BY_CONDITION = "getByCondition";
     String LIST_BY_CONDITION = "listByCondition";
+    String GET_BY_WRAPPER = "getByWrapper";
     String LIST_BY_WRAPPER = "listByWrapper";
+    String COUNT_BY_CONDITION = "countByCondition";
+    String COUNT_BY_WRAPPER = "countByWrapper";
+    String PAGINATE_EASY = "paginateEasy";
 }

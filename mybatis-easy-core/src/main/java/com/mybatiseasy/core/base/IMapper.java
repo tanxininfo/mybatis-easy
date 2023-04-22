@@ -2,15 +2,15 @@ package com.mybatiseasy.core.base;
 
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
+import com.mybatiseasy.core.paginate.Total;
 import com.mybatiseasy.core.provider.SqlProvider;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -59,6 +59,14 @@ public interface IMapper<T> {
     T getByCondition(@Param(MethodParam.CONDITION) Condition condition);
 
     /**
+     * 根据包装类查询一条实例
+     * @param wrapper 查询包装类
+     * @return List<T>
+     */
+    @SelectProvider(type = SqlProvider.class, method = Method.GET_BY_WRAPPER)
+    T getByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+
+    /**
      * 根据组合条件查询实例列表
      * @param condition 查询条件
      * @return List<T>
@@ -67,10 +75,35 @@ public interface IMapper<T> {
     List<T> listByCondition(@Param(MethodParam.CONDITION) Condition condition);
 
     /**
-     * 根据组合条件查询实例列表
+     * 根据包装类查询实例列表
      * @param wrapper 查询包装类
      * @return List<T>
      */
     @SelectProvider(type = SqlProvider.class, method = Method.LIST_BY_WRAPPER)
     List<T> listByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+
+    /**
+     * 根据组合条件统计实例数量
+     * @param condition 查询条件
+     * @return List<T>
+     */
+    @SelectProvider(type = SqlProvider.class, method = Method.COUNT_BY_CONDITION)
+    Long countByCondition(@Param(MethodParam.CONDITION) Condition condition);
+
+    /**
+     * 根据包装类统计实例数量
+     * @param wrapper 查询包装类
+     * @return List<T>
+     */
+    @SelectProvider(type = SqlProvider.class, method = Method.COUNT_BY_WRAPPER)
+    Long countByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+
+    /**
+     * 根据包装类分页查询
+     * @param wrapper 查询包装类
+     * @return List<T>
+     */
+    @SelectProvider(type = SqlProvider.class, method = Method.PAGINATE_EASY)
+    List<List<Object>> paginateEasy(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+
 }

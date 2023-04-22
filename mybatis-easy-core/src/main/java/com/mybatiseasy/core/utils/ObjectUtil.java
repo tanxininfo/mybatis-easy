@@ -109,4 +109,13 @@ public class ObjectUtil {
     public static   List<Map<String, Object>> objectToListMap(Object obj){
         return objectToListMap(obj, String.class, Object.class);
     }
+
+
+    public static boolean isEmpty(Object ...array){
+        return (array== null) || array.length<=0;
+    }
+
+    public static boolean isNotEmpty(Object ...array){
+        return !isEmpty(array);
+    }
 }

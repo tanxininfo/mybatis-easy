@@ -33,15 +33,6 @@ public class OrderController {
         log.info("one={}", one);
     }
 
-    static class TestClass{
-        TestClass(){
-
-        }
-        public void print(){
-            log.info("TestClass");
-        }
-        public TestClass test() {return new TestClass();}
-    }
 
 
     @GetMapping("/query")
@@ -53,22 +44,15 @@ public class OrderController {
         //Condition condition =  _ORDER.ID.gt(true, 2).and(_ORDER.ID.ne(true, 3));
         //log.info("condition={}", condition.getSql());
 
-        TestClass test = new TestClass();
-        test.test().print();
 
-//        QueryWrapper unionWrapper = new QueryWrapper();
-//        unionWrapper.select();
-//        unionWrapper.from(_USER.nm());
-//
-//        QueryWrapper wrapper = new QueryWrapper();
-//        wrapper.select(_USER.ID().NAME().AGE());
-//        wrapper.union(unionWrapper);
-//        wrapper.unionAll(unionWrapper);
-//        wrapper.unionAll(unionWrapper);
-//
-//
-//        List<User> list = userMapper.listByWrapper(wrapper);
-//        log.info("list={}", list);
+        //创建QueryWrapper对象
+                QueryWrapper wrapper = new QueryWrapper();
+                wrapper.select("SQL_CALC_FOUND_ROWS id, name, age, sex");
+
+        //通过 listByWrapper 方法使用QueryWrapper查询数据
+        List<List<Object>> object = userMapper.paginateEasy(wrapper);
+        log.info("object={}", object);
+
     }
 
 
