@@ -9,6 +9,7 @@ import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
+import org.springframework.util.Assert;
 
 import java.util.Map;
 
@@ -42,15 +43,54 @@ public class SqlProvider {
     }
 
     /**
-     * 插入一个实体
+     * 删除一条记录
      *
      * @param map
      * @param context
      * @return
      */
     public static String deleteById(Map map, ProviderContext context) {
-        log.info("map={}", map);
-        return "insert into u_user(id, username) values(1234, 'hahaha')";
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
+
+        return "DELETE FROM" + Sql.SPACE +
+                entityMap.getName() + Sql.SPACE +
+                "where" + Sql.SPACE + entityMap.getPrimary() + "=" + Sql.SPACE +
+                "#{" + MethodParam.PRIMARY_KEY +"}";
+    }
+
+    /**
+     * 删除多条记录, 根据Condition
+     *
+     * @param map 参数
+     * @param context 上下文
+     * @return 影响行数
+     */
+    public static String deleteByCondition(Map map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        Condition condition = (Condition) map.get(MethodParam.CONDITION);
+
+        return "DELETE FROM" + Sql.SPACE +
+                entityMap.getName() + Sql.SPACE +
+                getConditionSql(condition);
+    }
+
+    /**
+     * 根据包装类删除多条记录
+     *
+     * @param map     条件
+     * @param context 上下文
+     * @return String
+     */
+    public static String deleteByWrapper(Map<String, Object> map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapper.getValueMap());
+
+        SqlUtil.initDeleteWrapper(wrapper, entityMap.getName());
+         Assert.isTrue(!wrapper.hasWhere() && map.get("force")==null, "删除条件不得为空");
+
+        return wrapper.getSql();
     }
 
     /**
@@ -62,6 +102,7 @@ public class SqlProvider {
      */
     public static String getById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
 
         return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
@@ -88,6 +129,7 @@ public class SqlProvider {
     public static String getByCondition(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
+
         return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
                 getConditionSql(condition);
@@ -141,8 +183,6 @@ public class SqlProvider {
         map.putAll(wrapper.getValueMap());
 
         SqlUtil.initWrapper(wrapper, entityMap.getName());
-        log.info("wrapper.getSql()={}",wrapper.getSql());
-        log.info("wrapper.getValueMap()={}",wrapper.getValueMap());
         return wrapper.getSql();
     }
 

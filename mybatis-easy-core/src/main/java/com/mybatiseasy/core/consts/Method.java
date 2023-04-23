@@ -13,4 +13,6 @@ public interface Method {
     String COUNT_BY_CONDITION = "countByCondition";
     String COUNT_BY_WRAPPER = "countByWrapper";
     String QUERY_EASY = "queryEasy";
+    String DELETE_BY_WRAPPER = "deleteByWrapper";
+    String DELETE_BY_CONDITION = "deleteByCondition";
 }
