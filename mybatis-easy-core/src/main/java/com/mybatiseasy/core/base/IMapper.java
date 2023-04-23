@@ -8,17 +8,13 @@ import com.mybatiseasy.core.paginate.Total;
 import com.mybatiseasy.core.provider.SqlProvider;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
-import com.mybatiseasy.core.utils.ObjectUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
- * 所有Entity对应Mapp氏  er通过继承该接口取得CRUD功能。
+ * 所有Entity对应Mapper通过继承该接口取得CRUD功能。
  */
 
 public interface IMapper<T> {
@@ -130,16 +126,37 @@ public interface IMapper<T> {
      * @return PageList<T>
      */
     default PageList<T> paginate(QueryWrapper queryWrapper, int size, int current) {
-        long offset = size * (current - 1);
+        long offset = (long)size * (current - 1);
         if(offset < 0) offset = 0L;
 
         List<Object> objList = queryEasy(queryWrapper.limit(offset, (long)size));
 
         List<T> list = (List<T>) objList.get(0);
-        Long total = ((List<Total>) objList.get(1)).get(0).getTotal();
+        long total = ((List<Total>) objList.get(1)).get(0).getTotal();
         Page page = new Page(total, size, current);
 
         return new PageList<>(list, page);
     }
 
+    default List<T> listByQuery(QueryWrapper wrapper){
+        return listByWrapper(wrapper);
+    }
+
+    default List<T> listByQuery(Condition condition){
+        return listByWrapper(QueryWrapper.create().where(condition));
+    }
+
+    default T getByQuery(QueryWrapper wrapper) {
+        return getByWrapper(wrapper);
+    }
+    default T getByQuery(Condition condition){
+        return getByWrapper(QueryWrapper.create().where(condition));
+    }
+
+    default Long countByQuery(QueryWrapper wrapper) {
+        return countByWrapper(wrapper);
+    }
+    default Long countByQuery(Condition condition){
+        return countByWrapper(QueryWrapper.create().where(condition));
+    }
 }

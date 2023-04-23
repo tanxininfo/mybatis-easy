@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author dudley
@@ -45,14 +47,29 @@ public class OrderController {
         //Condition condition =  _ORDER.ID.gt(true, 2).and(_ORDER.ID.ne(true, 3));
         //log.info("condition={}", condition.getSql());
 
+        Map<String ,Object> mapA = new HashMap<>();
+        mapA.put("a", 1);
+        mapA.put("b", 2);
+
+        Map<String ,Object> mapB = new HashMap<>();
+        mapA.put("a", 21);
+        mapA.put("c", 3);
+
+        mapB.putAll(mapA);
+
+        log.info("mapB={}", mapB);
+
+
 
         //创建QueryWrapper对象
                 QueryWrapper wrapper = new QueryWrapper();
-                wrapper.select("SQL_CALC_FOUND_ROWS id, name, age, sex");
+                wrapper.select("SQL_CALC_FOUND_ROWS id, name, age, sex")
+                        .where(_USER.ID().eq(1));
 
         //通过 listByWrapper 方法使用QueryWrapper查询数据
-        PageList<User> objList = userMapper.paginate(wrapper, 1, 2);
-        log.info("object0={}", objList);
+       List<User> user = userMapper.listByQuery(wrapper);
+
+        log.info("object0={}", user);
         //log.info("object1={}", object.get(1));
 
     }
