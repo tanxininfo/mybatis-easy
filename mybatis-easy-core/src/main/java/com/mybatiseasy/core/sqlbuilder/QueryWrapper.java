@@ -149,7 +149,11 @@ public class QueryWrapper implements Serializable {
     }
 
     public String getSql(){
-        return sqlStatement.sql(new StringBuilder());
+        return sqlStatement.sql(new StringBuilder(), false);
+    }
+
+    public String getSqlPaginate(){
+        return sqlStatement.sql(new StringBuilder(), true);
     }
 
     public QueryWrapper from(Column... tables) {
@@ -232,6 +236,8 @@ public class QueryWrapper implements Serializable {
         Long offset;
         Long limit;
 
+        boolean isPaginate;
+
         public SQLStatement() {
             // Prevent Synthetic Access
             valuesList.add(new ArrayList<>());
@@ -262,10 +268,11 @@ public class QueryWrapper implements Serializable {
         }
 
         private String selectSQL(SafeAppendable builder) {
+            String foundRows = isPaginate? Sql.SPACE + "SQL_CALC_FOUND_ROWS" + Sql.SPACE: "";
             if (distinct) {
-                sqlClause(builder, "SELECT DISTINCT", select, "", "", ", ");
+                sqlClause(builder, "SELECT DISTINCT" + foundRows, select, "", "", ", ");
             } else {
-                sqlClause(builder, "SELECT", select, "", "", ", ");
+                sqlClause(builder, "SELECT"+ foundRows, select, "", "", ", ");
             }
 
             sqlClause(builder, "FROM", tables, "", "", ", ");
@@ -276,6 +283,7 @@ public class QueryWrapper implements Serializable {
             sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
             limits(builder);
             unions(builder);
+            if(this.isPaginate) builder.append(";\nselect FOUND_ROWS() as total;");
             return builder.appendable.toString();
         }
 
@@ -344,7 +352,8 @@ public class QueryWrapper implements Serializable {
             return builder.toString();
         }
 
-        public String sql(Appendable a) {
+        public String sql(Appendable a, boolean isPaginate) {
+            this.isPaginate = isPaginate;
             SafeAppendable builder = new SafeAppendable(a);
             if (statementType == null) {
                 return null;

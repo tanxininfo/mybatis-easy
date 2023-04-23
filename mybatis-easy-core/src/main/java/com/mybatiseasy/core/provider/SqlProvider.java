@@ -63,10 +63,11 @@ public class SqlProvider {
      */
     public static String getById(Map map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+
         return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
                 "where" + Sql.SPACE + entityMap.getPrimary() + "=" + Sql.SPACE +
-                map.get(MethodParam.PRIMARY_KEY).toString();
+                "#{" + MethodParam.PRIMARY_KEY +"}";
     }
 
     private static String getConditionSql(Condition condition){
@@ -130,6 +131,7 @@ public class SqlProvider {
      * @return String
      */
     public static String listByWrapper(Map map, ProviderContext context) {
+        log.info("map={}", map);
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
 
@@ -182,6 +184,6 @@ public class SqlProvider {
 
         SqlUtil.initWrapper(wrapper, entityMap.getName());
 
-        return wrapper.getSql()+";select FOUND_ROWS() as total;";
+        return wrapper.getSqlPaginate();
     }
 }

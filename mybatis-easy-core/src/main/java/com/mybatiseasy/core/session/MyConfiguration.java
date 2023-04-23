@@ -1,5 +1,6 @@
 package com.mybatiseasy.core.session;
 
+import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.paginate.Total;
 import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.StringUtil;
@@ -66,7 +67,7 @@ public class MyConfiguration extends Configuration {
      * 添加记录总数的ResultMap
      */
     private void addTotalResultMap() {
-        String mapperName = "com.mybatiseasy.core.paginate.Total";
+        String mapperName = Sql.TOTAL_CLASS_NAME;
         if(hasResultMap(mapperName)) return;
 
         try {
@@ -75,7 +76,7 @@ public class MyConfiguration extends Configuration {
             ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, "total", "total", Long.class);
             resultMappingList.add(resultMapping.build());
 
-            ResultMap newMap = new ResultMap.Builder(this, mapperName, Class.forName("com.mybatiseasy.core.paginate.Total"), resultMappingList).build();
+            ResultMap newMap = new ResultMap.Builder(this, mapperName, Class.forName(mapperName), resultMappingList).build();
             addResultMap(newMap);
         }catch (Exception ex){
             log.error("ResultMap format error:{}",ex.getMessage());
@@ -89,11 +90,9 @@ public class MyConfiguration extends Configuration {
         String mapperName = ms.getId().substring(0, dottedIndex);
         String methodName = ms.getId().substring(dottedIndex + 1);
         String[] methods = {"getById", "getByCondition", "listByCondition", "listByWrapper", "queryEasy"};
-        log.info("methodName={}", methodName);
 
 
         if(Arrays.asList(methods).contains(methodName)){
-            log.info("methodName={}", methodName);
             this.replaceMappedStatement(mapperName, methodName, ms);
             return;
         }
@@ -110,17 +109,10 @@ public class MyConfiguration extends Configuration {
         List<ResultMap> resultMaps = new ArrayList<>(hasResultMap(mapperName) ? List.of(getResultMap(mapperName)) : new ArrayList<>());
 
         if(methodName.equals("queryEasy")){
-            log.info("methodName={}", methodName);
-            ResultMap map = getResultMap("com.mybatiseasy.core.paginate.Total");
+            ResultMap map = getResultMap(Sql.TOTAL_CLASS_NAME);
             if(resultMaps.size() > 0 && map != null) resultMaps.add(map);
         }
 
-        for (ResultMap map:resultMaps
-        ) {
-            log.info("{},{},resultMaps={}",mapperName, methodName, map.getId());
-        }
-
-        log.info("end");
         MappedStatement.Builder statementBuilder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId(), ms.getSqlSource(), ms.getSqlCommandType())
                 .resource(ms.getResource()).fetchSize(ms.getFetchSize()).timeout(ms.getTimeout()).statementType(ms.getStatementType())
                 .keyGenerator(ms.getKeyGenerator()).keyProperty(keyProperty).keyColumn(keyColumn).databaseId(databaseId).lang(ms.getLang())

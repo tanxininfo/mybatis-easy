@@ -102,7 +102,9 @@ public class Column {
         String nextConditionSql = "";
         if (val instanceof Condition) nextConditionSql = ((Condition) val).getSql();
         else if (val instanceof Column) nextConditionSql = ((Column) val).getFullColumn();
-        else nextConditionSql = val.toString();
+        else {
+            nextConditionSql = val.toString();
+        }
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + nextConditionSql;
         return new Condition(sql);
     }
