@@ -3,15 +3,12 @@ package com.mybatiseasy.core.sqlbuilder;
 import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.utils.SqlUtil;
-import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.management.Query;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
 @Slf4j
 public class QueryWrapper implements Serializable {
 
@@ -23,7 +20,6 @@ public class QueryWrapper implements Serializable {
     }
 
     private final SQLStatement sqlStatement = new SQLStatement();
-
 
     public QueryWrapper orderBy(Column column, boolean isDesc){
         sqlStatement.orderBy.add(column.getTableColumn()+ Sql.SPACE + (isDesc? "DESC":"ASC"));
@@ -66,6 +62,8 @@ public class QueryWrapper implements Serializable {
 
     public QueryWrapper where(Condition condition){
         sqlStatement.where.add(condition.getSql());
+        sqlStatement.valueMap.putAll(condition.getValueMap());
+
         return this;
     }
 
@@ -151,6 +149,9 @@ public class QueryWrapper implements Serializable {
     public String getSql(){
         return sqlStatement.sql(new StringBuilder(), false);
     }
+    public Map<String, Object> getValueMap(){
+        return sqlStatement.valueMap;
+    }
 
     public String getSqlPaginate(){
         return sqlStatement.sql(new StringBuilder(), true);
@@ -232,6 +233,8 @@ public class QueryWrapper implements Serializable {
         List<String> unionAll = new ArrayList<>();
 
         List<List<String>> valuesList = new ArrayList<>();
+
+        Map<String, Object> valueMap = new HashMap<>();
         boolean distinct;
         Long offset;
         Long limit;
@@ -268,7 +271,7 @@ public class QueryWrapper implements Serializable {
         }
 
         private String selectSQL(SafeAppendable builder) {
-            String foundRows = isPaginate? Sql.SPACE + "SQL_CALC_FOUND_ROWS" + Sql.SPACE: "";
+            String foundRows = this.isPaginate? Sql.SPACE + "SQL_CALC_FOUND_ROWS" + Sql.SPACE: "";
             if (distinct) {
                 sqlClause(builder, "SELECT DISTINCT" + foundRows, select, "", "", ", ");
             } else {
