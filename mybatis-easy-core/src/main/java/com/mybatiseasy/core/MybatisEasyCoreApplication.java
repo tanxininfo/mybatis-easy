@@ -14,6 +14,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Slf4j
 @SpringBootApplication
@@ -40,6 +41,7 @@ public class MybatisEasyCoreApplication {
         configuration.setLogImpl(StdOutImpl.class);//标准输出日志
         configuration.setMapUnderscoreToCamelCase(true);// 开启驼峰命名
         sqlSessionFactoryBean.setConfiguration(configuration);
+
         sqlSessionFactoryBean.setDataSource(dataSource);
         return sqlSessionFactoryBean;
     }

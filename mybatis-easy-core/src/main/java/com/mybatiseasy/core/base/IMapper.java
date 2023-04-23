@@ -43,6 +43,11 @@ public interface IMapper<T> {
     @DeleteProvider(type = SqlProvider.class, method = Method.DELETE_BY_ID)
     int deleteById(@Param(MethodParam.PRIMARY_KEY) Serializable id);
 
+    @DeleteProvider(type = SqlProvider.class, method = Method.DELETE_BY_CONDITION)
+    int deleteByCondition(@Param(MethodParam.CONDITION) Condition condition);
+
+    @DeleteProvider(type = SqlProvider.class, method = Method.DELETE_BY_WRAPPER)
+    int deleteByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper queryWrapper, @Param(MethodParam.FORCE) boolean force);
     /**
      * 根据主键查询一条实例
      * @param id 主键值
@@ -138,25 +143,32 @@ public interface IMapper<T> {
         return new PageList<>(list, page);
     }
 
-    default List<T> listByQuery(QueryWrapper wrapper){
+    default List<T> list(QueryWrapper wrapper){
         return listByWrapper(wrapper);
     }
-
-    default List<T> listByQuery(Condition condition){
+    default List<T> list(Condition condition){
         return listByWrapper(QueryWrapper.create().where(condition));
     }
 
-    default T getByQuery(QueryWrapper wrapper) {
+    default T getOne(QueryWrapper wrapper) {
         return getByWrapper(wrapper);
     }
-    default T getByQuery(Condition condition){
+    default T getOne(Condition condition){
         return getByWrapper(QueryWrapper.create().where(condition));
     }
 
-    default Long countByQuery(QueryWrapper wrapper) {
+    default long count(QueryWrapper wrapper) {
         return countByWrapper(wrapper);
     }
-    default Long countByQuery(Condition condition){
+    default long count(Condition condition){
         return countByWrapper(QueryWrapper.create().where(condition));
     }
+
+    default int delete(QueryWrapper wrapper) {
+        return deleteByWrapper(wrapper, false);
+    }
+    default int delete(QueryWrapper wrapper, boolean force) {
+        return deleteByWrapper(wrapper, force);
+    }
+    default int delete(Condition condition){ return deleteByWrapper(QueryWrapper.create().where(condition), false); }
 }

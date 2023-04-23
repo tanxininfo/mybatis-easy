@@ -32,7 +32,7 @@ public class OrderController {
     @GetMapping
     public void get(){
 
-        User one = userMapper.getByCondition(_USER.AGE().gt(10).and(_USER.NAME().like("张%")));
+        User one = userMapper.getOne(_USER.AGE().gt(10).and(_USER.NAME().like("张%")));
 
         log.info("one={}", one);
     }
@@ -84,9 +84,9 @@ public class OrderController {
                         .where(_USER.ID().in(new Integer[]{1, 2}));
 
         //通过 listByWrapper 方法使用QueryWrapper查询数据
-       List<User> user = userMapper.listByQuery(wrapper);
+       int count = userMapper.deleteById(5L);
 
-        log.info("object0={}", user);
+        log.info("count={}", count);
         //log.info("object1={}", object.get(1));
 
     }

@@ -125,4 +125,10 @@ public class SqlUtil {
         if (!wrapper.hasTable()) wrapper.from(new Column(entityName));
         return wrapper;
     }
+
+
+    public static QueryWrapper initDeleteWrapper(QueryWrapper wrapper, String entityName) {
+        if (!wrapper.hasTable()) wrapper.deleteFrom(new Column(entityName));
+        return wrapper;
+    }
 }

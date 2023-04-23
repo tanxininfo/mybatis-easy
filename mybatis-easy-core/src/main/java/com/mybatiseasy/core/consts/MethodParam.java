@@ -6,5 +6,5 @@ public interface MethodParam {
     String PRIMARY_KEY = "primaryKey";
     String CONDITION = "condition";
     String WRAPPER = "wrapper";
-    String MAP = "map";
+    String FORCE = "force";
 }

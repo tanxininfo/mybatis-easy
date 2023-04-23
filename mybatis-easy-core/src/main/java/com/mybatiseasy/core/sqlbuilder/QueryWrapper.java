@@ -4,6 +4,7 @@ import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.jdbc.AbstractSQL;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -104,6 +105,20 @@ public class QueryWrapper implements Serializable {
     }
 
     /**
+     * 从表删除
+     * @param table 表
+     * @return QueryWrapper
+     */
+    public QueryWrapper deleteFrom(Column table) {
+        sqlStatement.statementType = SQLStatement.StatementType.DELETE;
+
+        sqlStatement.tableList.add(table);
+        sqlStatement.tables.add(table.getFullTable());
+
+        return this;
+    }
+
+    /**
      * groupBy
      * @param columns 数据列
      * @return QueryWrapper
@@ -194,6 +209,9 @@ public class QueryWrapper implements Serializable {
 
     public boolean hasSelect(){
         return sqlStatement.select.size()>0;
+    }
+    public boolean hasWhere(){
+        return sqlStatement.where.size()>0;
     }
 
     public boolean hasTable(){
