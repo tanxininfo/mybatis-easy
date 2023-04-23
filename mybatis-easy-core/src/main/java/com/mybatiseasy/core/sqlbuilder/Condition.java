@@ -2,16 +2,23 @@ package com.mybatiseasy.core.sqlbuilder;
 
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.utils.SqlUtil;
-import lombok.Data;
+
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
-@Data
 public class Condition {
     private StringBuilder sql = new StringBuilder();
+    private Map<String, Object> valueMap = new HashMap<>();
 
     public String getSql() {
         return sql.toString();
+    }
+
+    public Map<String, Object> getValueMap() {
+        return valueMap;
     }
 
     public Condition() {
@@ -20,6 +27,11 @@ public class Condition {
 
     public Condition(String sql) {
         this.sql = new StringBuilder(sql);
+    }
+
+    public Condition(String sql, Map<String, Object> valueMap) {
+        this.sql = new StringBuilder(sql);
+        this.valueMap = valueMap;
     }
 
 
@@ -44,7 +56,7 @@ public class Condition {
             }
         }
 
-        return new Condition(sql.toString());
+        return new Condition(sql.toString(), this.valueMap);
     }
 
     public Condition and(Condition nextCondition) {

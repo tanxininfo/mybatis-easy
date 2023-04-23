@@ -1,6 +1,5 @@
 package com.mybatiseasy.core.provider;
 
-import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.session.EntityMap;
@@ -57,11 +56,11 @@ public class SqlProvider {
     /**
      * 根据Id查询一个实体
      *
-     * @param map
-     * @param context
-     * @return
+     * @param map 参数map
+     * @param context 上下文
+     * @return String
      */
-    public static String getById(Map map, ProviderContext context) {
+    public static String getById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
 
         return "SELECT * FROM" + Sql.SPACE +
@@ -70,8 +69,13 @@ public class SqlProvider {
                 "#{" + MethodParam.PRIMARY_KEY +"}";
     }
 
-    private static String getConditionSql(Condition condition){
-       return condition.getSql().isEmpty()? "1 = 1": condition.getSql();
+    /**
+     * 拼接Condition条件
+     * @param condition  条件组合
+     * @return String
+     */
+    private static String getConditionSql(Condition condition) {
+        return condition.getSql().isEmpty() ? "" : "WHERE" + Sql.SPACE + condition.getSql();
     }
 
     /**
@@ -81,12 +85,11 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String getByCondition(Map map, ProviderContext context) {
+    public static String getByCondition(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
-                " WHERE " + Sql.SPACE +
                 getConditionSql(condition);
     }
 
@@ -97,9 +100,10 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String getByWrapper(Map map, ProviderContext context) {
+    public static String getByWrapper(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapper.getValueMap());
 
         SqlUtil.initWrapper(wrapper, entityMap.getName());
 
@@ -113,12 +117,13 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String listByCondition(Map map, ProviderContext context) {
+    public static String listByCondition(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
+        map.putAll(condition.getValueMap());
+
         return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
-                "WHERE" + Sql.SPACE +
                 getConditionSql(condition);
 
     }
@@ -130,13 +135,14 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String listByWrapper(Map map, ProviderContext context) {
-        log.info("map={}", map);
+    public static String listByWrapper(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapper.getValueMap());
 
         SqlUtil.initWrapper(wrapper, entityMap.getName());
-
+        log.info("wrapper.getSql()={}",wrapper.getSql());
+        log.info("wrapper.getValueMap()={}",wrapper.getValueMap());
         return wrapper.getSql();
     }
 
@@ -147,12 +153,13 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String countByCondition(Map map, ProviderContext context) {
+    public static String countByCondition(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
+        map.putAll(condition.getValueMap());
+
         return "SELECT count(*) FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
-                "WHERE" + Sql.SPACE +
                 getConditionSql(condition);
     }
 
@@ -163,9 +170,10 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String countByWrapper(Map map, ProviderContext context) {
+    public static String countByWrapper(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapper.getValueMap());
 
         SqlUtil.initWrapper(wrapper, entityMap.getName());
         return wrapper.getSql();
@@ -178,9 +186,10 @@ public class SqlProvider {
      * @param context 上下文
      * @return String
      */
-    public static String queryEasy(Map map, ProviderContext context) {
+    public static String queryEasy(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapper.getValueMap());
 
         SqlUtil.initWrapper(wrapper, entityMap.getName());
 

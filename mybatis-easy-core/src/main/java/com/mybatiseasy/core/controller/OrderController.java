@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,23 @@ public class OrderController {
     }
 
 
+    private void sayHi( Object... strings ){
+
+        System.out.println("----------" + strings);
+
+        if ( strings != null ) {
+
+            for (Object object : strings) {
+
+                System.out.println(object.toString());
+            }
+        }
+        else {
+            System.out.println("=========null");
+        }
+    }
+
+
 
     @GetMapping("/query")
     public void query(@RequestParam("param") Long param){
@@ -47,24 +65,23 @@ public class OrderController {
         //Condition condition =  _ORDER.ID.gt(true, 2).and(_ORDER.ID.ne(true, 3));
         //log.info("condition={}", condition.getSql());
 
-        Map<String ,Object> mapA = new HashMap<>();
-        mapA.put("a", 1);
-        mapA.put("b", 2);
 
-        Map<String ,Object> mapB = new HashMap<>();
-        mapA.put("a", 21);
-        mapA.put("c", 3);
+        int[] strings = new int[]{1,2};
 
-        mapB.putAll(mapA);
+        this.sayHi(strings);
+        this.sayHi("A");
 
-        log.info("mapB={}", mapB);
+        this.sayHi("O", "P");
+        this.sayHi();
+        this.sayHi(null);
+
 
 
 
         //创建QueryWrapper对象
                 QueryWrapper wrapper = new QueryWrapper();
-                wrapper.select("SQL_CALC_FOUND_ROWS id, name, age, sex")
-                        .where(_USER.ID().eq(1));
+                wrapper.select("id, name, age, sex")
+                        .where(_USER.ID().in(new Integer[]{1, 2}));
 
         //通过 listByWrapper 方法使用QueryWrapper查询数据
        List<User> user = userMapper.listByQuery(wrapper);

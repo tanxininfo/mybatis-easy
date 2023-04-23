@@ -5,16 +5,18 @@ import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AliasFor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 public class Column {
     protected List<ColumnData> columns;
+    protected Map<String, Object> valueMap;
 
     ColumnData column;
 
@@ -29,6 +31,7 @@ public class Column {
     public Column(String table, String tableAlias) {
         this.columns = new ArrayList<>();
         this.column = new ColumnData();
+        this.valueMap = new HashMap<>();
         this.column.setTableAlias(tableAlias);
         this.column.setTable(table);
     }
@@ -90,6 +93,69 @@ public class Column {
     }
 
     /**
+     * 创建值替位符，如:#{value}
+     * @return String
+     */
+    private String getValueTag(Object value){
+        String key = getMapKey();
+        this.valueMap.put(key, value);
+        return "#{"+ key  +"}";
+    }
+
+    /**
+     * 创建值替位符，如:#{value}
+     * 注意new Integer[]{1,2,3} 而不能是new int[]{1, 2, 3}
+     * @return String
+     */
+    private String getValueTagArray(Object[] array){
+        String key = getMapKey();
+        this.valueMap.put(key, array);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < array.length; i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append("#{").append(key).append("[");
+            sb.append(i);
+            sb.append("]}");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 创建值替位符，如:#{value}
+     * @return String
+     */
+    private String getValueTagCollection(Collection<?> collection){
+        String key = getMapKey();
+        this.valueMap.put(key, collection);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < collection.size(); i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append("#{").append(key).append("[");
+            sb.append(i);
+            sb.append("]}");
+        }
+
+        return sb.toString();
+    }
+
+    private String getMapKey(){
+        String column = SqlUtil.removeBackquote(this.column.getColumn());
+        String key;
+        for(int i=1;i<1000;i++){
+            key = column +"_" + i;
+            if(!this.valueMap.containsKey(key)) return key;
+        }
+        throw new RuntimeException("failed to generate map key");
+    }
+
+    /**
      * 比较运算
      *
      * @param apply  条件判断，是否应用此运算
@@ -103,28 +169,29 @@ public class Column {
         if (val instanceof Condition) nextConditionSql = ((Condition) val).getSql();
         else if (val instanceof Column) nextConditionSql = ((Column) val).getFullColumn();
         else {
-            nextConditionSql = val.toString();
+            nextConditionSql = getValueTag(val.toString());
         }
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + nextConditionSql;
-        return new Condition(sql);
+        return new Condition(sql, this.valueMap);
     }
 
     private Condition compare(Object[] array, String symbol, boolean apply) {
         if (!apply) return new Condition();
-        String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + SqlUtil.formatArray(array);
-        return new Condition(sql);
+        String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagArray(array) +")";
+        return new Condition(sql, this.valueMap);
     }
 
     private Condition compare(Collection<?> collection, String symbol, boolean apply) {
+        log.info("Collection<?> collection");
         if (!apply) return new Condition();
-        String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + SqlUtil.formatArray(collection);
-        return new Condition(sql);
+        String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagCollection(collection) +")";
+        return new Condition(sql, this.valueMap);
     }
 
     private Condition compareBetween(Object val1, Object val2, boolean apply) {
         if (!apply) return new Condition();
-        String sql = this.getTableColumn() + Sql.SPACE + "BETWEEN" + Sql.SPACE + val1 + Sql.SPACE + "AND" + Sql.SPACE + val2;
-        return new Condition(sql);
+        String sql = this.getTableColumn() + Sql.SPACE + "BETWEEN" + Sql.SPACE + getValueTag(val1) + Sql.SPACE + "AND" + Sql.SPACE + getValueTag(val2);
+        return new Condition(sql, this.valueMap);
     }
 
     private String formatLike(String value) {
@@ -171,6 +238,7 @@ public class Column {
     }
 
     public Condition in(Object... array) {
+        log.info("array[0]={}", array[0]);
         return compare(array, "IN", true);
     }
 

@@ -43,11 +43,14 @@ public class SqlUtil {
      * @param array 数组
      * @return in表达式
      */
-    public static String formatArray(Object[] array) {
+    public static Object[] formatArray(Object[] array) {
         if (ObjectUtil.isEmpty(array)) {
-            return "(NULL)";
+            return null;
         }
-        return Arrays.stream(array).map(SqlUtil::formatInElement).collect(joining(",", "(", ")"));
+        for (int i = 0; i < array.length; i++) {
+            array[i] = SqlUtil.formatInElement(array[i]);
+        }
+        return array;
     }
 
     /**
@@ -56,11 +59,11 @@ public class SqlUtil {
      * @param value Collection
      * @return in表达式
      */
-    public static String formatArray(Collection<?> value) {
+    public static List<?> formatArray(Collection<?> value) {
         if (CollectionUtil.isEmpty(value)) {
-            return "(NULL)";
+            return null;
         }
-        return value.stream().map(SqlUtil::formatInElement).collect(joining(",", "(", ")"));
+        return value.stream().map(SqlUtil::formatInElement).collect(Collectors.toList());
     }
 
     /**
