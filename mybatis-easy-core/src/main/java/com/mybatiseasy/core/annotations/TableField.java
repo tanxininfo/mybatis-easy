@@ -25,14 +25,14 @@ public @interface TableField {
     String column() default "";
 
     /**
-     * update的时候自动填充默认值
+     * update的时候自动填充默认值,字符串请用''包裹
      */
-    String updateDefault() default "";
+    String update() default "";
 
     /**
-     * insert的时候自动填充默认值
+     * insert的时候自动填充默认值,字符串请用''包裹
      */
-    String insertDefault() default "";
+    String insert() default "";
 
     /**
      * 是否大字段

@@ -26,9 +26,8 @@ public interface IMapper<T> {
     @InsertProvider(type = SqlProvider.class, method = Method.INSERT)
     int insert(@Param(MethodParam.ENTITY) T entity);
 
-
     /**
-     * 批量插入实体
+     * 插入一组实体
      * @param entityList 实例列表
      * @return 插入行数
      */

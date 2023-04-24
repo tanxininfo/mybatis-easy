@@ -6,11 +6,15 @@ import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.utils.MetaObjectUtil;
+import com.mybatiseasy.core.utils.SqlBuilderUtil;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
+import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -19,28 +23,29 @@ public class SqlProvider {
     }
 
     /**
-     * 插入一个实体
+     * 插入一条记录
      *
-     * @param map
-     * @param context
-     * @return
+     * @param map 参数
+     * @param context  上下文
+     * @return String
      */
-    public static String insert(Map map, ProviderContext context) {
-        log.info("map={}", map);
-        return "insert into u_user(id, username) values(1234, 'hahaha')";
+    public static String insert(Map<String, Object> map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        return SqlBuilderUtil.getInsertSql(map, entityMap);
     }
 
     /**
-     * 插入一个实体
+     * 插入一组记录
      *
-     * @param map
-     * @param context
-     * @return
+     * @param map 参数
+     * @param context  上下文
+     * @return String
      */
-    public static String insertBatch(Map map, ProviderContext context) {
-        log.info("map={}", map);
-        return "insert into u_user(id, username) values(1234, 'hahaha')";
+    public static String insertBatch(Map<String, Object> map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        return SqlBuilderUtil.getInsertBatchSql(map, entityMap);
     }
+
 
     /**
      * 删除一条记录
@@ -49,7 +54,7 @@ public class SqlProvider {
      * @param context
      * @return
      */
-    public static String deleteById(Map map, ProviderContext context) {
+    public static String deleteById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
 
@@ -66,7 +71,7 @@ public class SqlProvider {
      * @param context 上下文
      * @return 影响行数
      */
-    public static String deleteByCondition(Map map, ProviderContext context) {
+    public static String deleteByCondition(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
 

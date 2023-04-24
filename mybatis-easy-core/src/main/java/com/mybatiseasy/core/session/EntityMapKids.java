@@ -145,8 +145,8 @@ public class EntityMapKids {
 
 
         if (tableField != null) {
-            builder.desc(tableField.desc()).insertDefault(tableField.insertDefault())
-                    .updateDefault(tableField.updateDefault()).jdbcType(tableField.jdbcType())
+            builder.desc(tableField.desc()).insertDefault(tableField.insert())
+                    .updateDefault(tableField.update()).jdbcType(tableField.jdbcType())
                     .isLarge(tableField.isLarge()).numericScale(tableField.numericScale())
                     .typeHandler(tableField.typeHandler());
             if (!tableField.column().isEmpty()) builder.column(tableField.column());

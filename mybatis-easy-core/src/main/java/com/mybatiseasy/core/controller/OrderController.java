@@ -66,27 +66,20 @@ public class OrderController {
         //log.info("condition={}", condition.getSql());
 
 
-        int[] strings = new int[]{1,2};
 
-        this.sayHi(strings);
-        this.sayHi("A");
+        List<User> userList = new ArrayList<>();
 
-        this.sayHi("O", "P");
-        this.sayHi();
-        this.sayHi(null);
+        User user = new User();
+        user.setAge(10);
+        user.setName("李四");
+        user.setSex(Short.valueOf("1"));
+        userList.add(user);
+
+        int affectedRows = userMapper.insert(user);
+
+        log.info("affectedRows={}", user);
 
 
-
-
-        //创建QueryWrapper对象
-                QueryWrapper wrapper = new QueryWrapper();
-                wrapper.select("id, name, age, sex")
-                        .where(_USER.ID().in(new Integer[]{1, 2}));
-
-        //通过 listByWrapper 方法使用QueryWrapper查询数据
-       int count = userMapper.deleteById(5L);
-
-        log.info("count={}", count);
         //log.info("object1={}", object.get(1));
 
     }
