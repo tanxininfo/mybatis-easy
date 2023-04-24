@@ -60,7 +60,7 @@ public class SqlProvider {
 
         return "DELETE FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
-                "where" + Sql.SPACE + entityMap.getPrimary() + "=" + Sql.SPACE +
+                "where" + Sql.SPACE + entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
                 "#{" + MethodParam.PRIMARY_KEY +"}";
     }
 
@@ -111,7 +111,7 @@ public class SqlProvider {
 
         return "SELECT * FROM" + Sql.SPACE +
                 entityMap.getName() + Sql.SPACE +
-                "where" + Sql.SPACE + entityMap.getPrimary() + "=" + Sql.SPACE +
+                "where" + Sql.SPACE + entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
                 "#{" + MethodParam.PRIMARY_KEY +"}";
     }
 

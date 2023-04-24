@@ -41,5 +41,17 @@ public enum TableIdType {
     /**
      * 雪花算法
      */
-    SNOW_FLAKE
+    SNOW_FLAKE,
+
+    /**
+     * SEQUENCE
+     */
+    SEQUENCE,
+
+    /**
+     * 用户自定义
+     */
+    CUSTOM
+
+
 }

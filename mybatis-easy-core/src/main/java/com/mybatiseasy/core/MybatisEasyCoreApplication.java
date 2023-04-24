@@ -1,7 +1,6 @@
 package com.mybatiseasy.core;
 
-import com.mybatiseasy.core.session.MyConfiguration;
-import com.mybatiseasy.core.utils.ObjectUtil;
+import com.mybatiseasy.core.session.MeConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -14,7 +13,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 @Slf4j
 @SpringBootApplication
@@ -37,7 +35,7 @@ public class MybatisEasyCoreApplication {
     public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource){
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 //        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
-        MyConfiguration configuration = new MyConfiguration();
+        MeConfiguration configuration = new MeConfiguration();
         configuration.setLogImpl(StdOutImpl.class);//标准输出日志
         configuration.setMapUnderscoreToCamelCase(true);// 开启驼峰命名
         sqlSessionFactoryBean.setConfiguration(configuration);
