@@ -73,11 +73,19 @@ public class OrderController {
         user.setAge(10);
         user.setName("李四");
         user.setSex(Short.valueOf("1"));
+        user.setId(null);
         userList.add(user);
 
-        int affectedRows = userMapper.insert(user);
+        User user2 = new User();
+        user2.setAge(10);
+        user2.setName("王二");
+        user2.setSex(Short.valueOf("1"));
+        user2.setId(null);
+        userList.add(user2);
 
-        log.info("affectedRows={}", user);
+        int affectedRows = userMapper.insertBatch(userList);
+
+        log.info("affectedRows={}", userList);
 
 
         //log.info("object1={}", object.get(1));

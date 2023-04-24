@@ -22,4 +22,5 @@ public class User {
     private LocalDateTime createTime;
     @TableField(insert = "NOW()", update = "NOW()")
     private LocalDateTime updateTime;
+
 }

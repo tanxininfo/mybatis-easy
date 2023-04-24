@@ -114,18 +114,20 @@ public class EntityMapKids {
             Table table = AnnotationUtils.findAnnotation(entityClass, Table.class);
             if (table == null) return null;
 
-            String primary = "";
-
+            EntityFieldMap primary = null;
+           
             List<EntityFieldMap> entityFieldMapList = new ArrayList<>();
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {
                 EntityFieldMap fieldMap = reflectEntityMap(field);
-                if(fieldMap.getIsId()) primary = SqlUtil.addBackquote(fieldMap.getColumn());
+                if(fieldMap.getIsId()) primary = fieldMap;
                 entityFieldMapList.add(fieldMap);
             }
 
             String tableName = TypeUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
-            return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList).primary(primary).build();
+            return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList)
+                    .primary(primary)
+                    .build();
         } catch (Exception ignored) {
             return null;
         }
@@ -151,7 +153,7 @@ public class EntityMapKids {
                     .typeHandler(tableField.typeHandler());
             if (!tableField.column().isEmpty()) builder.column(tableField.column());
         }
-        if (tableId != null) builder.isId(true);
+        if (tableId != null) builder.isId(true).keyGenerator(tableId.keyGenerator()).sequence(tableId.sequence()).idType(tableId.idType());
         return builder.build();
 
     }

@@ -1,7 +1,8 @@
 package com.mybatiseasy.core.session;
 
+import com.mybatiseasy.core.keygen.IKeyGenerator;
+import com.mybatiseasy.core.enums.TableIdType;
 import com.mybatiseasy.core.utils.SqlUtil;
-import com.mybatiseasy.core.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
@@ -22,6 +23,20 @@ public class EntityFieldMap {
    * 是否主键
    */
   private boolean isId;
+  /**
+   * 主键类型
+   */
+  private TableIdType idType;
+
+  /**
+   * 当主键类型为 SEQUENCE 时设置此值
+   */
+  private String sequence;
+
+  /**
+   * 当主键类型为 CUSTOM 时设置此值
+   */
+  private Class<? extends IKeyGenerator> keyGenerator;
   /**
    * 数据表中的字段名
    */
@@ -121,6 +136,18 @@ public class EntityFieldMap {
       entityFieldMap.isId = isId;
       return this;
     }
+    public Builder idType(TableIdType idType) {
+      entityFieldMap.idType = idType;
+      return this;
+    }
+    public Builder sequence(String sequence) {
+      entityFieldMap.sequence = sequence;
+      return this;
+    }
+    public Builder keyGenerator(Class<? extends IKeyGenerator> keyGenerator) {
+      entityFieldMap.keyGenerator = keyGenerator;
+      return this;
+    }
     public Builder typeHandler(Class<? extends TypeHandler> typeHandler) {
       entityFieldMap.typeHandler = typeHandler;
       return this;
@@ -170,11 +197,20 @@ public class EntityFieldMap {
   public boolean  getIsId() {
     return isId;
   }
+  public TableIdType  getIdType() {
+    return idType;
+  }
+  public String  getSequence() {
+    return sequence;
+  }
   public Class<?>  getJavaType() {
     return javaType;
   }
   public Class<? extends TypeHandler>  getTypeHandler() {
     return typeHandler;
+  }
+  public Class<? extends IKeyGenerator>  getKeyGenerator() {
+    return keyGenerator;
   }
 
 

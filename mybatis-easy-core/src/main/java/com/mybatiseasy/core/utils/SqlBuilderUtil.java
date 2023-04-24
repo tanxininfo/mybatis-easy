@@ -12,10 +12,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.type.UnknownTypeHandler;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,9 +32,10 @@ public class SqlBuilderUtil {
 
     /**
      * 根据实体表获取insert语句 字段
-     * @param entityMap
-     * @param entityObj
-     * @return
+     * @param map 参数
+     * @param entityMap 实体映射
+     * @param entityObj 传入的实体对象
+     * @return List<String>
      */
     private static List<String> getInsertValues(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj){
         List<String> valueList = new ArrayList<>();
@@ -50,67 +48,77 @@ public class SqlBuilderUtil {
             value = entityObj.getValue(name);
             if(value != null) {
                 map.put(name, value);
-                valueList.add(getColumnValue(fieldMap));
+                valueList.add(getColumnValue(fieldMap, name));
             }else{
                 insertDefault = fieldMap.getInsertDefault();
                 if(!insertDefault.isEmpty()){
                     map.put(name, insertDefault);
-                    valueList.add(getColumnValue(fieldMap, insertDefault));
+                    valueList.add(getColumnValue(fieldMap, name, insertDefault));
                 }
             }
         }
         return valueList;
     }
 
-//    /**
-//     * 根据实体表获取insert语句 字段
-//     * @param entityMap
-//     * @param entityObj
-//     * @return
-//     */
-//    private static List<String> getInsertValues(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj){
-//        List<String> valueList = new ArrayList<>();
-//        String name;
-//        Object value;
-//        String insertDefault;
-//        for (EntityFieldMap fieldMap:entityMap.getEntityFieldMapList()
-//        ) {
-//            name = fieldMap.getName();
-//            value = entityObj.getValue(name);
-//            if(value != null) {
-//                map.put(name, value);
-//                valueList.add(getColumnValue(fieldMap));
-//            }else{
-//                insertDefault = fieldMap.getInsertDefault();
-//                if(!insertDefault.isEmpty()){
-//                    map.put(name, insertDefault);
-//                    valueList.add(getColumnValue(fieldMap, insertDefault));
-//                }
-//            }
-//        }
-//        return valueList;
-//    }
-
     /**
-     * 获取占位符
-     * @param fieldMap 字段映射
-     * @return String
+     * 根据实体表获取批量insert语句 字段
+     * @param map 参数
+     * @param entityObj
+     * @return
      */
-    private static String getColumnValue(EntityFieldMap fieldMap){
-       return getColumnValue(fieldMap, null);
+    private static List<String> getInsertValues(Map<String, Object> map,  List<Object> entityList, List<EntityFieldMap> insertColumnList) {
+
+        List<String> valueList = new ArrayList<>();
+        String name;
+        Object value;
+        String insertDefault;
+
+        for (int i = 0; i < entityList.size(); i++) {
+            StringJoiner joiner = new StringJoiner(", ", "(", ")");
+            for (EntityFieldMap fieldMap : insertColumnList
+            ) {
+                MetaObject entityObj = MetaObjectUtil.forObject(entityList.get(i));
+                value = entityObj.getValue(fieldMap.getName());
+                name = fieldMap.getName() + "_" + i;
+
+                if (value != null) {
+                    map.put(name, value);
+                    joiner.add(getColumnValue(fieldMap, name));
+                } else {
+                    insertDefault = fieldMap.getInsertDefault();
+                    map.put(name, insertDefault);
+                    joiner.add(getColumnValue(fieldMap, name, insertDefault));
+                }
+            }
+            valueList.add(joiner.toString());
+        }
+
+        return valueList;
     }
 
     /**
      * 获取占位符
      * @param fieldMap 字段映射
+     * @return String
+     */
+    private static String getColumnValue(EntityFieldMap fieldMap, String fieldName){
+       return getColumnValue(fieldMap, fieldName, null);
+    }
+
+
+
+    /**
+     * 获取占位符
+     * @param fieldMap 字段映射
+     * @param fieldName parameter参数名
      * @param value 一般用于自动填充
      * @return String
      */
-    private static String getColumnValue(EntityFieldMap fieldMap, String value) {
+    private static String getColumnValue(EntityFieldMap fieldMap, String fieldName, String value) {
         if (fieldMap.getTypeHandler() != UnknownTypeHandler.class)
-            return "#{" + fieldMap.getName() + ", typeHandler=" + fieldMap.getTypeHandler() + "}";
+            return "#{" + fieldName + ", typeHandler=" + fieldMap.getTypeHandler() + "}";
         else if (TypeUtil.isNotEmpty(value)) return value;
-        return "#{" + fieldMap.getName() + "}";
+        return "#{" + fieldName + "}";
     }
 
     public static String getInsertSql(Map<String, Object> map, EntityMap entityMap){
@@ -146,16 +154,15 @@ public class SqlBuilderUtil {
 
 
     public static String getInsertBatchSql(Map<String, Object> map, EntityMap entityMap){
-//        List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
-//        Assert.notEmpty(entityList, "实体不得为空");
-//        MetaObject entityObject = MetaObjectUtil.forObject(entityList.get(0));
-//
-//        List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
-//        List<String> insertValues = SqlBuilderUtil.getInsertValues(map, entityMap, entityObject);
-//
-//        return "INSERT INTO" + Sql.SPACE +
-//                entityMap.getName() + Sql.SPACE +
-//                "("+ getInsertColumnSymbolList(insertColumnList) +")" + Sql.SPACE + "VALUES (" +String.join(", ", insertValues)+")";
-        return "";
+        List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
+        Assert.notEmpty(entityList, "实体不得为空");
+        MetaObject entityObject = MetaObjectUtil.forObject(entityList.get(0));
+
+        List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
+        List<String> insertValues = SqlBuilderUtil.getInsertValues(map,  entityList, insertColumnList);
+
+        return "INSERT INTO" + Sql.SPACE +
+                entityMap.getName() + Sql.SPACE +
+                "("+ getInsertColumnSymbolList(insertColumnList) +")" + Sql.SPACE + "VALUES"+ Sql.SPACE +String.join(", ", insertValues);
     }
 }
