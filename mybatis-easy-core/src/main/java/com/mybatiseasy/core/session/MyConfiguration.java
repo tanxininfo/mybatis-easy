@@ -91,13 +91,6 @@ public class MyConfiguration extends Configuration {
         String methodName = ms.getId().substring(dottedIndex + 1);
         String[] methods = {"getById", "getByCondition", "listByCondition", "listByWrapper", "queryEasy"};
 
-
-        Collection<String> nameList =  getResultMapNames();
-        for (String name:nameList
-        ) {
-            log.info(name);
-        }
-
         if(Arrays.asList(methods).contains(methodName)){
             this.replaceMappedStatement(mapperName, methodName, ms);
             return;
