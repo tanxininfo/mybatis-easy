@@ -3,8 +3,7 @@ package com.mybatiseasy.core.keygen;
 public interface IKeyGenerator {
     /**
      * 生成Id的方法
-     * @param entity 实体映射对象
-     * @return
+     * @return Id值
      */
-    Object generateId(Object entity);
+    Object generateId();
 }

@@ -1,14 +1,18 @@
 package com.mybatiseasy.core.session;
 
+import com.mybatiseasy.core.annotations.Table;
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.TableIdType;
+import com.mybatiseasy.core.keygen.CustomKeyGenerator;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
@@ -18,12 +22,12 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.mybatiseasy.core.utils.TypeUtil.ArrayToDelimitedString;
 
 @Slf4j
 public class MeConfiguration extends Configuration {
-
 
     public MeConfiguration(Environment environment) {
         super(environment);
@@ -102,43 +106,46 @@ public class MeConfiguration extends Configuration {
         if(Arrays.asList(selectMethods).contains(methodName)){
             ms = this.replaceResultMapOfMappedStatement(mapperName, methodName, ms);
         }else if(Arrays.asList(insertMethods).contains(methodName)){
-            ms = this.replaceKeyGeneratorMappedStatement(mapperName, ms);
+            ms = this.replaceKeyGeneratorMappedStatement(mapperName, methodName, ms);
         }
 
         super.addMappedStatement(ms);
     }
 
-    private MappedStatement replaceKeyGeneratorMappedStatement(String mapperName, MappedStatement ms) {
-        log.info("111");
+    private MappedStatement replaceKeyGeneratorMappedStatement(String mapperName, String methodName, MappedStatement ms) {
         if(!ms.getKeyGenerator().equals(NoKeyGenerator.INSTANCE)){
             return ms;
         }
-        log.info("222");
-
         String entityName = EntityMapKids.getEntityName(mapperName);
         if(entityName==null) return ms;
-        log.info("333");
 
         EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
         if(entityMap==null) return ms;
-        log.info("444");
 
         EntityFieldMap primary = entityMap.getPrimary();
         if(primary == null) return ms;
-        log.info("555");
 
-        if(primary.getIdType().equals(TableIdType.NONE)) return ms;
-        log.info("666");
+        TableIdType primaryType = primary.getIdType();
 
+        if(primaryType == TableIdType.NONE) return ms;
 
-        String keyProperty = MethodParam.ENTITY+"."+ primary.getName();
+        boolean isBatch = methodName.equals(Method.INSERT_BATCH);
+
+        String keyProperty = (isBatch?MethodParam.ENTITY_LIST:MethodParam.ENTITY) +"."+ primary.getName();
         String keyColumn = SqlUtil.removeBackquote(primary.getColumn());
         String resultSets = ArrayToDelimitedString(ms.getResultSets());
 
-        KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
+        KeyGenerator keyGenerator;
 
-        if(primary.getIdType().equals(TableIdType.AUTO)){
+        if(primaryType == TableIdType.AUTO){
             keyGenerator = Jdbc3KeyGenerator.INSTANCE;
+        }
+        else if(primaryType == TableIdType.SEQUENCE){
+            replaceSequenceMappedStatement(primary, keyProperty, keyColumn, ms.getId(), ms);
+            keyGenerator = new CustomKeyGenerator(primary);
+        }
+        else {
+            keyGenerator = new CustomKeyGenerator(primary);
         }
 
         MappedStatement.Builder statementBuilder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId(), ms.getSqlSource(), ms.getSqlCommandType())
@@ -165,6 +172,48 @@ public class MeConfiguration extends Configuration {
         }
 
         return statementBuilder.build();
+    }
+
+    private void replaceSequenceMappedStatement(EntityFieldMap primary,String keyProperty, String keyColumn, String baseStatementId, MappedStatement ms){
+
+        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+
+        // defaults
+        boolean useCache = false;
+        KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
+        Integer fetchSize = null;
+        Integer timeout = null;
+        String databaseId = ms.getDatabaseId();
+
+        SqlSource sqlSource = ms.getLang().createSqlSource(ms.getConfiguration(), primary.getSequence(), primary.getJavaType());
+        SqlCommandType sqlCommandType = SqlCommandType.SELECT;
+
+        final ResultMap rm = new ResultMap.Builder(ms.getConfiguration(), "keyResultMap", primary.getJavaType(), new ArrayList<>()).build();
+
+        MappedStatement.Builder statementBuilder = new MappedStatement.Builder(ms.getConfiguration(), id, sqlSource, sqlCommandType)
+                .resource(ms.getResource())
+                .fetchSize(fetchSize)
+                .timeout(timeout)
+                .statementType(ms.getStatementType())
+                .keyGenerator(keyGenerator)
+                .keyProperty(keyProperty)
+                .keyColumn(keyColumn)
+                .databaseId(databaseId)
+                .lang(ms.getLang())
+                .resultOrdered(ms.isResultOrdered())
+                .resultSets(null)
+                .resultMaps(new ArrayList<ResultMap>() {
+                    private static final long serialVersionUID = 1L;
+                    {
+                        add(rm);
+                    }
+                })
+                .resultSetType(ms.getResultSetType())
+                .flushCacheRequired(false)
+                .useCache(useCache)
+                .cache(ms.getCache());
+        addMappedStatement(statementBuilder.build());
+        //return new SelectKeyGenerator(statementBuilder.build(), true);
     }
 
     private MappedStatement replaceResultMapOfMappedStatement(String mapperName, String methodName, MappedStatement ms){

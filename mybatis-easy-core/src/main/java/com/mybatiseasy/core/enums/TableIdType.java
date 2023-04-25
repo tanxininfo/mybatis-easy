@@ -44,6 +44,11 @@ public enum TableIdType {
     SNOW_FLAKE,
 
     /**
+     * 一个轻量ID,时分秒+随机
+     */
+    ID_MAKER,
+
+    /**
      * SEQUENCE
      */
     SEQUENCE,

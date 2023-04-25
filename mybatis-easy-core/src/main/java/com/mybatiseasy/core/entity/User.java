@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Table("user")
 public class User {
 
-    @TableId( idType = TableIdType.AUTO)
+    @TableId( idType = TableIdType.SEQUENCE, sequence = "SELECT id+1 as id from `user` order by id desc limit 1")
     private Long id;
     private String name;
     private Integer age;
