@@ -5,6 +5,7 @@ import com.mybatiseasy.core.mapper.UserMapper;
 import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.table._USER;
+import com.mybatiseasy.core.utils.SnowFlakeIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author dudley
@@ -32,7 +30,9 @@ public class OrderController {
     @GetMapping
     public void get(){
 
-        User one = userMapper.getOne(_USER.AGE().gt(10).and(_USER.NAME().like("张%")));
+        User one = userMapper.getOne(_USER.AGE().gt(10).and(_USER.NAME().like("张%")).and(_USER.NAME().like("李%")));
+        //User one = userMapper.getOne(_USER.ID().eq(1));
+
 
         log.info("one={}", one);
     }
@@ -65,9 +65,30 @@ public class OrderController {
         //Condition condition =  _ORDER.ID.gt(true, 2).and(_ORDER.ID.ne(true, 3));
         //log.info("condition={}", condition.getSql());
 
+//        SnowFlakeIdGenerator snowflakeIdGenerator = new SnowFlakeIdGenerator();
+//
+//        // 生成50个id
+//        Set<Long> set = new TreeSet<>();
+//        for (int i = 0; i < 50; i++) {
+//            set.add(snowflakeIdGenerator.nextId());
+//        }
+//        System.out.println(set.size());
+//        System.out.println(set);
+//
+//        // 验证生成100万个id需要多久
+//        long startTime = System.currentTimeMillis();
+//        for (int i = 0; i < 1000000; i++) {
+//            snowflakeIdGenerator.nextId();
+//        }
+//        System.out.println(System.currentTimeMillis() - startTime);
+
 
 
         List<User> userList = new ArrayList<>();
+
+        for(int i=0; i<1;i++) {
+
+        }
 
         User user = new User();
         user.setAge(10);
@@ -75,20 +96,18 @@ public class OrderController {
         user.setSex(Short.valueOf("1"));
         user.setId(null);
         userList.add(user);
-
-        User user2 = new User();
-        user2.setAge(10);
-        user2.setName("王二");
-        user2.setSex(Short.valueOf("1"));
-        user2.setId(null);
-        userList.add(user2);
-
+        long startTime = System.currentTimeMillis();
         int affectedRows = userMapper.insertBatch(userList);
 
-        log.info("affectedRows={}", userList);
 
 
-        //log.info("object1={}", object.get(1));
+//        int affectedRows = userMapper.insert(user);
+//        log.info("{}, user={}", affectedRows, user);
+
+
+
+
+
 
     }
 

@@ -11,14 +11,14 @@ import java.util.Map;
 @Slf4j
 public class Condition {
     private StringBuilder sql = new StringBuilder();
-    private Map<String, Object> valueMap = new HashMap<>();
+    private Map<String, Object> parameterMap = new HashMap<>();
 
     public String getSql() {
         return sql.toString();
     }
 
-    public Map<String, Object> getValueMap() {
-        return valueMap;
+    public Map<String, Object> getParameterMap() {
+        return parameterMap;
     }
 
     public Condition() {
@@ -29,9 +29,9 @@ public class Condition {
         this.sql = new StringBuilder(sql);
     }
 
-    public Condition(String sql, Map<String, Object> valueMap) {
+    public Condition(String sql, Map<String, Object> parameterMap) {
         this.sql = new StringBuilder(sql);
-        this.valueMap = valueMap;
+        this.parameterMap = parameterMap;
     }
 
 
@@ -55,8 +55,8 @@ public class Condition {
                     sql.append(Sql.SPACE).append(keyword).append(Sql.SPACE).append(nextCondition.sql);
             }
         }
-
-        return new Condition(sql.toString(), this.valueMap);
+        this.parameterMap.putAll(nextCondition.getParameterMap());
+        return new Condition(sql.toString(), this.parameterMap);
     }
 
     public Condition and(Condition nextCondition) {

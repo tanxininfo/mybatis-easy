@@ -63,10 +63,16 @@ public class QueryWrapper implements Serializable {
 
     public QueryWrapper where(Condition condition){
         sqlStatement.where.add(condition.getSql());
-        sqlStatement.valueMap.putAll(condition.getValueMap());
+        sqlStatement.parameterMap.putAll(condition.getParameterMap());
 
         return this;
     }
+
+    public QueryWrapper where(String condition){
+        sqlStatement.where.add(condition);
+        return this;
+    }
+
 
     public QueryWrapper limit(Long offset, Long limit){
         sqlStatement.offset = offset;
@@ -147,7 +153,42 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
+    public QueryWrapper insertInto(String tableName) {
+        sqlStatement.statementType = SQLStatement.StatementType.INSERT;
+        sqlStatement.tables.add(tableName);
+        return this;
+    }
 
+    /**
+     * 插入的数据字段列表
+     * @param columns 数据列
+     * @return QueryWrapper
+     */
+    public QueryWrapper columns(Object ...columns) {
+        String columnName = "";
+        for (Object column : columns
+        ) {
+            if (column instanceof Column) {
+                List<String> columnList = ((Column) column).getAllColumns();
+                sqlStatement.columns.addAll(columnList);
+            } else {
+                columnName = column.toString();
+                if (!sqlStatement.columns.contains(columnName)) sqlStatement.columns.add(columnName);
+            }
+        }
+        return this;
+    }
+
+
+    /**
+     * 插入的数据值列表
+     * @param valuesList 数据值,如：(a,b,c),(a,b,c)
+     * @return QueryWrapper
+     */
+    public QueryWrapper valuesList(List<List<String>> valuesList) {
+       sqlStatement.valuesList.addAll(valuesList);
+        return this;
+    }
 
     public QueryWrapper update(String table) {
         sqlStatement.statementType = SQLStatement.StatementType.UPDATE;
@@ -164,8 +205,8 @@ public class QueryWrapper implements Serializable {
     public String getSql(){
         return sqlStatement.sql(new StringBuilder(), false);
     }
-    public Map<String, Object> getValueMap(){
-        return sqlStatement.valueMap;
+    public Map<String, Object> getParameterMap(){
+        return sqlStatement.parameterMap;
     }
 
     public String getSqlPaginate(){
@@ -252,7 +293,7 @@ public class QueryWrapper implements Serializable {
 
         List<List<String>> valuesList = new ArrayList<>();
 
-        Map<String, Object> valueMap = new HashMap<>();
+        Map<String, Object> parameterMap = new HashMap<>();
         boolean distinct;
         Long offset;
         Long limit;
@@ -260,8 +301,6 @@ public class QueryWrapper implements Serializable {
         boolean isPaginate;
 
         public SQLStatement() {
-            // Prevent Synthetic Access
-            valuesList.add(new ArrayList<>());
         }
 
         private void sqlClause(SafeAppendable builder, String keyword, List<String> parts, String open, String close,
@@ -351,17 +390,18 @@ public class QueryWrapper implements Serializable {
         private String insertSQL(SafeAppendable builder) {
             sqlClause(builder, "INSERT INTO", tables, "", "", "");
             sqlClause(builder, "", columns, "(", ")", ", ");
+            log.info("valuesList={}",valuesList);
             for (int i = 0; i < valuesList.size(); i++) {
-                sqlClause(builder, i > 0 ? "," : "VALUES", valuesList.get(i), "(", ")", ", ");
+                sqlClause(builder, (i > 0) ? "," : "VALUES", valuesList.get(i), "(", ")", ", ");
             }
-            return builder.toString();
+            return builder.appendable.toString();
         }
 
         private String deleteSQL(SafeAppendable builder) {
             sqlClause(builder, "DELETE FROM", tables, "", "", "");
             sqlClause(builder, "WHERE", where, "(", ")", " AND ");
             limits(builder);
-            return builder.toString();
+            return builder.appendable.toString();
         }
 
         private String updateSQL(SafeAppendable builder) {
@@ -370,7 +410,7 @@ public class QueryWrapper implements Serializable {
             sqlClause(builder, "SET", sets, "", "", ", ");
             sqlClause(builder, "WHERE", where, "(", ")", " AND ");
             limits(builder);
-            return builder.toString();
+            return builder.appendable.toString();
         }
 
         public String sql(Appendable a, boolean isPaginate) {

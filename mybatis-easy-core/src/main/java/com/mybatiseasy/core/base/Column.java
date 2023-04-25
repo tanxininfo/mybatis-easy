@@ -1,14 +1,12 @@
 package com.mybatiseasy.core.base;
 
-import cn.hutool.core.annotation.Alias;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.sqlbuilder.Condition;
+import com.mybatiseasy.core.utils.IdUtil;
 import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.AliasFor;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Column {
     protected List<ColumnData> columns;
-    protected Map<String, Object> valueMap;
+    protected Map<String, Object> parameterMap;
 
     ColumnData column;
 
@@ -31,7 +29,7 @@ public class Column {
     public Column(String table, String tableAlias) {
         this.columns = new ArrayList<>();
         this.column = new ColumnData();
-        this.valueMap = new HashMap<>();
+        this.parameterMap = new HashMap<>();
         this.column.setTableAlias(tableAlias);
         this.column.setTable(table);
     }
@@ -98,7 +96,7 @@ public class Column {
      */
     private String getValueTag(Object value){
         String key = getMapKey();
-        this.valueMap.put(key, value);
+        this.parameterMap.put(key, value);
         return "#{"+ key  +"}";
     }
 
@@ -109,7 +107,7 @@ public class Column {
      */
     private String getValueTagArray(Object[] array){
         String key = getMapKey();
-        this.valueMap.put(key, array);
+        this.parameterMap.put(key, array);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
@@ -130,7 +128,7 @@ public class Column {
      */
     private String getValueTagCollection(Collection<?> collection){
         String key = getMapKey();
-        this.valueMap.put(key, collection);
+        this.parameterMap.put(key, collection);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < collection.size(); i++) {
@@ -147,12 +145,13 @@ public class Column {
 
     private String getMapKey(){
         String column = SqlUtil.removeBackquote(this.column.getColumn());
-        String key;
-        for(int i=1;i<1000;i++){
-            key = column +"_" + i;
-            if(!this.valueMap.containsKey(key)) return key;
-        }
-        throw new RuntimeException("failed to generate map key");
+        return column + IdUtil.uniqueId().id();
+//        String key;
+//        for(int i=1;i<1000;i++){
+//            key = column +"_" + i;
+//            if(!this.parameterMap.containsKey(key)) return key;
+//        }
+//        throw new RuntimeException("failed to generate map key");
     }
 
     /**
@@ -172,26 +171,26 @@ public class Column {
             nextConditionSql = getValueTag(val.toString());
         }
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + nextConditionSql;
-        return new Condition(sql, this.valueMap);
+        return new Condition(sql, this.parameterMap);
     }
 
     private Condition compare(Object[] array, String symbol, boolean apply) {
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagArray(array) +")";
-        return new Condition(sql, this.valueMap);
+        return new Condition(sql, this.parameterMap);
     }
 
     private Condition compare(Collection<?> collection, String symbol, boolean apply) {
         log.info("Collection<?> collection");
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagCollection(collection) +")";
-        return new Condition(sql, this.valueMap);
+        return new Condition(sql, this.parameterMap);
     }
 
     private Condition compareBetween(Object val1, Object val2, boolean apply) {
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + "BETWEEN" + Sql.SPACE + getValueTag(val1) + Sql.SPACE + "AND" + Sql.SPACE + getValueTag(val2);
-        return new Condition(sql, this.valueMap);
+        return new Condition(sql, this.parameterMap);
     }
 
     private String formatLike(String value) {

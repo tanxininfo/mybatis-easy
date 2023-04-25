@@ -35,6 +35,30 @@ public interface IMapper<T> {
     int insertBatch(@Param(MethodParam.ENTITY_LIST) List<T> entityList);
 
     /**
+     * 修改一个实体
+     * @param entity 实例
+     * @return 影响条数
+     */
+    @InsertProvider(type = SqlProvider.class, method = Method.UPDATE_BY_ID)
+    int updateById(@Param(MethodParam.ENTITY) T entity);
+
+    /**
+     * 修改一个实体
+     * @param entity 实例
+     * @return 影响条数
+     */
+    @InsertProvider(type = SqlProvider.class, method = Method.UPDATE_BY_CONDITION)
+    int updateByCondition(@Param(MethodParam.ENTITY) T entity, Condition condition);
+
+    /**
+     * 修改一个实体
+     * @param entity 实例
+     * @return 影响条数
+     */
+    @InsertProvider(type = SqlProvider.class, method = Method.UPDATE_BY_WRAPPER)
+    int updateByWrapper(@Param(MethodParam.ENTITY) T entity, QueryWrapper queryWrapper);
+
+    /**
      * 根据 主键删除行
      * @param id 主键值
      * @return
@@ -47,6 +71,7 @@ public interface IMapper<T> {
 
     @DeleteProvider(type = SqlProvider.class, method = Method.DELETE_BY_WRAPPER)
     int deleteByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper queryWrapper, @Param(MethodParam.FORCE) boolean force);
+
     /**
      * 根据主键查询一条实例
      * @param id 主键值
@@ -163,6 +188,9 @@ public interface IMapper<T> {
         return countByWrapper(QueryWrapper.create().where(condition));
     }
 
+    default int delete(Serializable id) {
+        return deleteById(id);
+    }
     default int delete(QueryWrapper wrapper) {
         return deleteByWrapper(wrapper, false);
     }
@@ -170,4 +198,13 @@ public interface IMapper<T> {
         return deleteByWrapper(wrapper, force);
     }
     default int delete(Condition condition){ return deleteByWrapper(QueryWrapper.create().where(condition), false); }
+
+
+    default int update(T entity) {
+        return updateById(entity);
+    }
+    default int update(T entity, QueryWrapper wrapper) {
+        return updateByWrapper(entity, wrapper);
+    }
+    default int delete(T entity, Condition condition){ return updateByWrapper(entity, QueryWrapper.create().where(condition)); }
 }

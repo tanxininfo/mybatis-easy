@@ -124,7 +124,7 @@ public class SqlUtil {
         return addSymbol(str, "'", "'");
     }
 
-    public static QueryWrapper initWrapper(QueryWrapper wrapper, String entityName) {
+    public static QueryWrapper initSelectWrapper(QueryWrapper wrapper, String entityName) {
         if (!wrapper.hasSelect()) wrapper.select("*");
         if (!wrapper.hasTable()) wrapper.from(new Column(entityName));
         return wrapper;
