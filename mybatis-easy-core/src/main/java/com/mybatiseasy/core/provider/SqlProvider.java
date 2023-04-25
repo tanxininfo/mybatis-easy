@@ -9,9 +9,11 @@ import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.utils.MetaObjectUtil;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
+import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.util.Assert;
 
 import java.util.Map;
@@ -63,16 +65,34 @@ public class SqlProvider {
     }
 
     /**
-     * 插入一条记录
+     * 修改一条记录
      *
      * @param map 参数
      * @param context  上下文
      * @return String
      */
     public static String updateById(Map<String, Object> map, ProviderContext context) {
-//        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-//        return SqlBuilderUtil.getUpdateSql(map, entityMap);
-        return "";
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
+        MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
+        Assert.notNull(entityObj.getValue(entityMap.getPrimary().getName()), "请指定实体主键值");
+
+        SqlBuilder builder = new SqlBuilder();
+        builder.generateUpdateParts(map, entityMap);
+
+        QueryWrapper wrapper = new QueryWrapper();
+        SqlUtil.initUpdateWrapper(wrapper, entityMap.getName());
+
+        wrapper.setValues(builder.getUpdateValueList());
+
+        wrapper.where(getWhereId(entityMap));
+
+        return wrapper.getSql();
+    }
+
+    private static String getWhereId(EntityMap entityMap){
+        return entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
+                "#{" + entityMap.getPrimary().getName() +"}";
     }
 
     /**
@@ -83,9 +103,20 @@ public class SqlProvider {
      * @return String
      */
     public static String updateByCondition(Map<String, Object> map, ProviderContext context) {
-//        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-//        return SqlBuilderUtil.getUpdateSql(map, entityMap);
-        return "";
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        Condition condition = (Condition) map.get(MethodParam.CONDITION);
+        map.putAll(condition.getParameterMap());
+
+        SqlBuilder builder = new SqlBuilder();
+        builder.generateUpdateParts(map, entityMap);
+
+        QueryWrapper wrapper = new QueryWrapper();
+        SqlUtil.initUpdateWrapper(wrapper, entityMap.getName());
+        wrapper.setValues(builder.getUpdateValueList());
+
+        wrapper.where(condition);
+
+        return wrapper.getSql();
     }
 
     /**
@@ -96,9 +127,19 @@ public class SqlProvider {
      * @return String
      */
     public static String updateByWrapper(Map<String, Object> map, ProviderContext context) {
-//        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-//        return SqlBuilderUtil.getUpdateSql(map, entityMap);
-        return "";
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        Condition condition = (Condition) map.get(MethodParam.CONDITION);
+        map.putAll(condition.getParameterMap());
+
+        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        SqlUtil.initUpdateWrapper(wrapper, entityMap.getName());
+
+        SqlBuilder builder = new SqlBuilder();
+        builder.generateUpdateParts(map, entityMap);
+
+        wrapper.setValues(builder.getUpdateValueList());
+
+        return wrapper.getSql();
     }
 
     /**
@@ -114,9 +155,9 @@ public class SqlProvider {
 
         QueryWrapper wrapper = new QueryWrapper();
         SqlUtil.initDeleteWrapper(wrapper, entityMap.getName());
-        String where = entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
-                "#{" + MethodParam.PRIMARY_KEY +"}";;
-        wrapper.where(where);
+
+        wrapper.where(getWhereId(entityMap));
+
 
         return wrapper.getSql();
     }
@@ -172,21 +213,12 @@ public class SqlProvider {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.select("*");
         wrapper.from(new Column(entityMap.getName()));
-        String where = entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
-                "#{" + MethodParam.PRIMARY_KEY +"}";;
-        wrapper.where(where);
+
+        wrapper.where(getWhereId(entityMap));
 
         return wrapper.getSql();
     }
 
-    /**
-     * 拼接Condition条件
-     * @param condition  条件组合
-     * @return String
-     */
-    private static String getConditionSql(Condition condition) {
-        return condition.getSql().isEmpty() ? "" : "WHERE" + Sql.SPACE + condition.getSql();
-    }
 
     /**
      * 根据组合条件查询一个实体
@@ -220,7 +252,6 @@ public class SqlProvider {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
         map.putAll(wrapper.getParameterMap());
-        log.info("wrapper.getParameterMap()={}", wrapper.getParameterMap());
         SqlUtil.initSelectWrapper(wrapper, entityMap.getName());
 
         return wrapper.getSql();
