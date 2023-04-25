@@ -27,6 +27,8 @@ public class SqlBuilder {
     private List<String> insertSymbolList = new ArrayList<>();
     private List<List<String>> insertValuesList = new ArrayList<>();
 
+    private List<String> updateValueList = new ArrayList<>();
+
     /**
      * 拼接insert字段
      * @param columnList List<EntityFieldMap>
@@ -149,6 +151,11 @@ public class SqlBuilder {
     public List<List<String>> getInsertValuesList(){
         return this.insertValuesList;
     }
+    public List<String> getUpdateValueList(){
+        return this.updateValueList;
+    }
+
+
 
     private static List<EntityFieldMap> getInsertColumnList(EntityMap entityMap, MetaObject entityObj) {
         List<EntityFieldMap> columnList = new ArrayList<>();
@@ -181,14 +188,39 @@ public class SqlBuilder {
     }
 
 
-//    public static String getUpdateSql(Map<String, Object> map, EntityMap entityMap){
-//        MetaObject entityObject = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
-//
-//        List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
-//        List<String> insertValues = SqlBuilderUtil.getInsertValues(map, entityMap, entityObject);
-//
-//        return "INSERT INTO" + Sql.SPACE +
-//                entityMap.getName() + Sql.SPACE +
-//                "("+ getInsertColumnSymbolList(insertColumnList) +")" + Sql.SPACE + "VALUES (" +String.join(", ", insertValues)+")";
-//    }
+    public   void generateUpdateParts(Map<String, Object> map, EntityMap entityMap) {
+        MetaObject entityObject = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
+
+        List<String> valueList = new ArrayList<>();
+
+        String name;
+        Object value;
+        String updateDefault;
+
+        for (EntityFieldMap fieldMap : entityMap.getEntityFieldMapList()
+        ) {
+            //主键不参与更新
+            if(fieldMap.getIsId()) continue;;
+
+            name = fieldMap.getName();
+            value = entityObject.getValue(name);
+
+            if (value != null) {
+                map.put(name, value);
+                valueList.add(formatUpdateItem(fieldMap, name, ""));
+            }
+            else {
+                updateDefault = fieldMap.getUpdateDefault();
+                if (!updateDefault.isEmpty()) {
+                    map.put(name, updateDefault);
+                    valueList.add(formatUpdateItem(fieldMap, name, updateDefault));
+                }
+            }
+        }
+        this.updateValueList = valueList;
+    }
+
+    private String formatUpdateItem(EntityFieldMap fieldMap, String name, String value){
+        return fieldMap.getColumn() + "=" + getColumnValue(fieldMap, name, value);
+    }
 }

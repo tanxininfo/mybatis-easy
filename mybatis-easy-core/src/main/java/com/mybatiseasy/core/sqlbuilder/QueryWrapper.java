@@ -159,6 +159,14 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
+
+    public QueryWrapper insertInto(Column table) {
+        sqlStatement.statementType = SQLStatement.StatementType.INSERT;
+        sqlStatement.tables.add(table.getFullTable());
+        return this;
+    }
+
+
     /**
      * 插入的数据字段列表
      * @param columns 数据列
@@ -187,6 +195,16 @@ public class QueryWrapper implements Serializable {
      */
     public QueryWrapper valuesList(List<List<String>> valuesList) {
        sqlStatement.valuesList.addAll(valuesList);
+        return this;
+    }
+
+    /**
+     * 修改语句中的 set 项。
+     * @param values 如：key=value
+     * @return QueryWrapper
+     */
+    public QueryWrapper setValues(List<String> values) {
+        sqlStatement.sets.addAll(values);
         return this;
     }
 

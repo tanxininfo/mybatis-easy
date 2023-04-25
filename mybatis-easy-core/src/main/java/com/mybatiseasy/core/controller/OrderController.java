@@ -91,18 +91,14 @@ public class OrderController {
         }
 
         User user = new User();
-        user.setAge(10);
-        user.setName("李四");
-        user.setSex(Short.valueOf("1"));
-        user.setId(null);
-        userList.add(user);
-        long startTime = System.currentTimeMillis();
-        int affectedRows = userMapper.insertBatch(userList);
+        user.setAge(100);
+        user.setName("李四四");
+        user.setId(5L);
+
+        int affectedRows = userMapper.update(user);
 
 
-
-//        int affectedRows = userMapper.insert(user);
-//        log.info("{}, user={}", affectedRows, user);
+        log.info("{}, user={}", affectedRows, user);
 
 
 
