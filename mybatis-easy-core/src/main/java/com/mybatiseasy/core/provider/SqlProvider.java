@@ -1,10 +1,9 @@
 package com.mybatiseasy.core.provider;
 
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.json.JSONUtil;
 import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
+import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
@@ -75,24 +74,17 @@ public class SqlProvider {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
         MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
-        Assert.notNull(entityObj.getValue(entityMap.getPrimary().getName()), "请指定实体主键值");
+        ProviderKid.putIdValueToMap(map, entityMap, entityObj);
 
         SqlBuilder builder = new SqlBuilder();
         builder.generateUpdateParts(map, entityMap);
 
-        QueryWrapper wrapper = new QueryWrapper();
-        SqlUtil.initUpdateWrapper(wrapper, entityMap.getName());
-
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.UPDATE, entityMap);
         wrapper.setValues(builder.getUpdateValueList());
 
-        wrapper.where(getWhereId(entityMap));
+        wrapper.where(ProviderKid.getWhereId(entityMap));
 
         return wrapper.getSql();
-    }
-
-    private static String getWhereId(EntityMap entityMap){
-        return entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
-                "#{" + entityMap.getPrimary().getName() +"}";
     }
 
     /**
@@ -107,11 +99,10 @@ public class SqlProvider {
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         map.putAll(condition.getParameterMap());
 
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.UPDATE, entityMap);
+
         SqlBuilder builder = new SqlBuilder();
         builder.generateUpdateParts(map, entityMap);
-
-        QueryWrapper wrapper = new QueryWrapper();
-        SqlUtil.initUpdateWrapper(wrapper, entityMap.getName());
         wrapper.setValues(builder.getUpdateValueList());
 
         wrapper.where(condition);
@@ -131,12 +122,11 @@ public class SqlProvider {
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         map.putAll(condition.getParameterMap());
 
-        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
-        SqlUtil.initUpdateWrapper(wrapper, entityMap.getName());
+        QueryWrapper wrapperFromMap = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.UPDATE, entityMap, wrapperFromMap);
 
         SqlBuilder builder = new SqlBuilder();
         builder.generateUpdateParts(map, entityMap);
-
         wrapper.setValues(builder.getUpdateValueList());
 
         return wrapper.getSql();
@@ -153,10 +143,9 @@ public class SqlProvider {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
 
-        QueryWrapper wrapper = new QueryWrapper();
-        SqlUtil.initDeleteWrapper(wrapper, entityMap.getName());
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.DELETE, entityMap);
 
-        wrapper.where(getWhereId(entityMap));
+        wrapper.where(ProviderKid.getWhereId(entityMap));
 
 
         return wrapper.getSql();
@@ -174,8 +163,7 @@ public class SqlProvider {
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         map.putAll(condition.getParameterMap());
 
-        QueryWrapper wrapper = new QueryWrapper();
-        SqlUtil.initDeleteWrapper(wrapper, entityMap.getName());
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.DELETE, entityMap);
         wrapper.where(condition);
 
         return wrapper.getSql();
@@ -190,11 +178,11 @@ public class SqlProvider {
      */
     public static String deleteByWrapper(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
-        map.putAll(wrapper.getParameterMap());
+        QueryWrapper wrapperFromMap = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapperFromMap.getParameterMap());
 
-        SqlUtil.initDeleteWrapper(wrapper, entityMap.getName());
-         Assert.isTrue(!wrapper.hasWhere() && map.get("force")==null, "删除条件不得为空");
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.DELETE, entityMap, wrapperFromMap);
+        Assert.isTrue(!wrapper.hasWhere() && map.get("force")==null, "删除条件不得为空");
 
         return wrapper.getSql();
     }
@@ -210,15 +198,11 @@ public class SqlProvider {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
 
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.select("*");
-        wrapper.from(new Column(entityMap.getName()));
-
-        wrapper.where(getWhereId(entityMap));
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap);
+        wrapper.where(ProviderKid.getWhereId(entityMap));
 
         return wrapper.getSql();
     }
-
 
     /**
      * 根据组合条件查询一个实体
@@ -230,12 +214,9 @@ public class SqlProvider {
     public static String getByCondition(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
-
         map.putAll(condition.getParameterMap());
 
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.select("*");
-        wrapper.from(new Column(entityMap.getName()));
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap);
         wrapper.where(condition);
 
         return wrapper.getSql();
@@ -250,9 +231,10 @@ public class SqlProvider {
      */
     public static String getByWrapper(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
-        map.putAll(wrapper.getParameterMap());
-        SqlUtil.initSelectWrapper(wrapper, entityMap.getName());
+        QueryWrapper wrapperFromMap = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapperFromMap.getParameterMap());
+
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap, wrapperFromMap);
 
         return wrapper.getSql();
     }
@@ -269,9 +251,7 @@ public class SqlProvider {
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         map.putAll(condition.getParameterMap());
 
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.select("*");
-        wrapper.from(new Column(entityMap.getName()));
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap);
         wrapper.where(condition);
 
         return wrapper.getSql();
@@ -287,10 +267,10 @@ public class SqlProvider {
      */
     public static String listByWrapper(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
-        map.putAll(wrapper.getParameterMap());
+        QueryWrapper wrapperFromMap = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapperFromMap.getParameterMap());
 
-        SqlUtil.initSelectWrapper(wrapper, entityMap.getName());
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap, wrapperFromMap);
         return wrapper.getSql();
     }
 
@@ -306,9 +286,7 @@ public class SqlProvider {
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         map.putAll(condition.getParameterMap());
 
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.select("count(*)");
-        wrapper.from(new Column(entityMap.getName()));
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap);
         wrapper.where(condition);
 
         return wrapper.getSql();
@@ -323,10 +301,11 @@ public class SqlProvider {
      */
     public static String countByWrapper(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
-        map.putAll(wrapper.getParameterMap());
+        QueryWrapper wrapperFromMap = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapperFromMap.getParameterMap());
 
-        SqlUtil.initSelectWrapper(wrapper, entityMap.getName());
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.COUNT, entityMap, wrapperFromMap);
+
         return wrapper.getSql();
     }
 
@@ -339,10 +318,10 @@ public class SqlProvider {
      */
     public static String queryEasy(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
-        map.putAll(wrapper.getParameterMap());
+        QueryWrapper wrapperFromMap = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapperFromMap.getParameterMap());
 
-        SqlUtil.initSelectWrapper(wrapper, entityMap.getName());
+        QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap, wrapperFromMap);
 
         return wrapper.getSqlPaginate();
     }

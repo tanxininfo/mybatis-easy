@@ -124,21 +124,4 @@ public class SqlUtil {
         return addSymbol(str, "'", "'");
     }
 
-    public static QueryWrapper initSelectWrapper(QueryWrapper wrapper, String entityName) {
-        if (!wrapper.hasSelect()) wrapper.select("*");
-        if (!wrapper.hasTable()) wrapper.from(new Column(entityName));
-        return wrapper;
-    }
-
-
-    public static QueryWrapper initUpdateWrapper(QueryWrapper wrapper, String entityName) {
-        if (!wrapper.hasTable()) wrapper.update(entityName);
-        return wrapper;
-    }
-
-
-    public static QueryWrapper initDeleteWrapper(QueryWrapper wrapper, String entityName) {
-        if (!wrapper.hasTable()) wrapper.deleteFrom(new Column(entityName));
-        return wrapper;
-    }
 }

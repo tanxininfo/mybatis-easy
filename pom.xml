@@ -18,7 +18,7 @@
 	<name>mybatis-easy</name>
 	<description>mybatis-easy</description>
 	<properties>
-		<java.version>18</java.version>
+		<java.version>17</java.version>
 		<jackson-datatype-jsr310.version>2.13.0</jackson-datatype-jsr310.version>
 		<jaxb-api.version>2.3.0</jaxb-api.version>
 		<jaxb-impl.version>2.3.0</jaxb-impl.version>

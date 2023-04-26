@@ -39,6 +39,6 @@ public class Page implements Serializable {
         this.setCurrent(current);
         this.setTotal(total);
         this.setSize(size);
-        this.setPages( Math.ceilDiv(this.getTotal(), this.getSize()));
+        this.setPages((long) Math.ceil(this.getTotal() * 1.0/this.getSize()));
     }
 }
