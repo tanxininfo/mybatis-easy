@@ -29,6 +29,7 @@ public class Utils {
         return sb.toString();
     }
 
+
     /**
      * 首字母小写
      * @param str 输入字符串
@@ -37,5 +38,16 @@ public class Utils {
     public static String uncapitalize(String str){
         if(isEmpty(str)) return str;
         return str.substring(0, 1).toLowerCase() + str.substring(1);
+    }
+
+
+    /**
+     * 首字母小写
+     * @param str 输入字符串
+     * @return 如: myMoney
+     */
+    public static String capitalize(String str){
+        if(isEmpty(str)) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
