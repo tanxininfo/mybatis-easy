@@ -36,7 +36,7 @@ spring:
     time-zone: GMT+8
     property-naming-strategy: SNAKE_CASE
   thymeleaf:
-    mode: HTML5
+    mode: HTML
     encoding: UTF-8
     prefix: classpath:/templates
 

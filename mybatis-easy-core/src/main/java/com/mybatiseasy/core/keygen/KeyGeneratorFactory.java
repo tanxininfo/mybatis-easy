@@ -1,6 +1,6 @@
 package com.mybatiseasy.core.keygen;
 
-import com.mybatiseasy.core.keygen.IKeyGenerator;
+import com.mybatiseasy.keygen.IKeyGenerator;
 import org.apache.ibatis.type.TypeException;
 
 import java.lang.reflect.Constructor;

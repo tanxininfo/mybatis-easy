@@ -1,9 +1,8 @@
 package com.mybatiseasy.core.session;
 
-import com.mybatiseasy.core.annotations.Table;
-import com.mybatiseasy.core.annotations.TableField;
-import com.mybatiseasy.core.annotations.TableId;
-import com.mybatiseasy.core.utils.SqlUtil;
+import com.mybatiseasy.annotation.Table;
+import com.mybatiseasy.annotation.TableField;
+import com.mybatiseasy.annotation.TableId;
 import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;

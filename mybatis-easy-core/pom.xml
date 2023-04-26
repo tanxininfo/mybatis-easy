@@ -22,6 +22,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.mybatis-easy</groupId>
+            <artifactId>mybatis-easy-annotation</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybatis-easy</groupId>
+            <artifactId>mybatis-easy-apt</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>6.0.6</version>

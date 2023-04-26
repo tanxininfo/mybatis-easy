@@ -1,4 +1,4 @@
-package com.mybatiseasy.core.annotations;
+package com.mybatiseasy.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 

@@ -1,14 +1,12 @@
 package com.mybatiseasy.core.session;
 
-import com.mybatiseasy.core.annotations.Table;
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
-import com.mybatiseasy.core.enums.TableIdType;
+import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.keygen.CustomKeyGenerator;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -22,7 +20,6 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static com.mybatiseasy.core.utils.TypeUtil.ArrayToDelimitedString;
 

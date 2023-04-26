@@ -1,7 +1,5 @@
 package com.mybatiseasy.core.utils;
 
-import com.mybatiseasy.core.keygen.IKeyGenerator;
-
 /**
  * 雪花算法
  *

@@ -1,7 +1,7 @@
 package com.mybatiseasy.core.session;
 
-import com.mybatiseasy.core.keygen.IKeyGenerator;
-import com.mybatiseasy.core.enums.TableIdType;
+import com.mybatiseasy.keygen.IKeyGenerator;
+import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;

@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="mybatis-easy-core" />
+        <module name="mybatis-easy-annotation" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="17" />
@@ -15,6 +16,8 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="mybatis-easy" options="-parameters" />
+      <module name="mybatis-easy-annotation" options="-parameters" />
+      <module name="mybatis-easy-apt" options="-parameters" />
       <module name="mybatis-easy-core" options="-parameters" />
     </option>
   </component>

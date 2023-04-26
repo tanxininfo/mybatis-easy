@@ -15,6 +15,7 @@
  */
 package com.mybatiseasy.core.keygen;
 
+import com.mybatiseasy.keygen.IKeyGenerator;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.mapping.MappedStatement;

@@ -1,9 +1,8 @@
-package com.mybatiseasy.core.annotations;
+package com.mybatiseasy.annotation;
 
-import com.mybatiseasy.core.keygen.IKeyGenerator;
-import com.mybatiseasy.core.enums.TableIdType;
-import com.mybatiseasy.core.keygen.NoKeyGenerator;
-import org.springframework.core.annotation.AliasFor;
+import com.mybatiseasy.emums.TableIdType;
+import com.mybatiseasy.keygen.IKeyGenerator;
+import com.mybatiseasy.keygen.NoKeyGenerator;
 
 import java.lang.annotation.*;
 

@@ -3,14 +3,12 @@ package com.mybatiseasy.core.entity;
 
 import java.time.LocalDateTime;
 
-import com.mybatiseasy.core.annotations.Table;
-import com.mybatiseasy.core.annotations.TableField;
-import com.mybatiseasy.core.annotations.TableId;
-import com.mybatiseasy.core.base.BaseEntity;
-import com.mybatiseasy.core.enums.TableIdType;
+import com.mybatiseasy.annotation.Table;
+import com.mybatiseasy.annotation.TableField;
+import com.mybatiseasy.annotation.TableId;
+import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.temp.GoodsPriceTypeHandler;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -21,9 +19,8 @@ import lombok.experimental.Accessors;
  * @since 2022-08-21
  */
 @Data
-@Accessors(chain = true)
 @Table("order")
-public class Order extends BaseEntity<Order> {
+public class Order{
 
     @TableId( idType = TableIdType.AUTO)
     private Long id;
