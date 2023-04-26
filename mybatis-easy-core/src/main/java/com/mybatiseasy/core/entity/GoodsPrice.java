@@ -1,6 +1,7 @@
 package com.mybatiseasy.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mybatiseasy.annotation.Table;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -9,16 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-    /**
-     * <p>
-     *
-     * </p>
-     *
-     * @author dudley
-     * @since 2022-07-18
-     */
     @Data
     @Accessors(chain = true)
+    @Table
     public class GoodsPrice implements Serializable {
 
         private Long id;

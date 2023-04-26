@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mybatiseasy.core.enums;
+package com.mybatiseasy.emums;
 
 import lombok.Getter;
 

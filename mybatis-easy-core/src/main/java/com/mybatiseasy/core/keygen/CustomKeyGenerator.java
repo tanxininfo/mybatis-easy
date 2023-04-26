@@ -3,20 +3,19 @@ package com.mybatiseasy.core.keygen;
 import java.sql.Statement;
 import java.util.*;
 
+import com.mybatiseasy.keygen.IKeyGenerator;
 import com.mybatiseasy.core.consts.MethodParam;
-import com.mybatiseasy.core.enums.TableIdType;
+import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.utils.CollectionUtil;
 import com.mybatiseasy.core.utils.ObjectUtil;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.RowBounds;
 
 /**
  * 自定义前置生成主键

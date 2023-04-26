@@ -1,4 +1,4 @@
-package com.mybatiseasy.core.annotations;
+package com.mybatiseasy.annotation;
 
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;

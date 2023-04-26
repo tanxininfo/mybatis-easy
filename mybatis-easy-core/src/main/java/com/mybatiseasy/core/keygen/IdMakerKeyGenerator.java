@@ -1,5 +1,6 @@
 package com.mybatiseasy.core.keygen;
 
+import com.mybatiseasy.keygen.IKeyGenerator;
 import com.mybatiseasy.core.utils.IdMakerUtil;
 
 /**

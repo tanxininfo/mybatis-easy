@@ -2,10 +2,7 @@ package com.mybatiseasy.core.controller;
 
 import com.mybatiseasy.core.entity.User;
 import com.mybatiseasy.core.mapper.UserMapper;
-import com.mybatiseasy.core.paginate.PageList;
-import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.table._USER;
-import com.mybatiseasy.core.utils.SnowFlakeIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,15 +87,15 @@ public class OrderController {
 
         }
 
-        User user = new User();
-        user.setAge(100);
-        user.setName("李四四");
-        user.setId(5L);
-
-        int affectedRows = userMapper.update(user);
-
-
-        log.info("{}, user={}", affectedRows, user);
+//        User user = new User();
+//        user.setAge(100);
+//        user.setName("李四四");
+//        user.setId(5L);
+//
+//        int affectedRows = userMapper.update(user);
+//
+//
+//        log.info("{}, user={}", affectedRows, user);
 
 
 
