@@ -1,51 +1,33 @@
-package ${config.package};
+package com.mybatiseasy.core.tables;
 
-import lombok.Data;
+import com.mybatiseasy.core.cols.${colClassName};
+import com.mybatiseasy.core.base.Table;
 
-<#list importPackages as pkg>
-import ${pkg};
-</#list>
-
-<#function snakeToCamel(s)>
-    <#return s
-    ?replace('(^_+)|(_+$)', '', 'r')
-    ?replace('\\_+(\\w)?', ' $1', 'r')
-    ?replace('([A-Z])', ' $1', 'r')
-    ?capitalize
-    ?replace(' ' , '')
-    ?uncap_first
-    >
-</#function>
-<#function camelToSnake(s)>
-    <#return s
-    <#-- "fooBar" to "foo_bar": -->
-    ?replace('([a-z])([A-Z])', '$1_$2', 'r')
-    <#-- "FOOBar" to "FOO_Bar": -->
-    ?replace('([A-Z])([A-Z][a-z])', '$1_$2', 'r')
-    <#-- All of those to "FOO_BAR": -->
-    ?upper_case
-    >
-</#function>
-/**
- * <p>
- * ${tableInfo.comment}
- * </p>
- *
- * @author ${config.author}
- * @since ${config.commentDate}
- */
-@Data
-public class ${name?cap_first}Dto {
-
+public class ${tableClassName} extends Table {
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list columnList as column>
-    <#if column.comment!?length gt 0>
-    /**
-    * ${column.comment}
-    */
-    </#if>
-    private ${snakeToCamel(column.dataType)?cap_first} ${column.name};
+    public static ${colClassName} ${column.capitalName}() {
+        return new ${colClassName}().${column.capitalName}();
+    }
 
 </#list>
 <#------------  END 字段循环遍历  ---------->
+
+
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list columnList as column>
+    public static ${colClassName} ${column.capitalName}(String alias) {
+        return new ${colClassName}().${column.capitalName}(alias);
+    }
+
+</#list>
+<#------------  END 字段循环遍历  ---------->
+
+    public static ${colClassName} as(String tableAlias) {
+        return new ${colClassName}("`${tableName}`", tableAlias);
+    }
+
+    public static ${colClassName} nm() {
+        return new ${colClassName}("`${tableName}`", "");
+    }
 }

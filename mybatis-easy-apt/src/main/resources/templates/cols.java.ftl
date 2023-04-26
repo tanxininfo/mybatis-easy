@@ -2,131 +2,102 @@ package com.mybatiseasy.core.cols;
 
 import com.mybatiseasy.core.base.Column;
 
-public class UserColumn extends Column {
+public class ${colClassName} extends Column {
 
-    public UserColumn(){
+    public ${colClassName}(){
 
     }
 
-    public UserColumn(String table) {
+    public ${colClassName}(String table) {
         super(table);
     }
 
-    public UserColumn(String table, String tableAlias) {
+    public ${colClassName}(String table, String tableAlias) {
         super(table, tableAlias);
     }
 
-    public UserColumn ID() {
-        addColumn("`id`");
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list columnList as column>
+    public ${colClassName} ${column.capitalName}() {
+        addColumn("`${column.column}`");
         return this;
     }
 
-    public UserColumn NAME() {
-        addColumn("`name`");
+</#list>
+<#------------  END 字段循环遍历  ---------->
+
+
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list columnList as column>
+    public ${colClassName} ${column.capitalName}(String alias) {
+        addColumn("`${column.column}`", alias);
         return this;
     }
 
-    public UserColumn AGE() {
-        addColumn("`age`");
-        return this;
-    }
-
-    public UserColumn SEX() {
-        addColumn("`sex`");
-        return this;
-    }
-
-    public UserColumn PARENT_ID() {
-        addColumn("`parent_id`");
-        return this;
-    }
+</#list>
+<#------------  END 字段循环遍历  ---------->
 
 
-    public UserColumn ID(String alias) {
-        addColumn("`id`", alias);
-        return this;
-    }
-
-    public UserColumn NAME(String alias) {
-        addColumn("`name`", alias);
-        return this;
-    }
-
-    public UserColumn AGE(String alias) {
-        addColumn("`age`", alias);
-        return this;
-    }
-
-    public UserColumn SEX(String alias) {
-        addColumn("`sex`", alias);
-        return this;
-    }
-
-    public UserColumn PARENT_ID(String alias) {
-        addColumn("`parent_id`", alias);
-        return this;
-    }
-
-    public UserColumn as(String columnAlias) {
+    public ${colClassName} as(String columnAlias) {
         super.columnAlias(columnAlias);
         return this;
     }
 
-    public UserColumn avg(String columnAlias) {
+    public ${colClassName} avg(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("AVG");
         return this;
     }
 
-    public UserColumn max(String columnAlias) {
+    public ${colClassName} max(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("MAX");
         return this;
     }
 
-    public UserColumn min(String columnAlias) {
+    public ${colClassName} min(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("MIN");
         return this;
     }
 
-    public UserColumn sum(String columnAlias) {
+    public ${colClassName} sum(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("SUM");
         return this;
     }
 
-    public UserColumn count(String columnAlias) {
+    public ${colClassName} count(String columnAlias) {
         super.setMethod("COUNT");
         super.columnAlias(columnAlias);
         return this;
     }
 
-    public UserColumn avg() {
+    public ${colClassName} avg() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("AVG");
         return this;
     }
 
-    public UserColumn max() {
+    public ${colClassName} max() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("MAX");
         return this;
     }
 
-    public UserColumn min() {
+    public ${colClassName} min() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("MIN");
         return this;
     }
 
-    public UserColumn sum() {
+    public ${colClassName} sum() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("SUM");
         return this;
     }
 
-    public UserColumn count() {
+    public ${colClassName} count() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("COUNT");
         return this;
