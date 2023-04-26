@@ -1,9 +1,12 @@
 package com.mybatiseasy.core.provider;
 
+import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
+import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
+import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.utils.MetaObjectUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -223,4 +226,5 @@ public class SqlBuilder {
     private String formatUpdateItem(EntityFieldMap fieldMap, String name, String value){
         return fieldMap.getColumn() + "=" + getColumnValue(fieldMap, name, value);
     }
+
 }

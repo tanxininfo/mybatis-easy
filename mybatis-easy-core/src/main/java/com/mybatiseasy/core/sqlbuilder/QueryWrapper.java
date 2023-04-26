@@ -2,6 +2,7 @@ package com.mybatiseasy.core.sqlbuilder;
 
 import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.Sql;
+import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.AbstractSQL;
@@ -95,7 +96,7 @@ public class QueryWrapper implements Serializable {
      * @return QueryWrapper
      */
     public QueryWrapper select(Object ...columns) {
-        sqlStatement.statementType = SQLStatement.StatementType.SELECT;
+        sqlStatement.statementType = StatementType.SELECT;
         String columnName = "";
         for (Object column : columns
         ) {
@@ -116,7 +117,7 @@ public class QueryWrapper implements Serializable {
      * @return QueryWrapper
      */
     public QueryWrapper deleteFrom(Column table) {
-        sqlStatement.statementType = SQLStatement.StatementType.DELETE;
+        sqlStatement.statementType = StatementType.DELETE;
 
         sqlStatement.tableList.add(table);
         sqlStatement.tables.add(table.getFullTable());
@@ -154,14 +155,14 @@ public class QueryWrapper implements Serializable {
     }
 
     public QueryWrapper insertInto(String tableName) {
-        sqlStatement.statementType = SQLStatement.StatementType.INSERT;
+        sqlStatement.statementType = StatementType.INSERT;
         sqlStatement.tables.add(tableName);
         return this;
     }
 
 
     public QueryWrapper insertInto(Column table) {
-        sqlStatement.statementType = SQLStatement.StatementType.INSERT;
+        sqlStatement.statementType = StatementType.INSERT;
         sqlStatement.tables.add(table.getFullTable());
         return this;
     }
@@ -209,11 +210,17 @@ public class QueryWrapper implements Serializable {
     }
 
     public QueryWrapper update(String table) {
-        sqlStatement.statementType = SQLStatement.StatementType.UPDATE;
+        sqlStatement.statementType = StatementType.UPDATE;
         sqlStatement.tables.add(table);
         return this;
     }
 
+
+    public QueryWrapper update(Column table) {
+        sqlStatement.statementType = StatementType.UPDATE;
+        sqlStatement.tables.add(table.getFullTable());
+        return this;
+    }
 
     public QueryWrapper set(String... sets) {
         sqlStatement.sets.addAll(Arrays.asList(sets));
@@ -278,19 +285,7 @@ public class QueryWrapper implements Serializable {
     }
     private static class SQLStatement {
 
-        public enum StatementType {
-
-            DELETE,
-
-            INSERT,
-
-            SELECT,
-
-            UPDATE
-
-        }
-
-        SQLStatement.StatementType statementType;
+        StatementType statementType;
         List<String> sets = new ArrayList<>();
         List<String> select = new ArrayList<>();
         List<String> tables = new ArrayList<>();
@@ -441,7 +436,7 @@ public class QueryWrapper implements Serializable {
             return switch (statementType) {
                 case DELETE -> deleteSQL(builder);
                 case INSERT -> insertSQL(builder);
-                case SELECT -> selectSQL(builder);
+                case SELECT, COUNT -> selectSQL(builder);
                 case UPDATE -> updateSQL(builder);
             };
         }
