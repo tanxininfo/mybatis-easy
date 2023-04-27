@@ -3,9 +3,7 @@ package com.mybatiseasy.generator;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
+import java.sql.*;
 
 @Slf4j
 public class Entry {
@@ -20,7 +18,9 @@ public class Entry {
 
 
             Statement statement = connection.createStatement();
-            statement.execute("select * from user");
+            ResultSet rs = statement.executeQuery("select * from user");
+            ResultSetMetaData metaData = rs.getMetaData();
+           log.info("1");
 
         }catch (Exception ex){
             log.error("出错啦" + ex.getMessage());
