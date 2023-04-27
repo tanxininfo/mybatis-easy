@@ -180,6 +180,7 @@ public class SqlBuilder {
         return columnList;
     }
 
+    @SuppressWarnings("unchecked")
     public  void generateInsertBatchParts(Map<String, Object> map, EntityMap entityMap){
         List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
         Assert.notEmpty(entityList, "实体不得为空");

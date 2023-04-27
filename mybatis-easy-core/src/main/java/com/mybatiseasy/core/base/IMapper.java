@@ -11,6 +11,7 @@ import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -154,14 +155,24 @@ public interface IMapper<T> {
      * @param current 当前页
      * @return PageList<T>
      */
+    @SuppressWarnings("unchecked")
     default PageList<T> paginate(QueryWrapper queryWrapper, int size, int current) {
         long offset = (long)size * (current - 1);
         if(offset < 0) offset = 0L;
 
-        List<Object> objList = queryEasy(queryWrapper.limit(offset, (long)size));
+        List<T> list = new ArrayList<>();
+        List<Total> totalList = new ArrayList<>();
 
-        List<T> list = (List<T>) objList.get(0);
-        long total = ((List<Total>) objList.get(1)).get(0).getTotal();
+
+        List<Object> objList = queryEasy(queryWrapper.limit(offset, (long)size));
+        if(objList.get(0) instanceof List<?>){
+            list = (List<T>) objList.get(0);
+        }
+        if(objList.get(1) instanceof List<?>){
+            totalList = (List<Total>) objList.get(1);
+        }
+
+        long total =totalList.get(0).getTotal();
         Page page = new Page(total, size, current);
 
         return new PageList<>(list, page);

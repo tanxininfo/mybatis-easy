@@ -73,6 +73,7 @@ public class ObjectUtil {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> List<T> objectToList(Object obj, Class<T> tClass){
         List<T> list = new ArrayList<T>();
         if (obj instanceof ArrayList<?>) {
