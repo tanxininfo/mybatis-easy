@@ -7,6 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MybatisEasyGeneratorApplication {
 
     public static void main(String[] args) {
+
+        Entry entry = new Entry();
+        entry.datasource();
+
         SpringApplication.run(MybatisEasyGeneratorApplication.class, args);
     }
 
