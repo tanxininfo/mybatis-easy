@@ -35,54 +35,6 @@ public class EntityMap {
   private EntityMap() {
   }
 
-  public static class Builder {
-    private final EntityMap entityMap = new EntityMap();
-
-    public Builder(String name, String desc, List<EntityFieldMap>  entityFieldMapList) {
-      entityMap.name = name;
-      entityMap.desc = desc;
-      entityMap.entityFieldMapList = entityFieldMapList;
-    }
-
-
-    public Builder(String name, String desc) {
-      this(name, desc, new ArrayList<>());
-    }
-
-    public Builder(String name, List<EntityFieldMap>  entityFieldMapList) {
-      this(name, "", entityFieldMapList);
-    }
-
-    public Builder name(String name) {
-      entityMap.name = name;
-      return this;
-    }
-    public Builder desc(String desc) {
-      entityMap.desc = desc;
-      return this;
-    }
-    public Builder schema(String schema) {
-      entityMap.schema = schema;
-      return this;
-    }
-
-    public Builder primary(EntityFieldMap primary) {
-      entityMap.primary = primary;
-      return this;
-    }
- 
-
-    public Builder entityFieldMapList(List<EntityFieldMap> entityFieldMapList) {
-      entityMap.entityFieldMapList = entityFieldMapList;
-      return this;
-    }
-
-    public EntityMap build() {
-      entityMap.name = SqlUtil.addBackquote(entityMap.name);
-      return entityMap;
-    }
-  }
-
   public String getName() {
     return name;
   }
@@ -134,5 +86,55 @@ public class EntityMap {
     sb.append('}');
     return sb.toString();
   }
+
+
+  public static class Builder {
+    private final EntityMap entityMap = new EntityMap();
+
+    public Builder(String name, String desc, List<EntityFieldMap>  entityFieldMapList) {
+      entityMap.name = name;
+      entityMap.desc = desc;
+      entityMap.entityFieldMapList = entityFieldMapList;
+    }
+
+
+    public Builder(String name, String desc) {
+      this(name, desc, new ArrayList<>());
+    }
+
+    public Builder(String name, List<EntityFieldMap>  entityFieldMapList) {
+      this(name, "", entityFieldMapList);
+    }
+
+    public Builder name(String name) {
+      entityMap.name = name;
+      return this;
+    }
+    public Builder desc(String desc) {
+      entityMap.desc = desc;
+      return this;
+    }
+    public Builder schema(String schema) {
+      entityMap.schema = schema;
+      return this;
+    }
+
+    public Builder primary(EntityFieldMap primary) {
+      entityMap.primary = primary;
+      return this;
+    }
+
+
+    public Builder entityFieldMapList(List<EntityFieldMap> entityFieldMapList) {
+      entityMap.entityFieldMapList = entityFieldMapList;
+      return this;
+    }
+
+    public EntityMap build() {
+      entityMap.name = SqlUtil.addBackquote(entityMap.name);
+      return entityMap;
+    }
+  }
+
 
 }
