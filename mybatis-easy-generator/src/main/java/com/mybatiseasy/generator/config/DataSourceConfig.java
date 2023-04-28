@@ -1,6 +1,7 @@
 package com.mybatiseasy.generator.config;
 
 
+import com.mybatiseasy.generator.utils.Utils;
 import org.springframework.util.Assert;
 
 public class DataSourceConfig {
@@ -9,22 +10,34 @@ public class DataSourceConfig {
     private String username;
     private String password;
 
+    private String schema;
+
     public String getUrl(){ return url;}
     public String getUsername(){ return username;}
     public String getPassword(){ return password;}
+
+    public String getSchema() {
+        return schema;
+    }
 
     public static class Builder{
 
         private final DataSourceConfig config = new DataSourceConfig();
 
         public Builder(String url, String username, String password){
-            config.url = url;
+            this.url(url);
             config.username = username;
             config.password = password;
         }
 
         public Builder url(String url){
             config.url = url;
+            if(Utils.isNotEmpty(url)) {
+                String[] strArr = url.split("/");
+                strArr = strArr[strArr.length - 1].split("\\?");
+                String schema = strArr[0];
+                schema(schema);
+            }
             return this;
         }
 
@@ -35,6 +48,12 @@ public class DataSourceConfig {
 
         public Builder password(String password){
             config.password = password;
+            return this;
+        }
+
+
+        public Builder schema(String schema){
+            config.schema = schema;
             return this;
         }
 

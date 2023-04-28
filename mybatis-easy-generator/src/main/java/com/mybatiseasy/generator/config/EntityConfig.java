@@ -1,6 +1,8 @@
 package com.mybatiseasy.generator.config;
 
+import com.mybatiseasy.generator.utils.Utils;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 public class EntityConfig {
 
@@ -10,6 +12,10 @@ public class EntityConfig {
     private Class<?> supperClass;
 
     private String suffix;
+    /**
+     * 包名
+     */
+    private String packageName;
 
     private String supperClassFull;
 
@@ -31,6 +37,14 @@ public class EntityConfig {
      * 逻辑删除实体属性名称
      */
     private String logicDeleteName;
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
 
     public Class<?> getSupperClass() {
         return supperClass;
@@ -60,8 +74,9 @@ public class EntityConfig {
 
         private final EntityConfig config = new EntityConfig();
 
-        public Builder(boolean override){
-            config.override = override;
+        public Builder(String packageName, String suffix){
+            config.packageName = packageName;
+            config.suffix = suffix;
         }
 
         public Builder supperClass(Class<?> supperClass) {
@@ -96,9 +111,8 @@ public class EntityConfig {
             return this;
         }
         public EntityConfig build(){
-            Assert.hasLength(config.url, "url不得为空");
-            Assert.hasLength(config.username, "username不得为空");
-            Assert.hasLength(config.password, "password不得为空");
+            if(Utils.isEmpty(config.suffix)) config.suffix = "Entity";
+            if(Utils.isEmpty(config.packageName)) config.packageName = "entity";
             return this.config;
         }
     }
