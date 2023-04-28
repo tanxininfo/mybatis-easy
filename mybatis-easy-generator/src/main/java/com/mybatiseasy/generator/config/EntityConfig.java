@@ -8,6 +8,9 @@ public class EntityConfig {
      * 设置父类
      */
     private Class<?> supperClass;
+
+    private String suffix;
+
     private String supperClassFull;
 
     /**
@@ -19,45 +22,79 @@ public class EntityConfig {
      * 是否启用lombok
      */
     private boolean enableLombok;
+
     /**
      * 逻辑删除数据库字段
      */
-    private boolean logicDeleteColumn;
+    private String logicDeleteColumn;
     /**
      * 逻辑删除实体属性名称
      */
-    private boolean logicDeleteName;
-    private String password;
+    private String logicDeleteName;
 
-    public String getUrl(){ return url;}
-    public String getUsername(){ return username;}
-    public String getPassword(){ return password;}
+    public Class<?> getSupperClass() {
+        return supperClass;
+    }
+
+    public String getSupperClassFull() {
+        return supperClassFull;
+    }
+
+    public boolean isOverride() {
+        return override;
+    }
+
+    public boolean isEnableLombok() {
+        return enableLombok;
+    }
+
+    public String getLogicDeleteColumn() {
+        return logicDeleteColumn;
+    }
+
+    public String getLogicDeleteName() {
+        return logicDeleteName;
+    }
 
     public static class Builder{
 
         private final EntityConfig config = new EntityConfig();
 
-        public Builder(String url, String username, String password){
-            config.url = url;
-            config.username = username;
-            config.password = password;
+        public Builder(boolean override){
+            config.override = override;
         }
 
-        public Builder url(String url){
-            config.url = url;
+        public Builder supperClass(Class<?> supperClass) {
+            config.supperClass = supperClass;
+            if (supperClass != null)
+                config.supperClassFull = supperClass.getTypeName();
             return this;
         }
 
-        public Builder username(String username){
-            config.username = username;
+        public Builder supperClass(String supperClass){
+            config.supperClassFull = supperClass;
             return this;
         }
 
-        public Builder password(String password){
-            config.password = password  `   `   ``  `   `;
+        public Builder override(boolean override){
+            config.override = override;
             return this;
         }
 
+        public Builder enableLombok(boolean enableLombok){
+            config.enableLombok = enableLombok;
+            return this;
+        }
+
+
+        public Builder logicDeleteColumn(String logicDeleteColumn){
+            config.logicDeleteColumn = logicDeleteColumn;
+            return this;
+        }
+        public Builder logicDeleteName(String logicDeleteName){
+            config.logicDeleteName = logicDeleteName;
+            return this;
+        }
         public EntityConfig build(){
             Assert.hasLength(config.url, "url不得为空");
             Assert.hasLength(config.username, "username不得为空");
