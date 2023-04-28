@@ -1,7 +1,9 @@
 package com.mybatiseasy.generator.config;
 
+import com.mybatiseasy.generator.utils.Utils;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -11,6 +13,10 @@ public class GlobalConfig {
      * 输出目录的总目录
      */
     private String baseDir;
+    /**
+     * 父包名
+     */
+    private String packageName;
     /**
      * 作者名
      */
@@ -32,6 +38,10 @@ public class GlobalConfig {
 
     public String getBaseDir(){return this.baseDir;}
 
+    public String getPackageName() {
+        return packageName;
+    }
+
     public String getAuthor(){return this.author;}
     public String getCommentDate(){return this.commentDate;}
     public List<String> getTableLikeList(){return this.tableLikeList;}
@@ -41,8 +51,9 @@ public class GlobalConfig {
     public static class Builder{
 
         private final GlobalConfig config = new GlobalConfig();
-        public Builder(String baseDir){
+        public Builder(String baseDir, String packageName){
             config.baseDir = baseDir;
+            config.packageName = packageName;
         }
 
         public Builder baseDir(String baseDir){
@@ -51,6 +62,7 @@ public class GlobalConfig {
         }
 
         public Builder templateType(TemplateType ...templateTypes) {
+            if(config.templateTypeList == null ) config.templateTypeList = new ArrayList<>();
             for (TemplateType templateType : templateTypes
             ) {
                 if (!config.templateTypeList.contains(templateType)) config.templateTypeList.add(templateType);
@@ -59,6 +71,10 @@ public class GlobalConfig {
             return this;
         }
 
+        public Builder packageName(String packageName) {
+            config.packageName = packageName;
+            return this;
+        }
         public Builder addTableLike(String like) {
             if (!config.tableLikeList.contains(like)) config.tableLikeList.add(like);
             return this;
@@ -69,6 +85,7 @@ public class GlobalConfig {
             return this;
         }
         public GlobalConfig build(){
+            if(Utils.isEmpty(config.packageName)) packageName("com.mybatiseasy");
             if(config.getTemplateTypeList()==null) templateType(TemplateType.ALL);
             return this.config;
         }

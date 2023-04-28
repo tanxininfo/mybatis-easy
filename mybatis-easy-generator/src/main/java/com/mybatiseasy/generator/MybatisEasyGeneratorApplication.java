@@ -1,9 +1,15 @@
 package com.mybatiseasy.generator;
 
 import com.mybatiseasy.generator.config.DataSourceConfig;
+import com.mybatiseasy.generator.config.EntityConfig;
 import com.mybatiseasy.generator.config.GlobalConfig;
+import com.mybatiseasy.generator.config.TemplateType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 @SpringBootApplication
 public class MybatisEasyGeneratorApplication {
@@ -19,18 +25,21 @@ public class MybatisEasyGeneratorApplication {
         String baseDir = "D:/temp";
 
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(url, username, password).build();
-        GlobalConfig globalConfig = new GlobalConfig.Builder(baseDir).build();
-        En entityConfig = new GlobalConfig.Builder(baseDir).build();
+        GlobalConfig globalConfig = new GlobalConfig.Builder("com.mybatiseasy", baseDir)
+                .templateType(TemplateType.ALL)
+                .build();
 
-        Generator generator = new Generator()
+        EntityConfig entityConfig = new EntityConfig.Builder("entity", "Entity").build();
+
+        new Generator()
                 .dataSourceConfig(dataSourceConfig)
                 .globalConfig(globalConfig)
                 .entityConfig(entityConfig)
-                .mapperConfig(mapperConfig)
-                .controllerConfig(controllerConfig)
-                .dtoConfig(dtoConfig)
-                .serviceConfig(serviceConfig)
-                .serviceImplConfig(serviceImplConfig)
+//                .mapperConfig(mapperConfig)
+//                .controllerConfig(controllerConfig)
+//                .dtoConfig(dtoConfig)
+//                .serviceConfig(serviceConfig)
+//                .serviceImplConfig(serviceImplConfig)
                 .generate();
 
         SpringApplication.run(MybatisEasyGeneratorApplication.class, args);
