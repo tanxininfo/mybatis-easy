@@ -1,5 +1,8 @@
 package com.mybatiseasy.generator.pojo;
 
+import com.mybatiseasy.emums.TableIdType;
+import com.mybatiseasy.keygen.IKeyGenerator;
+
 import java.util.List;
 
 /**
@@ -16,9 +19,23 @@ public class TableInfo {
 
     private String name;
 
+    private String tableName;
+
     private String comment;
 
-    private List<ColumnInfo> columnInfoList;
+    private List<ColumnInfo> columns;
+
+    private String pri;
+
+    private Class<? extends IKeyGenerator> keyGenerator;
+
+    public String getPri() {
+        return pri;
+    }
+
+    public Class<? extends IKeyGenerator> getKeyGenerator() {
+        return keyGenerator;
+    }
 
     public String getSchema() {
         return schema;
@@ -28,12 +45,16 @@ public class TableInfo {
         return name;
     }
 
+    public String getTableName() {
+        return tableName;
+    }
+
     public String getComment() {
         return comment;
     }
 
-    public List<ColumnInfo> getColumnInfoList() {
-        return columnInfoList;
+    public List<ColumnInfo> getColumns() {
+        return columns;
     }
 
     public TableInfo setComment(String comment) {
@@ -46,12 +67,26 @@ public class TableInfo {
         return this;
     }
 
+
+
     public TableInfo setSchema(String schema) {
         this.schema = schema;
         return this;
     }
 
-    public void setColumnInfoList(List<ColumnInfo> columnInfoList) {
-        this.columnInfoList = columnInfoList;
+    public void setColumns(List<ColumnInfo> columns) {
+        this.columns = columns;
+    }
+
+    public void setPri(String pri) {
+        this.pri = pri;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public void setKeyGenerator(Class<? extends IKeyGenerator> keyGenerator) {
+        this.keyGenerator = keyGenerator;
     }
 }

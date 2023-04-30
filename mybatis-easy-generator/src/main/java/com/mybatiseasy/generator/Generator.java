@@ -1,17 +1,24 @@
 package com.mybatiseasy.generator;
 
 import com.google.protobuf.Enum;
+import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.generator.config.*;
-import com.mybatiseasy.generator.pojo.ColumnInfo;
-import com.mybatiseasy.generator.pojo.MysqlDataType;
-import com.mybatiseasy.generator.pojo.TableInfo;
+import com.mybatiseasy.generator.pojo.*;
+import com.mybatiseasy.generator.template.FreemarkerTemplate;
+import com.mybatiseasy.generator.template.ITemplate;
+import com.mybatiseasy.generator.utils.TypeConvert;
+import com.mybatiseasy.generator.utils.Utils;
+import com.mybatiseasy.keygen.IKeyGenerator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
+import javax.crypto.KeyGenerator;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class Generator {
@@ -24,9 +31,18 @@ public class Generator {
     private DtoConfig dtoConfig;
     private ControllerConfig controllerConfig;
 
+    private ITemplate templateEngine;
+
+    private final Map<String, Class<? extends IKeyGenerator>> keyGeneratorMap = new HashMap<>();
+
+
     public Generator dataSourceConfig(DataSourceConfig dataSourceConfig){
          this.dataSourceConfig = dataSourceConfig;
         return this;
+    }
+
+    public void templateEngine(ITemplate templateEngine) {
+        this.templateEngine = templateEngine;
     }
 
     public Generator globalConfig(GlobalConfig globalConfig){
@@ -72,8 +88,51 @@ public class Generator {
         return null;
     }
 
-    public void generate(){
+    public void generate() {
         List<TableInfo> tableInfoList = getTableList();
+        this.initConfig();
+        this.templateEngine.init(globalConfig,
+                entityConfig,
+                dtoConfig,
+                mapperConfig,
+                controllerConfig,
+                serviceConfig,
+                serviceImplConfig);
+
+        for (TableInfo tableInfo : tableInfoList
+        ) {
+            if (wantToWrite(TemplateType.ENTITY)) this.templateEngine.writeEntity(tableInfo);
+            if (wantToWrite(TemplateType.MAPPER)) this.templateEngine.writeMapper(tableInfo);
+            if (wantToWrite(TemplateType.DTO)) this.templateEngine.writeDto(tableInfo);
+        }
+    }
+
+    private void initConfig(){
+        if(this.globalConfig== null){
+            String rootPath = System.getProperty("user.dir");
+            this.globalConfig = new GlobalConfig.Builder(rootPath, "com.mybatiseasy").build();
+        }
+        if(this.templateEngine == null){
+            this.templateEngine = new FreemarkerTemplate();
+        }
+        if(this.entityConfig == null){
+            this.entityConfig = new EntityConfig.Builder("entity", "Entity").build();
+        }
+        if(this.mapperConfig == null){
+            this.mapperConfig = new MapperConfig.Builder("mapper", "Mapper").build();
+        }
+        if(this.dtoConfig == null){
+            this.dtoConfig = new DtoConfig.Builder("dto", "Dto").build();
+        }
+    }
+
+    /**
+     * 是否需要生成文件
+     * @param templateType 类型
+     * @return boolean
+     */
+    private boolean wantToWrite(TemplateType templateType) {
+        return globalConfig.getTemplateTypeList().contains(templateType) || globalConfig.getTemplateTypeList().contains(TemplateType.ALL);
     }
 
 
@@ -90,7 +149,7 @@ public class Generator {
                 return tableInfoList;
             }
         } catch (Exception e) {
-            throw new RuntimeException("数据库表查询失败");
+            throw new RuntimeException("数据库表查询失败"+e.getMessage());
         }
     }
 
@@ -103,10 +162,17 @@ public class Generator {
                 String tableComment = recordSet.getString("TABLE_COMMENT");
                 TableInfo tableInfo = new TableInfo();
                 tableInfo.setSchema(schema);
-                tableInfo.setName(tableName);
+                tableInfo.setTableName(tableName);
+                tableInfo.setName(Utils.snakeToCamel(tableName));
                 tableInfo.setComment(tableComment);
-                List<ColumnInfo> columnInfoList = formatToColumnInfo(schema, tableName, conn);
-                tableInfo.setColumnInfoList(columnInfoList);
+                List<ColumnInfo> columns = formatToColumnInfo(schema, tableName, conn);
+                ColumnInfo priColumn = columns.stream().filter(ColumnInfo::isPri).findFirst().orElse(null);
+                assert priColumn != null;
+                tableInfo.setPri(priColumn.getName());
+                tableInfo.setColumns(columns);
+                if(keyGeneratorMap.containsKey(tableInfo.getName())){
+                    tableInfo.setKeyGenerator(globalConfig.getKeyGenerator());
+                }
                 tableInfoList.add(tableInfo);
             }
             return tableInfoList;
@@ -128,9 +194,24 @@ public class Generator {
                 String columnName = rs.getString("COLUMN_NAME");
                 String columnComment = rs.getString("COLUMN_COMMENT");
                 ColumnInfo columnInfo = new ColumnInfo();
-                columnInfo.setName(columnName);
+                columnInfo.setName(Utils.snakeToCamel(columnName));
                 columnInfo.setComment(columnComment);
-                columnInfo.setDataType(MysqlDataType.valueOf(rs.getString("DATA_TYPE").toUpperCase()));
+                columnInfo.setColumnName(columnName);
+                columnInfo.setDbType(rs.getString("COLUMN_TYPE"));
+                JavaDataType javaType = TypeConvert.fromDbType(columnInfo.getDbType());
+                columnInfo.setJavaType(javaType);
+                columnInfo.setJavaTypeName(javaType.getName());
+                columnInfo.setPri(rs.getString("COLUMN_KEY").toUpperCase().contains("PRI"));
+                columnInfo.setNumericScale(rs.getInt("NUMERIC_SCALE"));
+                columnInfo.setAutoIncrement(rs.getString("EXTRA").toLowerCase().contains("auto_increment"));
+                ColumnAutoSet columnAutoSet = entityConfig.getColumnAutoSetList().stream().filter( item -> item.getName().equals(columnInfo.getName())).findAny().orElse(null);
+                if(columnAutoSet!= null){
+                    if(columnAutoSet.getInsert()!=null) columnInfo.setInsert(columnAutoSet.getInsert());
+                    if(columnAutoSet.getUpdate()!=null) columnInfo.setUpdate(columnAutoSet.getUpdate());
+                }
+                if(columnInfo.isPri() && !columnInfo.isAutoIncrement() && (globalConfig.getKeyGenerator()!=null)){
+                    keyGeneratorMap.put(Utils.snakeToCamel(tableName), globalConfig.getKeyGenerator());
+                }
                 columnInfoList.add(columnInfo);
             }
             rs.close();

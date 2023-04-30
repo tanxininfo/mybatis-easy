@@ -1,9 +1,10 @@
 package com.mybatiseasy.generator;
 
-import com.mybatiseasy.generator.config.DataSourceConfig;
-import com.mybatiseasy.generator.config.EntityConfig;
-import com.mybatiseasy.generator.config.GlobalConfig;
-import com.mybatiseasy.generator.config.TemplateType;
+import com.mybatiseasy.emums.TableIdType;
+import com.mybatiseasy.generator.config.*;
+import com.mybatiseasy.generator.pojo.ColumnAutoSet;
+import com.mybatiseasy.generator.pojo.TableInfo;
+import com.mybatiseasy.keygen.NoKeyGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -25,19 +26,37 @@ public class MybatisEasyGeneratorApplication {
         String baseDir = "D:/temp";
 
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(url, username, password).build();
-        GlobalConfig globalConfig = new GlobalConfig.Builder("com.mybatiseasy", baseDir)
+        GlobalConfig globalConfig = new GlobalConfig.Builder(baseDir, "com.mybatiseasy")
                 .templateType(TemplateType.ALL)
+                .idType(TableIdType.CUSTOM)
+                .keyGenerator(NoKeyGenerator.class)
                 .build();
 
-        EntityConfig entityConfig = new EntityConfig.Builder("entity", "Entity").build();
+        EntityConfig entityConfig = new EntityConfig.Builder("entity", "Entity")
+                .override(true)
+                .swagger(true)
+                .enableLombok(false)
+                .chain(true)
+                .columnAutoSet(new ColumnAutoSet().setName("createTime").setInsert("NOW()"))
+                .columnAutoSet(new ColumnAutoSet().setName("updateTime").setInsert("NOW()").setUpdate("NOW()"))
+                .build();
+
+        MapperConfig mapperConfig = new MapperConfig.Builder("mapper", "Mapper")
+                .override(true)
+                .build();
+
+        DtoConfig dtoConfig = new DtoConfig.Builder("dto", "Dto")
+                .override(true)
+                .swagger(true)
+                .build();
 
         new Generator()
                 .dataSourceConfig(dataSourceConfig)
                 .globalConfig(globalConfig)
                 .entityConfig(entityConfig)
-//                .mapperConfig(mapperConfig)
+                .mapperConfig(mapperConfig)
 //                .controllerConfig(controllerConfig)
-//                .dtoConfig(dtoConfig)
+                .dtoConfig(dtoConfig)
 //                .serviceConfig(serviceConfig)
 //                .serviceImplConfig(serviceImplConfig)
                 .generate();

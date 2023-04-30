@@ -32,6 +32,11 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>com.mybatis-easy</groupId>
+            <artifactId>mybatis-easy-annotation</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

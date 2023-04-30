@@ -1,8 +1,10 @@
 package com.mybatiseasy.generator.config;
 
+import com.mybatiseasy.generator.pojo.ColumnAutoSet;
 import com.mybatiseasy.generator.utils.Utils;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityConfig {
 
@@ -17,12 +19,21 @@ public class EntityConfig {
      */
     private String packageName;
 
-    private String supperClassFull;
 
     /**
      * 是否覆盖已有文件
      */
     private boolean override;
+
+    /**
+     * 是否链式
+     */
+    private boolean chain;
+
+    /**
+     * 是否支持swagger
+     */
+    private boolean swagger;
 
     /**
      * 是否启用lombok
@@ -38,6 +49,23 @@ public class EntityConfig {
      */
     private String logicDeleteName;
 
+    /**
+     * 自动填充的字段
+     */
+    private final List<ColumnAutoSet> columnAutoSetList = new ArrayList<>();
+
+    public List<ColumnAutoSet> getColumnAutoSetList() {
+        return columnAutoSetList;
+    }
+
+    public boolean isChain() {
+        return chain;
+    }
+
+    public boolean isSwagger() {
+        return swagger;
+    }
+
     public String getSuffix() {
         return suffix;
     }
@@ -50,9 +78,6 @@ public class EntityConfig {
         return supperClass;
     }
 
-    public String getSupperClassFull() {
-        return supperClassFull;
-    }
 
     public boolean isOverride() {
         return override;
@@ -81,13 +106,13 @@ public class EntityConfig {
 
         public Builder supperClass(Class<?> supperClass) {
             config.supperClass = supperClass;
-            if (supperClass != null)
-                config.supperClassFull = supperClass.getTypeName();
             return this;
         }
 
-        public Builder supperClass(String supperClass){
-            config.supperClassFull = supperClass;
+
+        public Builder columnAutoSet(ColumnAutoSet columnAutoSet){
+            if(config.getColumnAutoSetList().stream().noneMatch(item -> item.getName().equals(columnAutoSet.getName())))
+                config.columnAutoSetList.add(columnAutoSet);
             return this;
         }
 
@@ -101,6 +126,15 @@ public class EntityConfig {
             return this;
         }
 
+        public Builder chain(boolean chain){
+            config.chain = chain;
+            return this;
+        }
+
+        public Builder swagger(boolean swagger){
+            config.swagger = swagger;
+            return this;
+        }
 
         public Builder logicDeleteColumn(String logicDeleteColumn){
             config.logicDeleteColumn = logicDeleteColumn;
