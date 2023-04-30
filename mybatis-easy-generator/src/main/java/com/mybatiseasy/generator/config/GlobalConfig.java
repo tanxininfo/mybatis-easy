@@ -1,6 +1,8 @@
 package com.mybatiseasy.generator.config;
 
+import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.generator.utils.Utils;
+import com.mybatiseasy.keygen.IKeyGenerator;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -11,10 +13,11 @@ public class GlobalConfig {
 
     /**
      * 输出目录的总目录
+     * 如：d:\project\com-mybatiseasy-generator\src\main\java
      */
     private String baseDir;
     /**
-     * 父包名
+     * 父包名,如：
      */
     private String packageName;
     /**
@@ -35,6 +38,22 @@ public class GlobalConfig {
     private List<String> tableNotLikeList;
 
     private List<TemplateType> templateTypeList;
+
+    private TableIdType idType;
+    private String  sequence;
+    private Class<? extends IKeyGenerator>  keyGenerator;
+
+    public TableIdType getIdType() {
+        return idType;
+    }
+
+    public String getSequence() {
+        return sequence;
+    }
+
+    public Class<? extends IKeyGenerator> getKeyGenerator() {
+        return keyGenerator;
+    }
 
     public String getBaseDir(){return this.baseDir;}
 
@@ -75,6 +94,24 @@ public class GlobalConfig {
             config.packageName = packageName;
             return this;
         }
+
+
+        public Builder idType(TableIdType idType) {
+            config.idType = idType;
+            return this;
+        }
+
+        public Builder sequence(String sequence) {
+            config.sequence = sequence;
+            return this;
+        }
+
+        public Builder keyGenerator(Class<? extends IKeyGenerator> keyGenerator) {
+            config.keyGenerator = keyGenerator;
+            return this;
+        }
+
+
         public Builder addTableLike(String like) {
             if (!config.tableLikeList.contains(like)) config.tableLikeList.add(like);
             return this;

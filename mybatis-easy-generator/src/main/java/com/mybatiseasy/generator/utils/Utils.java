@@ -31,6 +31,35 @@ public class Utils {
 
 
     /**
+     * 下划线命名转为小驼峰命名
+     *
+     * @param str 下划线命名格式
+     * @return 驼峰命名格式
+     */
+    public static String snakeToCamel(String str) {
+        if (!str.contains("_")) return str;
+        StringBuilder sb = new StringBuilder();
+        char[] chars = str.toCharArray();
+        boolean underLineFound = false;
+        sb.append(chars[0]);
+        for (int i = 1; i < chars.length; i++) {
+            char c = chars[i];
+            if (c == '_') {
+                underLineFound = true;
+            } else {
+                if (underLineFound) {
+                    sb.append(Character.toUpperCase(c));
+                    underLineFound = false;
+                } else {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
      * 首字母小写
      * @param str 输入字符串
      * @return 如: myMoney
