@@ -2,3 +2,5 @@
 /mybatis-easy-annotation/target/
 /mybatis-easy-apt/target/
 /mybatis-easy-generator/target/
+/mybatis-easy-test/target/
+/mybatis-easy-test/**/application-test.yml
