@@ -1,4 +1,4 @@
-package com.mybatiseasy.core.temp;
+package com.mybatiseasy.test.temp;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
