@@ -5,7 +5,7 @@ spring:
   main:
     allow-circular-references: true
   profiles:
-    active: dev
+    active: test
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
@@ -35,10 +35,6 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
     property-naming-strategy: SNAKE_CASE
-  thymeleaf:
-    mode: HTML
-    encoding: UTF-8
-    prefix: classpath:/templates
 
 mybatis:
   configuration:

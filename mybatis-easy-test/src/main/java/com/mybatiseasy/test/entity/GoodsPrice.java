@@ -1,4 +1,4 @@
-package com.mybatiseasy.core.entity;
+package com.mybatiseasy.test.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mybatiseasy.annotation.Table;

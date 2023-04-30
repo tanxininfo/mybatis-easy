@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="mybatis-easy-core" />
         <module name="mybatis-easy-annotation" />
+        <module name="mybatis-easy-test" />
         <module name="mybatis-easy-generator" />
       </profile>
     </annotationProcessing>
@@ -21,6 +22,7 @@
       <module name="mybatis-easy-apt" options="-parameters" />
       <module name="mybatis-easy-core" options="-parameters" />
       <module name="mybatis-easy-generator" options="-parameters" />
+      <module name="mybatis-easy-test" options="-parameters" />
     </option>
   </component>
 </project>

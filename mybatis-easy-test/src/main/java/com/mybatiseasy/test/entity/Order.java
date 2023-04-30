@@ -1,4 +1,4 @@
-package com.mybatiseasy.core.entity;
+package com.mybatiseasy.test.entity;
 
 
 import java.time.LocalDateTime;
@@ -7,7 +7,7 @@ import com.mybatiseasy.annotation.Table;
 import com.mybatiseasy.annotation.TableField;
 import com.mybatiseasy.annotation.TableId;
 import com.mybatiseasy.emums.TableIdType;
-import com.mybatiseasy.core.temp.GoodsPriceTypeHandler;
+import com.mybatiseasy.test.temp.GoodsPriceTypeHandler;
 import lombok.Data;
 
 /**

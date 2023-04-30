@@ -1,4 +1,4 @@
-package com.mybatiseasy.core.entity;
+package com.mybatiseasy.test.entity;
 
 import com.mybatiseasy.annotation.Table;
 import com.mybatiseasy.annotation.TableField;
