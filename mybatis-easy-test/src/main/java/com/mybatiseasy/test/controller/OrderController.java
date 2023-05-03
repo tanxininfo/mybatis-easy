@@ -1,16 +1,34 @@
+/*
+ *
+ *  * Copyright (c) 2023-2033, 杭州坦信科技有限公司 (soft@tanxin.info).
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package com.mybatiseasy.test.controller;
 
-import com.mybatiseasy.test.entity.User;
-import com.mybatiseasy.core.mapper.UserMapper;
-import com.mybatiseasy.core.tables._USER;
+import com.mybatiseasy.core.sqlbuilder.Condition;
+import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.tables._ORDER;
+import com.mybatiseasy.test.entity.Order;
+//import com.mybatiseasy.test.mapper.OrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,89 +39,20 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/order")
 public class OrderController {
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @GetMapping
-    public void get(){
-
-        User one = userMapper.getOne(_USER.AGE().gt(10).and(_USER.NAME().like("张%")).and(_USER.NAME().like("李%")));
-        //User one = userMapper.getOne(_USER.ID().eq(1));
-
-
-        log.info("one={}", one);
-    }
-
-
-    private void sayHi( Object... strings ){
-
-        System.out.println("----------" + strings);
-
-        if ( strings != null ) {
-
-            for (Object object : strings) {
-
-                System.out.println(object.toString());
-            }
-        }
-        else {
-            System.out.println("=========null");
-        }
-    }
-
-
-
-    @GetMapping("/query")
-    public void query(@RequestParam("param") Long param){
-        // (id=1 or id=2) and (id=3 or id=4)
-        //Order one = orderMapper.getByConditions(ORDER._id.eq(1).or(ORDER._id.eq(2)).and(ORDER._id.eq(3).or(ORDER._id.eq(4))));
-        //Condition condition = _ORDER.ID.gt(1).and(_ORDER.ID.gt(2).and(_ORDER.ID.ne(3)));
-        //Condition condition = _ORDER.ID.gt(true, 1).and(_ORDER.ID.gt(true, 2).and(false, _ORDER.ID.ne(true, 3)));
-        //Condition condition =  _ORDER.ID.gt(true, 2).and(_ORDER.ID.ne(true, 3));
-        //log.info("condition={}", condition.getSql());
-
-//        SnowFlakeIdGenerator snowflakeIdGenerator = new SnowFlakeIdGenerator();
 //
-//        // 生成50个id
-//        Set<Long> set = new TreeSet<>();
-//        for (int i = 0; i < 50; i++) {
-//            set.add(snowflakeIdGenerator.nextId());
-//        }
-//        System.out.println(set.size());
-//        System.out.println(set);
+//    @Autowired
+//    private OrderMapper orderMapper;
 //
-//        // 验证生成100万个id需要多久
-//        long startTime = System.currentTimeMillis();
-//        for (int i = 0; i < 1000000; i++) {
-//            snowflakeIdGenerator.nextId();
-//        }
-//        System.out.println(System.currentTimeMillis() - startTime);
-
-
-
-        List<User> userList = new ArrayList<>();
-
-        for(int i=0; i<1;i++) {
-
-        }
-
-//        User user = new User();
-//        user.setAge(100);
-//        user.setName("李四四");
-//        user.setId(5L);
+//    @GetMapping
+//    public void getList(){
 //
-//        int affectedRows = userMapper.update(user);
+////        List<Order> orderList = orderMapper.list(_ORDER.ID().eq(1).or(_ORDER.ID().eq(2)).and(_ORDER.ID().eq(3).or(_ORDER.ID().eq(4))));
+////        Condition condition = _ORDER.ID().gt(1).and(_ORDER.ID().gt(2).and(_ORDER.ID().ne(3)));
+////        Condition condition = _ORDER.ID().gt(1, true).and(_ORDER.ID().gt(2, true).and(_ORDER.ID().ne(3, true), false));
+////        Condition condition =  _ORDER.ID().gt(2, true).and(_ORDER.ID().ne(3, true));
 //
+//        List<Order> orderList = orderMapper.list(new QueryWrapper().limit(5L));
 //
-//        log.info("{}, user={}", affectedRows, user);
-
-
-
-
-
-
-    }
-
-
+//        log.info("orderList={}", orderList);
+//    }
 }

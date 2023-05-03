@@ -1,6 +1,25 @@
+/*
+ *
+ *  * Copyright (c) 2023-2033, 杭州坦信科技有限公司 (soft@tanxin.info).
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package com.mybatiseasy.core.provider;
 
 import com.mybatiseasy.core.base.Column;
+import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityMap;
@@ -43,7 +62,7 @@ public class ProviderKid {
 
     public static void putIdValueToMap(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj){
         String idKey = entityMap.getPrimary().getName();
-        Object idValue = entityObj.getValue(idKey);
+        Object idValue = (entityObj!=null ? entityObj.getValue(idKey): map.get(MethodParam.PRIMARY_KEY));
         Assert.notNull(idValue, "请指定实体主键值");
         map.put(idKey, idValue);
     }

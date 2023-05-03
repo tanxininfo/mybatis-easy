@@ -1,7 +1,23 @@
+/*
+ *
+ *  * Copyright (c) 2023-2033, 杭州坦信科技有限公司 (soft@tanxin.info).
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package com.mybatiseasy.generator.pojo;
 
-
-import com.sun.jdi.PrimitiveValue;
 
 /**
  * <p>
@@ -14,7 +30,7 @@ import com.sun.jdi.PrimitiveValue;
 public class ColumnInfo {
 
     /**
-     * 字段名称
+     * 字段名称，驼峰
      */
     private String name;
 
@@ -24,7 +40,7 @@ public class ColumnInfo {
     private String comment;
 
     /**
-     * 字段描述
+     * 字段
      */
     private String columnName;
     /**
@@ -36,7 +52,7 @@ public class ColumnInfo {
 
     private boolean autoIncrement;
 
-    private String dbType;
+    private String dataType;
     private JavaDataType javaType;
     private String javaTypeName;
 
@@ -49,6 +65,18 @@ public class ColumnInfo {
      * 修改记录时自动填充的值
      */
     private String update;
+
+    private String columnKey;
+
+    private String extra;
+
+    public String getColumnKey() {
+        return columnKey;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
 
     public String getInsert() {
         return insert;
@@ -72,8 +100,8 @@ public class ColumnInfo {
     }
 
 
-    public String getDbType() {
-        return dbType;
+    public String getDataType() {
+        return dataType;
     }
 
     public boolean isAutoIncrement() {
@@ -116,8 +144,8 @@ public class ColumnInfo {
         this.autoIncrement = autoIncrement;
     }
 
-    public void setDbType(String dbType) {
-        this.dbType = dbType;
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
     }
 
     public void setJavaType(JavaDataType javaType) {
@@ -138,5 +166,13 @@ public class ColumnInfo {
 
     public void setUpdate(String update) {
         this.update = update;
+    }
+
+    public void setColumnKey(String columnKey) {
+        this.columnKey = columnKey;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
     }
 }

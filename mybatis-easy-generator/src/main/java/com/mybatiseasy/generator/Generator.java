@@ -1,19 +1,35 @@
+/*
+ *
+ *  * Copyright (c) 2023-2033, 杭州坦信科技有限公司 (soft@tanxin.info).
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package com.mybatiseasy.generator;
 
-import com.google.protobuf.Enum;
-import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.generator.config.*;
+import com.mybatiseasy.generator.dialect.DialectFactory;
+import com.mybatiseasy.generator.dialect.IDialect;
 import com.mybatiseasy.generator.pojo.*;
 import com.mybatiseasy.generator.template.FreemarkerTemplate;
 import com.mybatiseasy.generator.template.ITemplate;
 import com.mybatiseasy.generator.utils.TypeConvert;
 import com.mybatiseasy.generator.utils.Utils;
 import com.mybatiseasy.keygen.IKeyGenerator;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
-import javax.crypto.KeyGenerator;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,8 +93,6 @@ public class Generator {
 
     private Connection getConnection() {
         Assert.hasLength(dataSourceConfig.getUrl(), "数据库配置 url 不得为空");
-        Assert.hasLength(dataSourceConfig.getUsername(), "数据库配置 username 不得为空");
-        Assert.hasLength(dataSourceConfig.getPassword(), "数据库配置 password 不得为空");
         try {
             return DriverManager.getConnection(dataSourceConfig.getUrl(), dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
 
@@ -89,7 +103,6 @@ public class Generator {
     }
 
     public void generate() {
-        List<TableInfo> tableInfoList = getTableList();
         this.initConfig();
         this.templateEngine.init(globalConfig,
                 entityConfig,
@@ -99,7 +112,10 @@ public class Generator {
                 serviceConfig,
                 serviceImplConfig);
 
-        for (TableInfo tableInfo : tableInfoList
+        IDialect dialect = DialectFactory.getDialect(dataSourceConfig, globalConfig, entityConfig);
+        List<TableInfo> tableList = dialect.getTableList(getConnection());
+
+        for (TableInfo tableInfo : tableList
         ) {
             if (wantToWrite(TemplateType.ENTITY)) this.templateEngine.writeEntity(tableInfo);
             if (wantToWrite(TemplateType.MAPPER)) this.templateEngine.writeMapper(tableInfo);
@@ -197,8 +213,8 @@ public class Generator {
                 columnInfo.setName(Utils.snakeToCamel(columnName));
                 columnInfo.setComment(columnComment);
                 columnInfo.setColumnName(columnName);
-                columnInfo.setDbType(rs.getString("COLUMN_TYPE"));
-                JavaDataType javaType = TypeConvert.fromDbType(columnInfo.getDbType());
+                columnInfo.setDataType(rs.getString("COLUMN_TYPE"));
+                JavaDataType javaType = TypeConvert.fromDbType(columnInfo.getDataType());
                 columnInfo.setJavaType(javaType);
                 columnInfo.setJavaTypeName(javaType.getName());
                 columnInfo.setPri(rs.getString("COLUMN_KEY").toUpperCase().contains("PRI"));

@@ -1,3 +1,5 @@
+server:
+  port: 50211
 spring:
   mvc:
     pathmatch:
@@ -7,8 +9,11 @@ spring:
   profiles:
     active: test
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.sqlite.JDBC
     type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:sqlite:mybatis-easy-test/sqlite/test.db
+    username:
+    password:
     # HikariCP连接池配置
     hikari:
       # 最小空闲连接数量
@@ -39,3 +44,4 @@ spring:
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    mapUnderscoreToCamelCase: true
