@@ -68,7 +68,7 @@ public class ${table.name?cap_first}${dto.suffix} {
         return this;
     </#if>
     }
-        
+
     </#list>
 </#if>
 }

@@ -5,8 +5,10 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/mybatis-easy-generator/pom.xml" />
-        <option value="$PROJECT_DIR$/mybatis-easy-test/pom.xml" />
+        <option value="$PROJECT_DIR$/mybatis-easy-annotation/pom.xml" />
+        <option value="$PROJECT_DIR$/mybatis-easy-apt/pom.xml" />
+        <option value="$PROJECT_DIR$/mybatis-easy-core/pom.xml" />
+        <option value="$PROJECT_DIR$/mybatis-easy-boot-starter/pom.xml" />
       </list>
     </option>
   </component>
