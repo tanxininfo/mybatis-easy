@@ -18,12 +18,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.mybatis-easy</groupId>
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>com.mybatis-easy</groupId>
+        <version>0.1.0</version>
+    </parent>
     <artifactId>mybatis-easy-test</artifactId>
-    <name>mybatis-easy-test</name>
-    <description>mybatis-easy-test</description>
-    <version>0.1.0</version>
     <properties>
         <java.version>17</java.version>
         <mybatis-easy.version>0.1.0</mybatis-easy.version>
