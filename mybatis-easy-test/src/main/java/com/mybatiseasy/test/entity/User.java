@@ -16,11 +16,13 @@
 
 package com.mybatiseasy.test.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mybatiseasy.annotation.Table;
 import com.mybatiseasy.annotation.TableField;
 import com.mybatiseasy.annotation.TableId;
 import com.mybatiseasy.emums.TableIdType;
 import lombok.Data;
+import org.apache.ibatis.type.LocalDateTimeTypeHandler;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ public class User implements Serializable{
     private Short sex;
     private Long parentId;
     @TableField(insert = "NOW()")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 //    @TableField(insert = "NOW()", update = "NOW()")
 //    private LocalDateTime updateTime;
