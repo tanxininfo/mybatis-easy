@@ -29,9 +29,11 @@
 	</modules>
 	<groupId>com.mybatis-easy</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>mybatis-easy</name>
-	<description>mybatis-easy</description>
+	<url>https://mybatis-easy.com</url>
+	<description>Mybatis-Easy, a simplified and enhanced framework for mybatis.</description>
+
 	<properties>
 		<java.version>17</java.version>
 		<jackson-datatype-jsr310.version>2.13.0</jackson-datatype-jsr310.version>
@@ -44,14 +46,13 @@
 		<mybatis-spring.version>2.0.6</mybatis-spring.version>
 		<lombok.version>1.18.24</lombok.version>
 		<slf4j-api.version>2.0.0-alpha1</slf4j-api.version>
-		<spring.version>5.3.2</spring.version>
+		<spring.version>5.3.8</spring.version>
 		<mysql-connector-j.version>8.0.32</mysql-connector-j.version>
 		<hikaricp.version>5.0.1</hikaricp.version>
 		<hutool.version>5.8.1</hutool.version>
 		<spring-boot.version>2.7.10</spring-boot.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -149,23 +150,10 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>cn.hutool</groupId>
 			<artifactId>hutool-all</artifactId>
 		</dependency>
-
-
 		<!--java版本太高  向下兼容-->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -197,14 +185,47 @@
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-api</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.slf4j</groupId>-->
-<!--			<artifactId>slf4j-log4j12</artifactId>-->
-<!--		</dependency>-->
-
-
-
 	</dependencies>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>dudley</name>
+			<email>soft@tanxin.info</email>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git@github.com:tanxininfo/mybatis-easy.git</connection>
+		<developerConnection>scm:git@github.com:tanxininfo/mybatis-easy.git</developerConnection>
+		<url>git@github.com:tanxininfo/mybatis-easy.git</url>
+	</scm>
+
+	<issueManagement>
+		<system>Github Issue</system>
+		<url>https://github.com/tanxininfo/mybatis-easy/issues</url>
+	</issueManagement>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
+
+
+
+
 
 	<build>
 		<plugins>
@@ -230,6 +251,69 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<!-- source -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Javadoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.5.0</version>
+				<configuration>
+					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+					<additionalJOptions>
+						<additionalJOption>-Xdoclint:none</additionalJOption>
+					</additionalJOptions>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Gpg Signature -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.sonatype.plugins</groupId>-->
+<!--				<artifactId>nexus-staging-maven-plugin</artifactId>-->
+<!--				<version>1.6.9</version>-->
+<!--				<extensions>true</extensions>-->
+<!--				<configuration>-->
+<!--					<serverId>ossrh</serverId>-->
+<!--					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
+<!--					<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 

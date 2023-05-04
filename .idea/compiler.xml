@@ -24,7 +24,7 @@
       <module name="mybatis-easy-boot-starter" options="" />
       <module name="mybatis-easy-core" options="" />
       <module name="mybatis-easy-generator" options="" />
-      <module name="mybatis-easy-test" options="-parameters" />
+      <module name="mybatis-easy-test" options="" />
     </option>
   </component>
 </project>
