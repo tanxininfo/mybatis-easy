@@ -18,10 +18,9 @@ package com.mybatiseasy.test.controller;
 
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
-import com.mybatiseasy.core.tables._ORDER;
+//import com.mybatiseasy.core.tables._ORDER;
 import com.mybatiseasy.test.entity.Order;
 //import com.mybatiseasy.test.mapper.OrderMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,6 @@ import java.util.List;
  * @since 2022-07-02
  */
 @RestController
-@Slf4j
 @RequestMapping("/order")
 public class OrderController {
 //

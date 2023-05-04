@@ -36,6 +36,6 @@ public class User implements Serializable{
     private Long parentId;
     @TableField(insert = "NOW()")
     private LocalDateTime createTime;
-    @TableField(insert = "NOW()", update = "NOW()")
-    private LocalDateTime updateTime;
+//    @TableField(insert = "NOW()", update = "NOW()")
+//    private LocalDateTime updateTime;
 }

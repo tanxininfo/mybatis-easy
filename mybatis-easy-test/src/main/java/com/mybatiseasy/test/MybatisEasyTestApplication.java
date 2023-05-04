@@ -29,15 +29,7 @@ public class MybatisEasyTestApplication {
 
 
     public static void main(String[] args) {
-
-        String text = "北京市(海淀区)(朝阳区)(西城区)";
-        Pattern pattern = Pattern.compile("(?<=\\()[^\\)]+");
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            System.out.println(matcher.group(0));
-        }
-
-        //SpringApplication.run(MybatisEasyTestApplication.class, args);
+        SpringApplication.run(MybatisEasyTestApplication.class, args);
     }
 
 }

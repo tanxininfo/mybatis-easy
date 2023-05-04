@@ -18,18 +18,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.2</version>
-        <relativePath/>
-    </parent>
+
+    <groupId>com.mybatis-easy</groupId>
     <artifactId>mybatis-easy-test</artifactId>
     <name>mybatis-easy-test</name>
     <description>mybatis-easy-test</description>
+    <version>0.1.0</version>
     <properties>
         <java.version>17</java.version>
-        <mybatis-easy.version>0.0.1-SNAPSHOT</mybatis-easy.version>
+        <mybatis-easy.version>0.1.0</mybatis-easy.version>
         <mysql-connector-j.version>8.0.32</mysql-connector-j.version>
         <sqlite-jdbc.version>3.40.1.0</sqlite-jdbc.version>
     </properties>
@@ -45,11 +42,6 @@
             <version>${sqlite-jdbc.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>com.mybatis-easy</groupId>
             <artifactId>mybatis-easy-boot-starter</artifactId>
             <version>${mybatis-easy.version}</version>
@@ -59,20 +51,23 @@
             <artifactId>mybatis-easy-generator</artifactId>
             <version>${mybatis-easy.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.project-lombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>

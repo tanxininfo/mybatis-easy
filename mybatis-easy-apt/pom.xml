@@ -21,7 +21,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
     <artifactId>mybatis-easy-apt</artifactId>
     <name>mybatis-easy-apt</name>
@@ -29,8 +29,8 @@
     <properties>
         <java.version>17</java.version>
         <auto-service.version>1.0.1</auto-service.version>
-        <javapoet.version>1.9.0</javapoet.version>
         <processor.version>2.7.9</processor.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <dependencies>
         <dependency>
