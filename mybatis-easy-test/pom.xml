@@ -29,6 +29,9 @@
         <mybatis-easy.version>0.1.0</mybatis-easy.version>
         <mysql-connector-j.version>8.0.32</mysql-connector-j.version>
         <sqlite-jdbc.version>3.40.1.0</sqlite-jdbc.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lombok.version>1.18.26</lombok.version>
+        <logback-classic.version>1.2.11</logback-classic.version>
     </properties>
     <dependencies>
         <dependency>
@@ -40,6 +43,11 @@
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>${sqlite-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mybatis-easy</groupId>
@@ -54,7 +62,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
+            <version>${lombok.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -19,6 +19,9 @@ package com.mybatiseasy.core.session;
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
+import com.mybatiseasy.core.typehandler.LocalDateTimeTypeHandler;
+import com.mybatiseasy.core.typehandler.LocalDateTypeHandler;
+import com.mybatiseasy.core.typehandler.LocalTimeTypeHandler;
 import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.keygen.CustomKeyGenerator;
 import com.mybatiseasy.core.utils.SqlUtil;
@@ -33,6 +36,9 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,11 +50,21 @@ public class MeConfiguration extends Configuration {
 
     public MeConfiguration(Environment environment) {
         super(environment);
-        this.addTotalResultMap();
+        this.init();
     }
 
     public MeConfiguration() {
+        this.init();
+    }
+
+    public void init(){
         this.addTotalResultMap();
+        /**
+         * 在sqlite中不支持数据类型:LocalDateTime, LocalDate, LocalTime
+         */
+        this.typeHandlerRegistry.register(LocalDateTime.class, LocalDateTimeTypeHandler.class);
+        this.typeHandlerRegistry.register(LocalDate.class, LocalDateTypeHandler.class);
+        this.typeHandlerRegistry.register(LocalTime.class, LocalTimeTypeHandler.class);
     }
 
     /**
