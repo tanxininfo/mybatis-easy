@@ -21,17 +21,17 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.1.0</version>
+        <version>0.3.0</version>
     </parent>
     <artifactId>mybatis-easy-test</artifactId>
     <properties>
         <java.version>17</java.version>
-        <mybatis-easy.version>0.1.0</mybatis-easy.version>
+        <mybatis-easy.version>0.2.0</mybatis-easy.version>
         <mysql-connector-j.version>8.0.32</mysql-connector-j.version>
         <sqlite-jdbc.version>3.40.1.0</sqlite-jdbc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.26</lombok.version>
-        <logback-classic.version>1.2.11</logback-classic.version>
+        <swagger.version>3.0.0</swagger.version>
     </properties>
     <dependencies>
         <dependency>
@@ -45,25 +45,25 @@
             <version>${sqlite-jdbc.version}</version>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback-classic.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.mybatis-easy</groupId>
             <artifactId>mybatis-easy-boot-starter</artifactId>
-            <version>${mybatis-easy.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mybatis-easy</groupId>
             <artifactId>mybatis-easy-generator</artifactId>
-            <version>${mybatis-easy.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
     </dependencies>
 

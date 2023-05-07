@@ -29,7 +29,7 @@
 	</modules>
 	<groupId>com.mybatis-easy</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.1.0</version>
+	<version>0.3.0</version>
 	<name>mybatis-easy</name>
 	<url>https://mybatis-easy.com</url>
 	<description>Mybatis-Easy, a simplified and enhanced framework for mybatis.</description>
@@ -45,12 +45,12 @@
 		<mybatis.version>3.5.11</mybatis.version>
 		<mybatis-spring.version>2.0.6</mybatis-spring.version>
 		<lombok.version>1.18.24</lombok.version>
-		<slf4j-api.version>2.0.0-alpha1</slf4j-api.version>
+		<slf4j.version>1.7.36</slf4j.version>
 		<spring.version>5.3.8</spring.version>
 		<mysql-connector-j.version>8.0.32</mysql-connector-j.version>
 		<hikaricp.version>5.0.1</hikaricp.version>
 		<hutool.version>5.8.1</hutool.version>
-		<spring-boot.version>2.7.10</spring-boot.version>
+		<spring-boot.version>2.7.11</spring-boot.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -130,7 +130,6 @@
 				<artifactId>hutool-all</artifactId>
 				<version>${hutool.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
@@ -138,13 +137,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j-api.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>${slf4j-api.version}</version>
+				<artifactId>jul-to-slf4j</artifactId>
+				<version>${slf4j.version}</version>
 			</dependency>
 
 		</dependencies>
@@ -182,8 +176,8 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-api</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -302,6 +296,18 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- Nexus Staging Plugin -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.9</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>sonatype</serverId>
+					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

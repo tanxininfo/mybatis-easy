@@ -16,5 +16,67 @@
 
 package com.mybatiseasy.generator.config;
 
+import com.mybatiseasy.generator.utils.Utils;
+
 public class ServiceImplConfig {
+    /**
+     * 设置父类
+     */
+    private Class<?> supperClass;
+
+    private String suffix;
+    /**
+     * 包名
+     */
+    private String packageName;
+
+    /**
+     * 是否覆盖已有文件
+     */
+    private boolean override;
+
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public Class<?> getSupperClass() {
+        return supperClass;
+    }
+
+    public boolean isOverride() {
+        return override;
+    }
+
+
+    public static class Builder{
+
+        private final ServiceImplConfig config = new ServiceImplConfig();
+
+        public Builder(String packageName, String suffix){
+            config.packageName = packageName;
+            config.suffix = suffix;
+        }
+
+        public Builder supperClass(Class<?> supperClass) {
+            config.supperClass = supperClass;
+            return this;
+        }
+
+
+        public Builder override(boolean override){
+            config.override = override;
+            return this;
+        }
+
+        public ServiceImplConfig build(){
+            if(Utils.isEmpty(config.suffix)) config.suffix = "ServiceImpl";
+            if(Utils.isEmpty(config.packageName)) config.packageName = "service.impl";
+            return this.config;
+        }
+    }
 }

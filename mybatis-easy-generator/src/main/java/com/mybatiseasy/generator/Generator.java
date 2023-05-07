@@ -118,6 +118,9 @@ public class Generator {
             if (wantToWrite(TemplateType.ENTITY)) this.templateEngine.writeEntity(tableInfo);
             if (wantToWrite(TemplateType.MAPPER)) this.templateEngine.writeMapper(tableInfo);
             if (wantToWrite(TemplateType.DTO)) this.templateEngine.writeDto(tableInfo);
+            if (wantToWrite(TemplateType.CONTROLLER)) this.templateEngine.writeController(tableInfo);
+            if (wantToWrite(TemplateType.SERVICE)) this.templateEngine.writeService(tableInfo);
+            if (wantToWrite(TemplateType.SERVICE_IMPL)) this.templateEngine.writeServiceImpl(tableInfo);
         }
     }
 
@@ -137,6 +140,12 @@ public class Generator {
         }
         if(this.dtoConfig == null){
             this.dtoConfig = new DtoConfig.Builder("dto", "Dto").build();
+        }
+        if(this.serviceConfig == null){
+            this.serviceConfig = new ServiceConfig.Builder("service", "Service").build();
+        }
+        if(this.serviceImplConfig == null){
+            this.serviceImplConfig = new ServiceImplConfig.Builder("service.impl", "ServiceImpl").build();
         }
     }
 
@@ -182,7 +191,7 @@ public class Generator {
                 List<ColumnInfo> columns = formatToColumnInfo(schema, tableName, conn);
                 ColumnInfo priColumn = columns.stream().filter(ColumnInfo::isPri).findFirst().orElse(null);
                 assert priColumn != null;
-                tableInfo.setPri(priColumn.getName());
+                tableInfo.setPriColumn(priColumn);
                 tableInfo.setColumns(columns);
                 if(keyGeneratorMap.containsKey(tableInfo.getName())){
                     tableInfo.setKeyGenerator(globalConfig.getKeyGenerator());

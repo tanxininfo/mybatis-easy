@@ -33,6 +33,9 @@ public class FreemarkerTemplate implements ITemplate{
     private Template entityTemplate;
     private Template mapperTemplate;
     private Template dtoTemplate;
+    private Template serviceTemplate;
+    private Template serviceImplTemplate;
+    private Template controllerTemplate;
 
     private GlobalConfig globalConfig;
     private EntityConfig entityConfig;
@@ -68,6 +71,9 @@ public class FreemarkerTemplate implements ITemplate{
             entityTemplate = config.getTemplate("entity.java.ftl");
             mapperTemplate = config.getTemplate("mapper.java.ftl");
             dtoTemplate = config.getTemplate("dto.java.ftl");
+            serviceTemplate = config.getTemplate("service.java.ftl");
+            serviceImplTemplate = config.getTemplate("serviceImpl.java.ftl");
+            controllerTemplate = config.getTemplate("controller.java.ftl");
 
             config.setDefaultEncoding("utf-8");
         } catch (Exception ex) {
@@ -75,18 +81,28 @@ public class FreemarkerTemplate implements ITemplate{
         }
     }
 
+    private String getFilePath(String packageName, String suffix, String tableName){
+        String path = globalConfig.getBaseDir()
+                + File.separator
+                + globalConfig.getPackageName().replace(".", File.separator)
+                + File.separator
+                + packageName.replace(".", File.separator);
+
+        File file = new File(path);
+        if (!file.exists()) file.mkdirs();
+
+        return path
+                +File.separator
+                + StringUtils.capitalize(tableName)
+                + suffix
+                + ".java";
+    }
 
     public void writeEntity(TableInfo tableInfo) {
         String filePath = "";
         try {
-            String capitalName = tableInfo.getName();
-            filePath = globalConfig.getBaseDir()
-                    + File.separator
-                    + entityConfig.getPackageName().replace(".", File.separator)
-                    +File.separator
-                    + StringUtils.capitalize(capitalName)
-                    + entityConfig.getSuffix()
-                    + ".java";
+            filePath = getFilePath(entityConfig.getPackageName(), entityConfig.getSuffix(), tableInfo.getName());
+
             File file = new File(filePath);
             if (!entityConfig.isOverride() && file.exists()) return;
 
@@ -107,14 +123,7 @@ public class FreemarkerTemplate implements ITemplate{
     public void writeDto(TableInfo tableInfo) {
         String filePath = "";
         try {
-            String capitalName = tableInfo.getName();
-            filePath = globalConfig.getBaseDir()
-                    + File.separator
-                    + dtoConfig.getPackageName().replace(".", File.separator)
-                    +File.separator
-                    + StringUtils.capitalize(capitalName)
-                    + dtoConfig.getSuffix()
-                    + ".java";
+            filePath = getFilePath(dtoConfig.getPackageName(), dtoConfig.getSuffix(), tableInfo.getName());
 
             File file = new File(filePath);
             if (!dtoConfig.isOverride() && file.exists()) return;
@@ -135,14 +144,7 @@ public class FreemarkerTemplate implements ITemplate{
     public void writeMapper(TableInfo tableInfo) {
         String filePath = "";
         try {
-            String capitalName = tableInfo.getName();
-            filePath = globalConfig.getBaseDir()
-                    + File.separator
-                    + mapperConfig.getPackageName().replace(".", File.separator)
-                    +File.separator
-                    + StringUtils.capitalize(capitalName)
-                    + mapperConfig.getSuffix()
-                    + ".java";
+            filePath = getFilePath(mapperConfig.getPackageName(), mapperConfig.getSuffix(), tableInfo.getName());
 
             File file = new File(filePath);
             if (!mapperConfig.isOverride() && file.exists()) return;
@@ -155,6 +157,81 @@ public class FreemarkerTemplate implements ITemplate{
             paramsMap.put("table", tableInfo);
 
             mapperTemplate.process(paramsMap, out);
+            out.close();
+        } catch (Exception ex) {
+            throw new RuntimeException("文件生成失败["+ filePath +"]" + ex.getMessage());
+        }
+    }
+
+
+    public void writeService(TableInfo tableInfo) {
+        String filePath = "";
+        try {
+            filePath = getFilePath(serviceConfig.getPackageName(), serviceConfig.getSuffix(), tableInfo.getName());
+
+            File file = new File(filePath);
+            if (!serviceConfig.isOverride() && file.exists()) return;
+
+            Writer out = new FileWriter(file);
+            Map<String, Object> paramsMap =new HashMap<>();
+            paramsMap.put("global", globalConfig);
+            paramsMap.put("dto", dtoConfig);
+            paramsMap.put("entity", entityConfig);
+            paramsMap.put("service", serviceConfig);
+            paramsMap.put("table", tableInfo);
+
+            serviceTemplate.process(paramsMap, out);
+            out.close();
+        } catch (Exception ex) {
+            throw new RuntimeException("文件生成失败["+ filePath +"]" + ex.getMessage());
+        }
+    }
+
+    public void writeServiceImpl(TableInfo tableInfo) {
+        String filePath = "";
+        try {
+            filePath = getFilePath(serviceImplConfig.getPackageName(), serviceImplConfig.getSuffix(), tableInfo.getName());
+
+            File file = new File(filePath);
+            if (!serviceImplConfig.isOverride() && file.exists()) return;
+
+            Writer out = new FileWriter(file);
+            Map<String, Object> paramsMap =new HashMap<>();
+            paramsMap.put("global", globalConfig);
+            paramsMap.put("dto", dtoConfig);
+            paramsMap.put("entity", entityConfig);
+            paramsMap.put("service", serviceConfig);
+            paramsMap.put("serviceImpl", serviceImplConfig);
+            paramsMap.put("mapper", mapperConfig);
+            paramsMap.put("table", tableInfo);
+
+            serviceImplTemplate.process(paramsMap, out);
+            out.close();
+        } catch (Exception ex) {
+            throw new RuntimeException("文件生成失败["+ filePath +"]" + ex.getMessage());
+        }
+    }
+
+
+    public void writeController(TableInfo tableInfo) {
+        String filePath = "";
+        try {
+            filePath = getFilePath(controllerConfig.getPackageName(), controllerConfig.getSuffix(), tableInfo.getName());
+
+            File file = new File(filePath);
+            if (!controllerConfig.isOverride() && file.exists()) return;
+
+            Writer out = new FileWriter(file);
+            Map<String, Object> paramsMap =new HashMap<>();
+            paramsMap.put("global", globalConfig);
+            paramsMap.put("dto", dtoConfig);
+            paramsMap.put("entity", entityConfig);
+            paramsMap.put("service", serviceConfig);
+            paramsMap.put("serviceImpl", serviceImplConfig);
+            paramsMap.put("controller", controllerConfig);
+            paramsMap.put("table", tableInfo);
+
+            controllerTemplate.process(paramsMap, out);
             out.close();
         } catch (Exception ex) {
             throw new RuntimeException("文件生成失败["+ filePath +"]" + ex.getMessage());

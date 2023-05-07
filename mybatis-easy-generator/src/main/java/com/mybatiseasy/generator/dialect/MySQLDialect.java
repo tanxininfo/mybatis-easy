@@ -33,7 +33,7 @@ public class MySQLDialect extends BaseDialect implements IDialect {
         this.entityConfig = entityConfig;
         this.schema = dataSourceConfig.getSchema();
 
-        this.queryTableListSql = "select * from information_schema.TABLES where TABLE_SCHEMA=#{schema}?";
+        this.queryTableListSql = "select * from information_schema.TABLES where TABLE_SCHEMA=#{schema}";
         this.queryColumnListSql = "select * from information_schema.COLUMNS where TABLE_SCHEMA=#{schema} and TABLE_NAME=#{tableName}";
 
         this.tableNameColumn = "TABLE_NAME";
@@ -76,7 +76,7 @@ public class MySQLDialect extends BaseDialect implements IDialect {
      * @param columns 字段列表
      */
     public void formatTableInfo(TableInfo tableInfo, List<ColumnInfo> columns) {
-        columns.stream().filter(ColumnInfo::isPri).findFirst().ifPresent(priColumn -> tableInfo.setPri(priColumn.getName()));
+        columns.stream().filter(ColumnInfo::isPri).findFirst().ifPresent(tableInfo::setPriColumn);
         if (keyGeneratorMap.containsKey(tableInfo.getName())) {
             tableInfo.setKeyGenerator(globalConfig.getKeyGenerator());
         }

@@ -78,7 +78,7 @@ public class SqliteDialect extends BaseDialect implements IDialect {
      * @param columns 字段列表
      */
     public void formatTableInfo(TableInfo tableInfo, List<ColumnInfo> columns) {
-        columns.stream().filter(ColumnInfo::isPri).findFirst().ifPresent(priColumn -> tableInfo.setPri(priColumn.getName()));
+        columns.stream().filter(ColumnInfo::isPri).findFirst().ifPresent(tableInfo::setPriColumn);
         if (keyGeneratorMap.containsKey(tableInfo.getName())) {
             tableInfo.setKeyGenerator(globalConfig.getKeyGenerator());
         }

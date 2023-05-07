@@ -14,36 +14,21 @@
  *
  */
 
-package com.mybatiseasy.test.entity;
+package com.mybatiseasy.annotation;
 
-
-import java.time.LocalDateTime;
-
-import com.mybatiseasy.annotation.Table;
-import com.mybatiseasy.annotation.TableField;
-import com.mybatiseasy.annotation.TableId;
 import com.mybatiseasy.emums.TableIdType;
-import com.mybatiseasy.test.typehandler.GoodsPriceTypeHandler;
-import lombok.Data;
+import com.mybatiseasy.keygen.IKeyGenerator;
+import com.mybatiseasy.keygen.NoKeyGenerator;
+
+import java.lang.annotation.*;
 
 /**
- * <p>
+ * 标识乐观锁
  *
- * </p>
- *
- * @author dudley
- * @since 2022-08-21
  */
-@Data
-@Table("order")
-public class Order{
-
-    @TableId( type = TableIdType.AUTO)
-    private Long id;
-    @TableField(column="price_info", typeHandler = GoodsPriceTypeHandler.class)
-    private GoodsPrice priceInfo;
-
-    private Long goodsId;
-    private LocalDateTime createTime;
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Version {
 
 }

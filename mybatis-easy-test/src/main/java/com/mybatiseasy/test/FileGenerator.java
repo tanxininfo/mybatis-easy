@@ -29,16 +29,16 @@ public class FileGenerator {
         String username = "";
         String password = "";
 
-        String baseDir =  System.getProperty("user.dir") + "\\mybatis-easy-test\\src\\main\\java\\com\\mybatiseasy\\test";
+        String baseDir =  System.getProperty("user.dir") + "\\mybatis-easy-test\\src\\main\\java";
 
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(url, username, password).build();
-        GlobalConfig globalConfig = new GlobalConfig.Builder(baseDir, "com.mybatiseasy.test")
-                .templateType(TemplateType.MAPPER)
+        GlobalConfig globalConfig = new GlobalConfig.Builder(baseDir, "com.mybatiseasy.test.out")
+                .templateType(TemplateType.ALL)
                 .idType(TableIdType.CUSTOM)
                 .keyGenerator(NoKeyGenerator.class)
                 .build();
 
-        EntityConfig entityConfig = new EntityConfig.Builder("entity", "Entity")
+        EntityConfig entityConfig = new EntityConfig.Builder("entity", "")
                 .override(true)
                 .swagger(true)
                 .enableLombok(false)
@@ -56,15 +56,27 @@ public class FileGenerator {
                 .swagger(true)
                 .build();
 
+        ControllerConfig controllerConfig = new ControllerConfig.Builder("controller", "Controller")
+                .override(true)
+                .build();
+
+        ServiceConfig serviceConfig = new ServiceConfig.Builder("service", "Service")
+                .override(true)
+                .build();
+
+        ServiceImplConfig serviceImplConfig = new ServiceImplConfig.Builder("service.impl", "ServiceImpl")
+                .override(true)
+                .build();
+
         new Generator()
                 .dataSourceConfig(dataSourceConfig)
                 .globalConfig(globalConfig)
                 .entityConfig(entityConfig)
                 .mapperConfig(mapperConfig)
-//                .controllerConfig(controllerConfig)
+                .controllerConfig(controllerConfig)
                 .dtoConfig(dtoConfig)
-//                .serviceConfig(serviceConfig)
-//                .serviceImplConfig(serviceImplConfig)
+                .serviceConfig(serviceConfig)
+                .serviceImplConfig(serviceImplConfig)
                 .generate();
     }
 }

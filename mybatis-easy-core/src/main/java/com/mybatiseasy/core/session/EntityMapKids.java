@@ -19,6 +19,7 @@ package com.mybatiseasy.core.session;
 import com.mybatiseasy.annotation.Table;
 import com.mybatiseasy.annotation.TableField;
 import com.mybatiseasy.annotation.TableId;
+import com.mybatiseasy.annotation.Version;
 import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -130,18 +131,21 @@ public class EntityMapKids {
             if (table == null) return null;
 
             EntityFieldMap primary = null;
-           
+            EntityFieldMap version = null;
+
             List<EntityFieldMap> entityFieldMapList = new ArrayList<>();
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {
                 EntityFieldMap fieldMap = reflectEntityMap(field);
-                if(fieldMap.getIsId()) primary = fieldMap;
+                if(fieldMap.isId()) primary = fieldMap;
+                if(fieldMap.isVersion()) version = fieldMap;
                 entityFieldMapList.add(fieldMap);
             }
 
             String tableName = TypeUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
             return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList)
                     .primary(primary)
+                    .version(version)
                     .build();
         } catch (Exception ignored) {
             return null;
@@ -156,6 +160,7 @@ public class EntityMapKids {
     public static EntityFieldMap reflectEntityMap(Field field) {
         TableField tableField = AnnotationUtils.findAnnotation(field, TableField.class);
         TableId tableId = AnnotationUtils.findAnnotation(field, TableId.class);
+        Version version = AnnotationUtils.findAnnotation(field, Version.class);
         String name = field.getName();
         String column = StringUtil.camelToSnake(field.getName());
         EntityFieldMap.Builder builder = new EntityFieldMap.Builder(name, column).javaType(field.getType());
@@ -168,7 +173,8 @@ public class EntityMapKids {
                     .typeHandler(tableField.typeHandler());
             if (!tableField.column().isEmpty()) builder.column(tableField.column());
         }
-        if (tableId != null) builder.isId(true).keyGenerator(tableId.keyGenerator()).sequence(tableId.sequence()).idType(tableId.idType());
+        if (tableId != null) builder.isId(true).keyGenerator(tableId.keyGenerator()).sequence(tableId.sequence()).idType(tableId.type());
+        if(version != null) builder.isVersion(true);
         return builder.build();
 
     }

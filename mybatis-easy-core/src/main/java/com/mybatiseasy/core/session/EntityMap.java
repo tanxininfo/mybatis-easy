@@ -44,6 +44,11 @@ public class EntityMap {
   private EntityFieldMap primary;
 
   /**
+   * 乐观锁字段
+   */
+  private EntityFieldMap version;
+
+  /**
    * 实体的字段映射
    */
   private List<EntityFieldMap> entityFieldMapList;
@@ -66,7 +71,10 @@ public class EntityMap {
   public EntityFieldMap  getPrimary() {
     return primary;
   }
- 
+
+  public EntityFieldMap  getVersion() {
+    return version;
+  }
 
   public List<EntityFieldMap> getEntityFieldMapList() {
     return entityFieldMapList;
@@ -140,6 +148,10 @@ public class EntityMap {
       return this;
     }
 
+    public Builder version(EntityFieldMap version) {
+      entityMap.version = version;
+      return this;
+    }
 
     public Builder entityFieldMapList(List<EntityFieldMap> entityFieldMapList) {
       entityMap.entityFieldMapList = entityFieldMapList;

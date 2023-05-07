@@ -57,9 +57,10 @@ public class EntityConfig {
     private boolean enableLombok;
 
     /**
-     * 逻辑删除数据库字段
+     * version的字段名称
      */
-    private String logicDeleteColumn;
+    private String versionName;
+
     /**
      * 逻辑删除实体属性名称
      */
@@ -72,6 +73,10 @@ public class EntityConfig {
 
     public List<ColumnAutoSet> getColumnAutoSetList() {
         return columnAutoSetList;
+    }
+
+    public String getVersionName() {
+        return versionName;
     }
 
     public boolean isChain() {
@@ -101,10 +106,6 @@ public class EntityConfig {
 
     public boolean isEnableLombok() {
         return enableLombok;
-    }
-
-    public String getLogicDeleteColumn() {
-        return logicDeleteColumn;
     }
 
     public String getLogicDeleteName() {
@@ -152,16 +153,17 @@ public class EntityConfig {
             return this;
         }
 
-        public Builder logicDeleteColumn(String logicDeleteColumn){
-            config.logicDeleteColumn = logicDeleteColumn;
+        public Builder versionName(String versionName){
+            config.versionName = versionName;
             return this;
         }
+
         public Builder logicDeleteName(String logicDeleteName){
             config.logicDeleteName = logicDeleteName;
             return this;
         }
         public EntityConfig build(){
-            if(Utils.isEmpty(config.suffix)) config.suffix = "Entity";
+            if(Utils.isEmpty(config.suffix)) config.suffix = "";
             if(Utils.isEmpty(config.packageName)) config.packageName = "entity";
             return this.config;
         }

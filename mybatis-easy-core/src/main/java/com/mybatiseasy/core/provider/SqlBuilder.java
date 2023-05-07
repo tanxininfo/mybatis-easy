@@ -16,13 +16,9 @@
 
 package com.mybatiseasy.core.provider;
 
-import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.MethodParam;
-import com.mybatiseasy.core.consts.Sql;
-import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
-import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.utils.MetaObjectUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +29,6 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
@@ -220,7 +215,7 @@ public class SqlBuilder {
         for (EntityFieldMap fieldMap : entityMap.getEntityFieldMapList()
         ) {
             //主键不参与更新
-            if(fieldMap.getIsId()) continue;;
+            if(fieldMap.isId()) continue;;
 
             name = fieldMap.getName();
             value = entityObject.getValue(name);
@@ -240,8 +235,9 @@ public class SqlBuilder {
         this.updateValueList = valueList;
     }
 
-    private String formatUpdateItem(EntityFieldMap fieldMap, String name, String value){
-        return fieldMap.getColumn() + "=" + getColumnValue(fieldMap, name, value);
+    private String formatUpdateItem(EntityFieldMap fieldMap, String name, String value) {
+        String columValue = fieldMap.isVersion() ? fieldMap.getColumn() + " + 1" : getColumnValue(fieldMap, name, value);
+        return fieldMap.getColumn() + "=" + columValue;
     }
 
 }

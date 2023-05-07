@@ -30,7 +30,6 @@ import javax.tools.Diagnostic;
 import java.util.Map;
 import java.util.Set;
 
-@AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedAnnotationTypes("com.mybatiseasy.annotation.Table")
 @Slf4j

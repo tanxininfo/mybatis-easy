@@ -39,19 +39,19 @@ public class Page implements Serializable {
     /**
      * 每页记录数
      */
-    private long size;
+    private int size;
 
     /**
      * 当前页
      */
-    private long current;
+    private int current;
 
     /**
      * 页数
      */
     private long pages;
 
-    public Page(long total, long size, long current){
+    public Page(long total, int size, int current){
         this.setCurrent(current);
         this.setTotal(total);
         this.setSize(size);

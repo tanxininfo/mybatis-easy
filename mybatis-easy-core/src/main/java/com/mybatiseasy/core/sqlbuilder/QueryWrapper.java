@@ -19,9 +19,12 @@ package com.mybatiseasy.core.sqlbuilder;
 import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
+import com.mybatiseasy.core.session.EntityFieldMap;
+import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.AbstractSQL;
+import org.apache.ibatis.reflection.MetaObject;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -44,12 +47,28 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
+    public QueryWrapper orderBy(String columnName, boolean isDesc){
+        sqlStatement.orderBy.add(columnName+ Sql.SPACE + (isDesc? "DESC":"ASC"));
+        return this;
+    }
+
     private String formatJoin(Column column, Condition condition) {
         return column.getFullTable()+ Sql.SPACE + "ON" + Sql.SPACE + condition.getSql();
     }
 
     public QueryWrapper join(Column column, Condition condition){
         sqlStatement.join.add(formatJoin(column, condition));
+        return this;
+    }
+
+    /**
+     * 添加 preparestatement 的 parameter参数
+     * @param key 键名
+     * @param value 键值
+     * @return QueryWrapper
+     */
+    public QueryWrapper addParameter(String key, Object value){
+        this.sqlStatement.parameterMap.put(key, value);
         return this;
     }
 

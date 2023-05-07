@@ -98,6 +98,7 @@ public class GlobalConfig {
 
         public Builder templateType(TemplateType ...templateTypes) {
             if(config.templateTypeList == null ) config.templateTypeList = new ArrayList<>();
+
             for (TemplateType templateType : templateTypes
             ) {
                 if (!config.templateTypeList.contains(templateType)) config.templateTypeList.add(templateType);

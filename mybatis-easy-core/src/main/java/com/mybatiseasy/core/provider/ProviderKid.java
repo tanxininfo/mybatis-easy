@@ -20,8 +20,10 @@ import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
+import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.utils.SqlUtil;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.util.Assert;
 
@@ -74,5 +76,18 @@ public class ProviderKid {
 
         return entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
                 "#{" + entityMap.getPrimary().getName() +"}";
+    }
+
+
+    public static void version(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj, QueryWrapper queryWrapper){
+        EntityFieldMap version = entityMap.getVersion();
+        if(version == null) return;
+
+        Object value = entityObj.getValue(version.getName());
+        String key = SqlUtil.getMapKey(version.getColumn());
+        String valueTag = SqlUtil.getValueTag(key);
+
+        queryWrapper.where(SqlUtil.addBackquote(version.getColumn()) +" = "+ valueTag);
+        queryWrapper.addParameter(key, value);
     }
 }

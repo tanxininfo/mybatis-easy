@@ -92,13 +92,16 @@ public class SqlProvider {
         MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
         ProviderKid.putIdValueToMap(map, entityMap, entityObj);
 
-
         SqlBuilder builder = new SqlBuilder();
         builder.generateUpdateParts(map, entityMap);
 
         QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.UPDATE, entityMap);
         wrapper.setValues(builder.getUpdateValueList());
 
+        /**
+         * 乐观锁处理
+         */
+        ProviderKid.version(map, entityMap, entityObj, wrapper);
         wrapper.where(ProviderKid.getWhereId(entityMap));
 
         return wrapper.getSql();
@@ -124,6 +127,12 @@ public class SqlProvider {
 
         wrapper.where(condition);
 
+        MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
+
+        /**
+         * 乐观锁处理
+         */
+        ProviderKid.version(map, entityMap, entityObj, wrapper);
         return wrapper.getSql();
     }
 
@@ -145,6 +154,10 @@ public class SqlProvider {
         SqlBuilder builder = new SqlBuilder();
         builder.generateUpdateParts(map, entityMap);
         wrapper.setValues(builder.getUpdateValueList());
+
+        MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
+
+        ProviderKid.version(map, entityMap, entityObj, wrapper);
 
         return wrapper.getSql();
     }

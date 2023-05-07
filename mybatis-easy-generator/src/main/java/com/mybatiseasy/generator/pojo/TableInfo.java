@@ -20,6 +20,7 @@ import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.keygen.IKeyGenerator;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,7 +42,8 @@ public class TableInfo {
 
     private List<ColumnInfo> columns;
 
-    private String pri;
+    private List<String> columnNames;
+    private ColumnInfo priColumn;
 
     private Class<? extends IKeyGenerator> keyGenerator;
 
@@ -55,8 +57,8 @@ public class TableInfo {
         return extra;
     }
 
-    public String getPri() {
-        return pri;
+    public ColumnInfo getPriColumn() {
+        return priColumn;
     }
 
     public Class<? extends IKeyGenerator> getKeyGenerator() {
@@ -102,10 +104,11 @@ public class TableInfo {
 
     public void setColumns(List<ColumnInfo> columns) {
         this.columns = columns;
+        this.columnNames = this.columns.stream().map(ColumnInfo::getName).collect(Collectors.toList());
     }
 
-    public void setPri(String pri) {
-        this.pri = pri;
+    public void setPriColumn(ColumnInfo priColumn) {
+        this.priColumn = priColumn;
     }
 
     public void setTableName(String tableName) {

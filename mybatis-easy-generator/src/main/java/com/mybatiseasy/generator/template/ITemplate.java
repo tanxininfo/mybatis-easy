@@ -32,4 +32,7 @@ public interface ITemplate {
     void writeEntity(TableInfo tableInfo);
     void writeMapper(TableInfo tableInfo);
     void writeDto(TableInfo tableInfo);
+    void writeController(TableInfo tableInfo);
+    void writeService(TableInfo tableInfo);
+    void writeServiceImpl(TableInfo tableInfo);
 }

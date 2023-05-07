@@ -18,6 +18,9 @@ import lombok.experimental.Accessors;
 
 <#if entity.supperClass??>
 import ${entity.supperClass.name};
+<#else>
+import java.io.Serializable;
+import java.io.Serial;
 </#if>
 
 <#if table.keyGenerator??>
@@ -26,12 +29,27 @@ import ${table.keyGenerator.name};
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.columns as column>
 <#if column.javaTypeName == "LocalDateTime">
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 <#break>
 </#if>
 </#list>
 <#------------  END 字段循环遍历  ---------->
-
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list table.columns as column>
+<#if column.javaTypeName == "LocalDate">
+import java.time.LocalDate;
+<#break>
+</#if>
+</#list>
+<#------------  END 字段循环遍历  ---------->
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list table.columns as column>
+<#if column.javaTypeName == "LocalTime">
+import java.time.LocalTime;
+<#break>
+</#if>
+</#list>
+<#------------  END 字段循环遍历  ---------->
 /**
  * ${table.comment!}
  *
@@ -49,10 +67,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @ApiModel(value = "${table.name}对象", description = "${table.comment!}")
 </#if>
 <#if entity.supperClass??>
-public class ${table.name} extends ${entity.supperClass.simpleName} {
+public class ${table.name?cap_first}${entity.suffix} extends ${entity.supperClass.simpleName} {
 <#else>
-public class ${table.name} implements Serializable {
+public class ${table.name?cap_first}${entity.suffix} implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 </#if>
 
@@ -71,12 +90,12 @@ public class ${table.name} implements Serializable {
     <#-- 主键 -->
     <#if column.pri>
     <#if column.autoIncrement>
-    @TableId(value = "${column.columnName}", type = IdType.AUTO)
+    @TableId(type = TableIdType.AUTO)
     <#elseif global.idType??>
-    @TableId(value = "${column.columnName}", type = IdType.${global.idType}<#if global.sequence!?length gt 0> sequence="${global.sequence}"</#if><#if global.keyGenerator??> keyGenerator=${global.keyGenerator.simpleName}.class</#if>)
+    @TableId(type = TableIdType.${global.idType}<#if global.sequence!?length gt 0>, sequence="${global.sequence}"</#if><#if global.keyGenerator??>, keyGenerator=${global.keyGenerator.simpleName}.class</#if>)
     </#if>
     </#if>
-    @TableField(column = "${column.columnName}"<#if column.insert!?length gt 0> insert = "${column.insert!}"</#if><#if column.update!?length gt 0> update = "${column.update!}"</#if><#if column.javaTypeName=="Float" || column.javaTypeName=="BigDecimal"> numericScale = ${column.numericScale}</#if>)
+    @TableField(column = "${column.columnName}"<#if column.insert!?length gt 0>, insert = "${column.insert!}"</#if><#if column.update!?length gt 0>, update = "${column.update!}"</#if><#if column.javaTypeName=="Float" || column.javaTypeName=="BigDecimal">, numericScale = ${column.numericScale}</#if>)
     private ${column.javaTypeName} ${column.name};
 
 </#list>

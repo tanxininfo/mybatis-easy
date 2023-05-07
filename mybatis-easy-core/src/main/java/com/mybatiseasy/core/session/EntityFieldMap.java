@@ -74,6 +74,10 @@ public class EntityFieldMap {
    */
   private boolean isLarge;
   /**
+   * 是否乐观锁
+   */
+  private boolean isVersion;
+  /**
    * 字段的JdbcType
    */
   private JdbcType jdbcType;
@@ -89,6 +93,7 @@ public class EntityFieldMap {
    * 小数点位数
    */
   private String numericScale;
+
 
   private EntityFieldMap() {
   }
@@ -134,6 +139,10 @@ public class EntityFieldMap {
     }
     public Builder isLarge(boolean isLarge) {
       entityFieldMap.isLarge = isLarge;
+      return this;
+    }
+    public Builder isVersion(boolean isVersion) {
+      entityFieldMap.isVersion = isVersion;
       return this;
     }
     public Builder jdbcType(JdbcType jdbcType) {
@@ -193,8 +202,11 @@ public class EntityFieldMap {
     return desc;
   }
 
-  public boolean  getIsLarge() {
+  public boolean  isLarge() {
     return isLarge;
+  }
+  public boolean  isVersion() {
+    return isVersion;
   }
 
   public String  getNumericScale() {
@@ -209,7 +221,7 @@ public class EntityFieldMap {
   public JdbcType  getJdbcType() {
     return jdbcType;
   }
-  public boolean  getIsId() {
+  public boolean isId() {
     return isId;
   }
   public TableIdType  getIdType() {

@@ -4,6 +4,7 @@ package ${global.packageName}.${dto.packageName};
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 </#if>
+import java.time.LocalDateTime;
 
 <#if dto.enableLombok>
 import lombok.Data;
@@ -12,6 +13,30 @@ import lombok.experimental.Accessors;
 </#if>
 </#if>
 
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list table.columns as column>
+<#if column.javaTypeName == "LocalDateTime">
+import java.time.LocalDateTime;
+<#break>
+</#if>
+</#list>
+<#------------  END 字段循环遍历  ---------->
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list table.columns as column>
+<#if column.javaTypeName == "LocalDate">
+import java.time.LocalDate;
+<#break>
+</#if>
+</#list>
+<#------------  END 字段循环遍历  ---------->
+<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#list table.columns as column>
+<#if column.javaTypeName == "LocalTime">
+import java.time.LocalTime;
+<#break>
+</#if>
+</#list>
+<#------------  END 字段循环遍历  ---------->
 /**
  *
  * ${table.comment!} ${table.name} Dto对象

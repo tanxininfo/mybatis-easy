@@ -75,10 +75,11 @@ public class SqlUtil {
 
     /**
      * 格式化in表达式里的项
+     *
      * @return 如： 'a', 1
      */
-    public static String formatInElement(Object obj){
-        if(obj instanceof String){
+    public static String formatInElement(Object obj) {
+        if (obj instanceof String) {
             return addSymbol(obj.toString(), "'", "'");
         } else return obj.toString();
     }
@@ -86,45 +87,58 @@ public class SqlUtil {
 
     /**
      * 用于sql语句中，给表或字段名添加`号，避免和sql关键字冲突
+     *
      * @param str 表名或列名
      * @return 加上`号的表名或列名
      */
-    public static String addBackquote(String str){
-        return str.startsWith("`")? str: "`"+str+"`";
+    public static String addBackquote(String str) {
+        return str.startsWith("`") ? str : "`" + str + "`";
     }
 
 
     /**
      * 用于sql语句中，给表或字段名去除`号
+     *
      * @param str 表名或列名
      * @return 去除`号的表名或列名
      */
-    public static String removeBackquote(String str){
-        return str.replace("`","");
+    public static String removeBackquote(String str) {
+        return str.replace("`", "");
     }
 
 
     /**
      * 用于sql语句中，给字符串加符号
+     *
      * @param str String
      * @return 加上''的值
      */
-    public static String addSymbol(String str, String leftSymbol, String rightSymbol){
-        return str.startsWith(leftSymbol)? str: leftSymbol+str+rightSymbol;
+    public static String addSymbol(String str, String leftSymbol, String rightSymbol) {
+        return str.startsWith(leftSymbol) ? str : leftSymbol + str + rightSymbol;
     }
 
 
     /**
      * 用于sql语句中，给表或字段名去除符号
+     *
      * @param str String
      * @return 去除''的值
      */
-    public static String removeSymbol(String str, String leftSymbol, String rightSymbol){
-        return str.replace(leftSymbol,"").replace(rightSymbol, "");
+    public static String removeSymbol(String str, String leftSymbol, String rightSymbol) {
+        return str.replace(leftSymbol, "").replace(rightSymbol, "");
     }
 
-    public static String addSingQuote(String str){
+    public static String addSingQuote(String str) {
         return addSymbol(str, "'", "'");
     }
 
+
+    public static String getMapKey(String column) {
+        String originColumn = SqlUtil.removeBackquote(column);
+        return originColumn + IdUtil.uniqueId().id();
+    }
+
+    public static String getValueTag(String key) {
+        return "#{" + key + "}";
+    }
 }

@@ -111,7 +111,7 @@ public class Column {
      * @return String
      */
     private String getValueTag(Object value){
-        String key = getMapKey();
+        String key = SqlUtil.getMapKey(this.column.getColumn());
         this.parameterMap.put(key, value);
         return "#{"+ key  +"}";
     }
@@ -122,7 +122,7 @@ public class Column {
      * @return String
      */
     private String getValueTagArray(Object[] array){
-        String key = getMapKey();
+        String key = SqlUtil.getMapKey(this.column.getColumn());
         this.parameterMap.put(key, array);
 
         StringBuilder sb = new StringBuilder();
@@ -143,7 +143,7 @@ public class Column {
      * @return String
      */
     private String getValueTagCollection(Collection<?> collection){
-        String key = getMapKey();
+        String key = SqlUtil.getMapKey(this.column.getColumn());
         this.parameterMap.put(key, collection);
 
         StringBuilder sb = new StringBuilder();
@@ -157,17 +157,6 @@ public class Column {
         }
 
         return sb.toString();
-    }
-
-    private String getMapKey(){
-        String column = SqlUtil.removeBackquote(this.column.getColumn());
-        return column + IdUtil.uniqueId().id();
-//        String key;
-//        for(int i=1;i<1000;i++){
-//            key = column +"_" + i;
-//            if(!this.parameterMap.containsKey(key)) return key;
-//        }
-//        throw new RuntimeException("failed to generate map key");
     }
 
     /**
@@ -192,6 +181,7 @@ public class Column {
 
     private Condition compare(Object[] array, String symbol, boolean apply) {
         if (!apply) return new Condition();
+
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagArray(array) +")";
         return new Condition(sql, this.parameterMap);
     }

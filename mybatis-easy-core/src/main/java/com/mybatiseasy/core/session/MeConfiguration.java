@@ -93,7 +93,7 @@ public class MeConfiguration extends Configuration {
                     resultMapping.typeHandler(typeHandler);
                 }
 
-                if(fieldMap.getIsId()) resultMapping.flags(List.of(ResultFlag.ID));
+                if(fieldMap.isId()) resultMapping.flags(List.of(ResultFlag.ID));
                 resultMappingList.add(resultMapping.build());
             }
              ResultMap newMap = new ResultMap.Builder(this, mapperName, Class.forName(entityName), resultMappingList).build();

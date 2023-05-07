@@ -21,7 +21,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.1.0</version>
+        <version>0.3.0</version>
     </parent>
     <artifactId>mybatis-easy-apt</artifactId>
     <name>mybatis-easy-apt</name>
@@ -30,7 +30,6 @@
         <java.version>17</java.version>
         <auto-service.version>1.0.1</auto-service.version>
         <processor.version>2.7.9</processor.version>
-        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <dependencies>
         <dependency>
@@ -53,7 +52,6 @@
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
             <version>${auto-service.version}</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
