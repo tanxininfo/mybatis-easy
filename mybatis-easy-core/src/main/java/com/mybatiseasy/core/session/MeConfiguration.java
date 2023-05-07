@@ -92,7 +92,6 @@ public class MeConfiguration extends Configuration {
                     TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), fieldMap.getTypeHandler());
                     resultMapping.typeHandler(typeHandler);
                 }
-
                 if(fieldMap.isId()) resultMapping.flags(List.of(ResultFlag.ID));
                 resultMappingList.add(resultMapping.build());
             }

@@ -17,4 +17,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ${table.name?cap_first}${mapper.suffix} extends ${mapper.supperClass!"IMapper"}<${table.name?cap_first}${entity.suffix?cap_first}> {
 
+
 }

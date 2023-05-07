@@ -181,7 +181,6 @@ public class Column {
 
     private Condition compare(Object[] array, String symbol, boolean apply) {
         if (!apply) return new Condition();
-
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagArray(array) +")";
         return new Condition(sql, this.parameterMap);
     }

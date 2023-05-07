@@ -21,14 +21,14 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.3.0</version>
+        <version>0.3.1</version>
     </parent>
     <artifactId>mybatis-easy-annotation</artifactId>
     <name>mybatis-easy-annotation</name>
     <description>mybatis-easy-annotation</description>
     <properties>
         <java.version>17</java.version>
-        <spring-core.version>5.3.8</spring-core.version>
+        <spring-core.version>5.3.27</spring-core.version>
     </properties>
     <dependencies>
         <dependency>

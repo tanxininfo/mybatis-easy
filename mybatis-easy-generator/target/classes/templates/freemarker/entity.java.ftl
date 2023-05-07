@@ -96,6 +96,7 @@ public class ${table.name?cap_first}${entity.suffix} implements Serializable {
     </#if>
     </#if>
     @TableField(column = "${column.columnName}"<#if column.insert!?length gt 0>, insert = "${column.insert!}"</#if><#if column.update!?length gt 0>, update = "${column.update!}"</#if><#if column.javaTypeName=="Float" || column.javaTypeName=="BigDecimal">, numericScale = ${column.numericScale}</#if>)
+
     private ${column.javaTypeName} ${column.name};
 
 </#list>

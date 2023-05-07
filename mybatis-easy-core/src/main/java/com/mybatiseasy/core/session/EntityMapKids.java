@@ -132,7 +132,6 @@ public class EntityMapKids {
 
             EntityFieldMap primary = null;
             EntityFieldMap version = null;
-
             List<EntityFieldMap> entityFieldMapList = new ArrayList<>();
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {

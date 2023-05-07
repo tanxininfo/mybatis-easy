@@ -29,7 +29,7 @@
 	</modules>
 	<groupId>com.mybatis-easy</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.3.0</version>
+	<version>0.3.1</version>
 	<name>mybatis-easy</name>
 	<url>https://mybatis-easy.com</url>
 	<description>Mybatis-Easy, a simplified and enhanced framework for mybatis.</description>
@@ -296,18 +296,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- Nexus Staging Plugin -->
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.9</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>sonatype</serverId>
-					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

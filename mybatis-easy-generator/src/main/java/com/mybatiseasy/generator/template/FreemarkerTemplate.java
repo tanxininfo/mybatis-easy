@@ -102,7 +102,6 @@ public class FreemarkerTemplate implements ITemplate{
         String filePath = "";
         try {
             filePath = getFilePath(entityConfig.getPackageName(), entityConfig.getSuffix(), tableInfo.getName());
-
             File file = new File(filePath);
             if (!entityConfig.isOverride() && file.exists()) return;
 

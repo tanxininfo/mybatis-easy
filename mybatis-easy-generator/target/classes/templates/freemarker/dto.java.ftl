@@ -4,7 +4,6 @@ package ${global.packageName}.${dto.packageName};
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 </#if>
-import java.time.LocalDateTime;
 
 <#if dto.enableLombok>
 import lombok.Data;

@@ -34,6 +34,7 @@ public class FileGenerator {
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(url, username, password).build();
         GlobalConfig globalConfig = new GlobalConfig.Builder(baseDir, "com.mybatiseasy.test.out")
                 .templateType(TemplateType.ALL)
+
                 .idType(TableIdType.CUSTOM)
                 .keyGenerator(NoKeyGenerator.class)
                 .build();

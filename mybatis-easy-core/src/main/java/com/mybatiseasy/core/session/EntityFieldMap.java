@@ -94,7 +94,6 @@ public class EntityFieldMap {
    */
   private String numericScale;
 
-
   private EntityFieldMap() {
   }
 

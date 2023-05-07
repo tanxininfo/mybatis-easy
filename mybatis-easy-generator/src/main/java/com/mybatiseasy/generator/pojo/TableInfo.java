@@ -41,7 +41,6 @@ public class TableInfo {
     private String comment;
 
     private List<ColumnInfo> columns;
-
     private List<String> columnNames;
     private ColumnInfo priColumn;
 

@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 @Data
 @Table("user")
 public class User implements Serializable{
+
     @TableId( type = TableIdType.SEQUENCE, sequence = "SELECT id+1 as id from `user` order by id desc limit 1")
     private Long id;
     private String name;
@@ -39,6 +40,6 @@ public class User implements Serializable{
     @TableField(insert = "NOW()")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
-//    @TableField(insert = "NOW()", update = "NOW()")
-//    private LocalDateTime updateTime;
+    @TableField(insert = "NOW()", update = "NOW()")
+    private LocalDateTime updateTime;
 }
