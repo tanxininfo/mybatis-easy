@@ -44,7 +44,7 @@ public class ColumnInfo {
     /**
      * 是否主键
      */
-    private boolean isPri;
+    private boolean pri;
 
     private int numericScale;
 
@@ -111,7 +111,7 @@ public class ColumnInfo {
     }
 
     public boolean isPri() {
-        return isPri;
+        return pri;
     }
 
     public String getName() {
@@ -131,7 +131,7 @@ public class ColumnInfo {
     }
 
     public void setPri(boolean isPri) {
-        this.isPri = isPri;
+        this.pri = isPri;
     }
 
     public void setNumericScale(int numericScale) {

@@ -25,9 +25,14 @@ import com.mybatiseasy.keygen.NoKeyGenerator;
 public class FileGenerator {
 
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:mybatis-easy-test/sqlite/test.db";
-        String username = "";
-        String password = "";
+//        String url = "jdbc:sqlite:mybatis-easy-test/sqlite/test.db";
+//        String username = "";
+//        String password = "";
+
+        String url = "jdbc:mysql://127.0.0.1:3306/test_data?allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true";
+        String username = "root";
+        String password="Pass3##a893";
+
 
         String baseDir =  System.getProperty("user.dir") + "\\mybatis-easy-test\\src\\main\\java";
 

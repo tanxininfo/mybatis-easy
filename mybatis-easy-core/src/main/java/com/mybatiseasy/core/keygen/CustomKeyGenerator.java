@@ -19,6 +19,7 @@ package com.mybatiseasy.core.keygen;
 import java.sql.Statement;
 import java.util.*;
 
+import com.mybatiseasy.core.utils.BeanMapUtil;
 import com.mybatiseasy.keygen.IKeyGenerator;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.emums.TableIdType;
@@ -90,7 +91,7 @@ public class CustomKeyGenerator implements KeyGenerator {
                     generator = KeyGeneratorFactory.getInstance(clazz);
                 }
 
-                Map<String, Object> map = ObjectUtil.beanToMap(parameter, false, false);
+                Map<String, Object> map = BeanMapUtil.beanToMap(parameter);
                 Object entityOrList = map.get(key);
                 if(Objects.equals(key, MethodParam.ENTITY)){
                     MetaObject metaParam = configuration.newMetaObject(entityOrList);

@@ -29,7 +29,7 @@
 	</modules>
 	<groupId>com.mybatis-easy</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.3.1</version>
+	<version>0.3.2</version>
 	<name>mybatis-easy</name>
 	<url>https://mybatis-easy.com</url>
 	<description>Mybatis-Easy, a simplified and enhanced framework for mybatis.</description>
@@ -44,15 +44,15 @@
 		<jaxb-runtime.version>2.3.3</jaxb-runtime.version>
 		<mybatis.version>3.5.11</mybatis.version>
 		<mybatis-spring.version>2.0.6</mybatis-spring.version>
-		<lombok.version>1.18.24</lombok.version>
+		<lombok.version>1.18.26</lombok.version>
 		<slf4j.version>1.7.36</slf4j.version>
-		<spring.version>5.3.8</spring.version>
+		<spring.version>5.3.27</spring.version>
 		<mysql-connector-j.version>8.0.32</mysql-connector-j.version>
 		<hikaricp.version>5.0.1</hikaricp.version>
-		<hutool.version>5.8.1</hutool.version>
 		<spring-boot.version>2.7.11</spring-boot.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jackson-datatype-jsr310.version>2.13.5</jackson-datatype-jsr310.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -126,11 +126,6 @@
 				<version>${mysql-connector-j.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>cn.hutool</groupId>
-				<artifactId>hutool-all</artifactId>
-				<version>${hutool.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>${freemarker.version}</version>
@@ -144,10 +139,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<dependency>
-			<groupId>cn.hutool</groupId>
-			<artifactId>hutool-all</artifactId>
-		</dependency>
 		<!--java版本太高  向下兼容-->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

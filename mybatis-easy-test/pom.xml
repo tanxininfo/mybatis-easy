@@ -21,15 +21,13 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.3.1</version>
+        <version>0.3.2</version>
     </parent>
     <artifactId>mybatis-easy-test</artifactId>
     <properties>
         <java.version>17</java.version>
-        <mysql-connector-j.version>8.0.32</mysql-connector-j.version>
         <sqlite-jdbc.version>3.40.1.0</sqlite-jdbc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok.version>1.18.26</lombok.version>
         <swagger.version>3.0.0</swagger.version>
     </properties>
     <dependencies>
@@ -63,6 +61,24 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>${swagger.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

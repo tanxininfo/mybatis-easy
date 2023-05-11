@@ -48,7 +48,6 @@ public class TableGenerator extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        messager.printMessage(Diagnostic.Kind.NOTE, String.format("process entity  entry"));
         if (roundEnv.processingOver()) {
             return false;
         }

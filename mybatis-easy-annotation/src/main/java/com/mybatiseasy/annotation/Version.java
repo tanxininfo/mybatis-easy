@@ -16,10 +16,6 @@
 
 package com.mybatiseasy.annotation;
 
-import com.mybatiseasy.emums.TableIdType;
-import com.mybatiseasy.keygen.IKeyGenerator;
-import com.mybatiseasy.keygen.NoKeyGenerator;
-
 import java.lang.annotation.*;
 
 /**

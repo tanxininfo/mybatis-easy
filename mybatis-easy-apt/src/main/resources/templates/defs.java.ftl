@@ -1,24 +1,24 @@
-package com.mybatiseasy.core.cols;
+package com.mybatiseasy.core.defs;
 
 import com.mybatiseasy.core.base.Column;
 
-public class ${colClassName} extends Column {
+public class ${defClassName} extends Column {
 
-    public ${colClassName}(){
+    public ${defClassName}(){
 
     }
 
-    public ${colClassName}(String table) {
+    public ${defClassName}(String table) {
         super(table);
     }
 
-    public ${colClassName}(String table, String tableAlias) {
+    public ${defClassName}(String table, String tableAlias) {
         super(table, tableAlias);
     }
 
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list columnList as column>
-    public ${colClassName} ${column.capitalName}() {
+    public ${defClassName} ${column.capitalName}() {
         addColumn("`${column.column}`");
         return this;
     }
@@ -29,7 +29,7 @@ public class ${colClassName} extends Column {
 
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list columnList as column>
-    public ${colClassName} ${column.capitalName}(String alias) {
+    public ${defClassName} ${column.capitalName}(String alias) {
         addColumn("`${column.column}`", alias);
         return this;
     }
@@ -38,66 +38,66 @@ public class ${colClassName} extends Column {
 <#------------  END 字段循环遍历  ---------->
 
 
-    public ${colClassName} as(String columnAlias) {
+    public ${defClassName} as(String columnAlias) {
         super.columnAlias(columnAlias);
         return this;
     }
 
-    public ${colClassName} avg(String columnAlias) {
+    public ${defClassName} avg(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("AVG");
         return this;
     }
 
-    public ${colClassName} max(String columnAlias) {
+    public ${defClassName} max(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("MAX");
         return this;
     }
 
-    public ${colClassName} min(String columnAlias) {
+    public ${defClassName} min(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("MIN");
         return this;
     }
 
-    public ${colClassName} sum(String columnAlias) {
+    public ${defClassName} sum(String columnAlias) {
         super.columnAlias(columnAlias);
         super.setMethod("SUM");
         return this;
     }
 
-    public ${colClassName} count(String columnAlias) {
+    public ${defClassName} count(String columnAlias) {
         super.setMethod("COUNT");
         super.columnAlias(columnAlias);
         return this;
     }
 
-    public ${colClassName} avg() {
+    public ${defClassName} avg() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("AVG");
         return this;
     }
 
-    public ${colClassName} max() {
+    public ${defClassName} max() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("MAX");
         return this;
     }
 
-    public ${colClassName} min() {
+    public ${defClassName} min() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("MIN");
         return this;
     }
 
-    public ${colClassName} sum() {
+    public ${defClassName} sum() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("SUM");
         return this;
     }
 
-    public ${colClassName} count() {
+    public ${defClassName} count() {
         super.columnAlias(this.getColumn().getColumn());
         super.setMethod("COUNT");
         return this;

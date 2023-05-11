@@ -16,6 +16,17 @@
 
 package com.mybatiseasy.core.base;
 
-public class Table {
+public class Table extends Column {
 
+    public Table() {
+        super("", "");
+    }
+
+    public Table(String table) {
+        super(table, "");
+    }
+
+    public Table(String table, String tableAlias) {
+        super(table, tableAlias);
+    }
 }

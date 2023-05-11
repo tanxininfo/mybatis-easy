@@ -61,8 +61,8 @@ public class TableInfo {
 
     private void setClassName(TypeElement classElement) {
         root.put("entityClassName", Utils.uncapitalize(classElement.getSimpleName().toString()));
-        root.put("colClassName", Utils.capitalize(classElement.getSimpleName().toString()) + "Column");
-        root.put("tableClassName",  Utils.camelToSnake(classElement.getSimpleName().toString()).toUpperCase());
+        root.put("defClassName", Utils.capitalize(classElement.getSimpleName().toString()) + "Def");
+        root.put("tableClassName",  Utils.camelToSnake(Utils.uncapitalize(classElement.getSimpleName().toString())).toUpperCase());
     }
 
     private void setTableName(TypeElement classElement){

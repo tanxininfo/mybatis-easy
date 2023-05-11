@@ -18,7 +18,6 @@ package com.mybatiseasy.core.base;
 
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.sqlbuilder.Condition;
-import com.mybatiseasy.core.utils.IdUtil;
 import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -63,10 +62,25 @@ public class Column {
     public void addColumn(String columnName, String columnAlias) {
         ColumnData newColumn = new ColumnData();
         newColumn.setColumn(columnName);
+        newColumn.setTable(this.column.getTable());
         if (TypeUtil.isNotEmpty(this.column.getTableAlias())) newColumn.setTableAlias(this.column.getTableAlias());
         if (TypeUtil.isNotEmpty(columnAlias)) newColumn.setColumnAlias(columnAlias);
-        this.columns.add(newColumn);
+        if(this.columns.stream().noneMatch(item ->
+                item.getTable().equals(newColumn.getTable())
+                        && item.getTableAlias().equals(newColumn.getTableAlias())
+                        && item.getColumn().equals(newColumn.getColumn()))) {
+            this.columns.add(newColumn);
+        }
         this.column = newColumn;
+    }
+
+    /**
+     * 当出现在非 select语句下时，要去除新添加的column,因为此时并不是为了表示select字段。
+     * 例如：在where语句中，新添加了column,但是该column会出现在select 语句中，所以要删除。
+     */
+    public void removeLastColumn() {
+        if (this.columns.size() > 0)
+            this.columns.remove(this.columns.size() - 1);
     }
 
     public void columnAlias(String columnAlias) {
@@ -84,7 +98,7 @@ public class Column {
     }
 
     public String getTableColumn() {
-        if (TypeUtil.isNotEmpty(this.column.getTableAlias())) return this.column.getTableAlias() + "." + this.column;
+        if (TypeUtil.isNotEmpty(this.column.getTableAlias())) return this.column.getTableAlias() + "." + this.column.getColumn();
         return this.column.getColumn();
     }
 
@@ -95,7 +109,7 @@ public class Column {
     }
 
     public String getTableColumn(ColumnData column) {
-        if (TypeUtil.isNotEmpty(column.getTableAlias())) return column.getTableAlias() + "." + column;
+        if (TypeUtil.isNotEmpty(column.getTableAlias())) return column.getTableAlias() + "." + column.getColumn();
         return column.getColumn();
     }
 
@@ -168,31 +182,40 @@ public class Column {
      * @return Condition
      */
     private Condition compare(Object val, String symbol, boolean apply) {
-        if (!apply) return new Condition();
+        this.removeLastColumn();
         String nextConditionSql = "";
         if (val instanceof Condition) nextConditionSql = ((Condition) val).getSql();
-        else if (val instanceof Column) nextConditionSql = ((Column) val).getFullColumn();
+        else if (val instanceof Column) {
+            ((Column) val).removeLastColumn();
+            nextConditionSql = ((Column) val).getFullColumn();
+        }
         else {
             nextConditionSql = getValueTag(val.toString());
         }
+
+        //不应用条件判断时，直接返回空的Condition
+        if (!apply) return new Condition();
+
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + nextConditionSql;
         return new Condition(sql, this.parameterMap);
     }
 
     private Condition compare(Object[] array, String symbol, boolean apply) {
+        this.removeLastColumn();
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagArray(array) +")";
         return new Condition(sql, this.parameterMap);
     }
 
     private Condition compare(Collection<?> collection, String symbol, boolean apply) {
-        log.info("Collection<?> collection");
+        this.removeLastColumn();
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagCollection(collection) +")";
         return new Condition(sql, this.parameterMap);
     }
 
     private Condition compareBetween(Object val1, Object val2, boolean apply) {
+        this.removeLastColumn();
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + "BETWEEN" + Sql.SPACE + getValueTag(val1) + Sql.SPACE + "AND" + Sql.SPACE + getValueTag(val2);
         return new Condition(sql, this.parameterMap);
@@ -242,7 +265,6 @@ public class Column {
     }
 
     public Condition in(Object... array) {
-        log.info("array[0]={}", array[0]);
         return compare(array, "IN", true);
     }
 

@@ -95,7 +95,7 @@ public class Generator {
             return DriverManager.getConnection(dataSourceConfig.getUrl(), dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
 
         } catch (Exception ex) {
-            Assert.isTrue(true, "数据库连接配置有误");
+            Assert.isTrue(true, "数据库连接失败:"+ex.getMessage());
         }
         return null;
     }

@@ -7,13 +7,17 @@ spring:
   main:
     allow-circular-references: true
   profiles:
-    active: test
+    active: dev
   datasource:
-    driver-class-name: org.sqlite.JDBC
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:sqlite:mybatis-easy-test/sqlite/test.db
-    username:
-    password:
+    #driver-class-name: org.sqlite.JDBC
+    #url: jdbc:sqlite:mybatis-easy-test/sqlite/test.db
+    #username:
+    #password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test_data
+    username: root
+    password: Pass3##a893
     # HikariCP连接池配置
     hikari:
       # 最小空闲连接数量

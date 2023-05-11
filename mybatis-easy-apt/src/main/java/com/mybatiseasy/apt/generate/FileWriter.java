@@ -33,10 +33,10 @@ public class FileWriter {
     private final ProcessingEnvironment processingEnv;
     private final Messager messager;
 
-    private final String COLS_PACKAGE_NAME = "com.mybatiseasy.core.cols";
+    private final String COLS_PACKAGE_NAME = "com.mybatiseasy.core.defs";
     private final String TABLES_PACKAGE_NAME = "com.mybatiseasy.core.tables";
 
-    private Template colsTemplate;
+    private Template defsTemplate;
     private Template tablesTemplate;
 
     public FileWriter(ProcessingEnvironment processingEnv, Messager messager) {
@@ -50,7 +50,7 @@ public class FileWriter {
             Configuration config = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
             config.setClassForTemplateLoading(getClass(), "/templates");
-            colsTemplate = config.getTemplate("cols.java.ftl");
+            defsTemplate = config.getTemplate("defs.java.ftl");
             tablesTemplate = config.getTemplate("tables.java.ftl");
 
             config.setDefaultEncoding("utf-8");
@@ -60,22 +60,22 @@ public class FileWriter {
     }
 
     /**
-     * 通过JavaPoet生成新的源文件
+     * 生成新的源文件
      */
     public void createTableFile(Map<String, Object> root) {
-        writeColsFile(root);
+        writeDefsFile(root);
         writeTablesFile(root);
     }
 
-    private void writeColsFile(Map<String, Object> paramsMap) {
+    private void writeDefsFile(Map<String, Object> paramsMap) {
         try {
 
-            JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(COLS_PACKAGE_NAME + "." + paramsMap.get("colClassName"));
+            JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(COLS_PACKAGE_NAME + "." + paramsMap.get("defClassName"));
             Writer writer = fileObject.openWriter();
-            colsTemplate.process(paramsMap, writer);
+            defsTemplate.process(paramsMap, writer);
             writer.close();
         } catch (Exception ex) {
-            messager.printMessage(Diagnostic.Kind.ERROR, "文件生成失败["+COLS_PACKAGE_NAME + "." + paramsMap.get("colClassName")+"]" + ex.getMessage());
+            messager.printMessage(Diagnostic.Kind.ERROR, "文件生成失败["+COLS_PACKAGE_NAME + "." + paramsMap.get("defClassName")+"]" + ex.getMessage());
         }
     }
 

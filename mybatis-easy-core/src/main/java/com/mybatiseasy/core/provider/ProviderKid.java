@@ -16,7 +16,7 @@
 
 package com.mybatiseasy.core.provider;
 
-import com.mybatiseasy.core.base.Column;
+import com.mybatiseasy.core.base.Table;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
@@ -41,20 +41,20 @@ public class ProviderKid {
         switch (statementType) {
             case SELECT -> {
                 if (!wrapper.hasSelect()) wrapper.select("*");
-                if (!wrapper.hasTable()) wrapper.from(new Column(entityName));
+                if (!wrapper.hasTable()) wrapper.from(new Table(entityName));
             }
             case COUNT -> {
                 if (!wrapper.hasSelect()) wrapper.select("count(*)");
-                if (!wrapper.hasTable()) wrapper.from(new Column(entityName));
+                if (!wrapper.hasTable()) wrapper.from(new Table(entityName));
             }
             case DELETE ->{
-                if (!wrapper.hasTable()) wrapper.deleteFrom(new Column(entityName));
+                if (!wrapper.hasTable()) wrapper.deleteFrom(new Table(entityName));
             }
             case INSERT -> {
-                if (!wrapper.hasTable()) wrapper.insertInto(new Column(entityName));
+                if (!wrapper.hasTable()) wrapper.insertInto(new Table(entityName));
             }
             case UPDATE -> {
-                if (!wrapper.hasTable()) wrapper.update(new Column(entityName));
+                if (!wrapper.hasTable()) wrapper.update(new Table(entityName));
             }
         }
         return wrapper;

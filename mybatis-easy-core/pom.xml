@@ -21,18 +21,19 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.3.1</version>
+        <version>0.3.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>mybatis-easy-core</name>
     <description>mybatis-easy-core</description>
     <artifactId>mybatis-easy-core</artifactId>
 
+    <properties>
+        <annotation-api.version>1.3.5</annotation-api.version>
+        <mybatis-typehandlers-jsr310.version>1.0.2</mybatis-typehandlers-jsr310.version>
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.mybatis-easy</groupId>
             <artifactId>mybatis-easy-annotation</artifactId>
@@ -41,12 +42,12 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-typehandlers-jsr310</artifactId>
-            <version>1.0.2</version>
+            <version>${mybatis-typehandlers-jsr310.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.14.2</version>
+            <version>${jackson-datatype-jsr310.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mybatis-easy</groupId>
@@ -56,15 +57,31 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>6.0.6</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${annotation-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 

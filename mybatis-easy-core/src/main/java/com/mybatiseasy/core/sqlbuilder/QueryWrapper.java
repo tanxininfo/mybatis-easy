@@ -17,6 +17,7 @@
 package com.mybatiseasy.core.sqlbuilder;
 
 import com.mybatiseasy.core.base.Column;
+import com.mybatiseasy.core.base.Table;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityFieldMap;
@@ -43,6 +44,7 @@ public class QueryWrapper implements Serializable {
     private final SQLStatement sqlStatement = new SQLStatement();
 
     public QueryWrapper orderBy(Column column, boolean isDesc){
+        column.removeLastColumn();
         sqlStatement.orderBy.add(column.getTableColumn()+ Sql.SPACE + (isDesc? "DESC":"ASC"));
         return this;
     }
@@ -52,12 +54,12 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
-    private String formatJoin(Column column, Condition condition) {
-        return column.getFullTable()+ Sql.SPACE + "ON" + Sql.SPACE + condition.getSql();
+    private String formatJoin(Table table, Condition condition) {
+        return table.getFullTable()+ Sql.SPACE + "ON" + Sql.SPACE + condition.getSql();
     }
 
-    public QueryWrapper join(Column column, Condition condition){
-        sqlStatement.join.add(formatJoin(column, condition));
+    public QueryWrapper join(Table table, Condition condition){
+        sqlStatement.join.add(formatJoin(table, condition));
         return this;
     }
 
@@ -72,18 +74,18 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
-    public QueryWrapper innerJoin(Column column, Condition condition){
-        sqlStatement.innerJoin.add(formatJoin(column, condition));
+    public QueryWrapper innerJoin(Table table, Condition condition){
+        sqlStatement.innerJoin.add(formatJoin(table, condition));
         return this;
     }
 
-    public QueryWrapper leftJoin(Column column, Condition condition){
-        sqlStatement.leftOuterJoin.add(formatJoin(column, condition));
+    public QueryWrapper leftJoin(Table table, Condition condition){
+        sqlStatement.leftOuterJoin.add(formatJoin(table, condition));
         return this;
     }
 
-    public QueryWrapper rightJoin(Column column, Condition condition){
-        sqlStatement.rightOuterJoin.add(formatJoin(column, condition));
+    public QueryWrapper rightJoin(Table table, Condition condition){
+        sqlStatement.rightOuterJoin.add(formatJoin(table, condition));
         return this;
     }
 
@@ -151,7 +153,7 @@ public class QueryWrapper implements Serializable {
      * @param table 表
      * @return QueryWrapper
      */
-    public QueryWrapper deleteFrom(Column table) {
+    public QueryWrapper deleteFrom(Table table) {
         sqlStatement.statementType = StatementType.DELETE;
 
         sqlStatement.tableList.add(table);
@@ -169,9 +171,10 @@ public class QueryWrapper implements Serializable {
         String columnName = "";
         for (Object column : columns
         ) {
-            if (column instanceof Column) {
-                List<String> columnList = ((Column) column).getAllColumns();
-                sqlStatement.groupBy.addAll(columnList);
+            if (column instanceof Column columnInstance) {
+                columnInstance.removeLastColumn();
+                columnName = columnInstance.getFullColumn();
+                sqlStatement.groupBy.add(columnName);
             } else {
                 columnName = column.toString();
                 if (!sqlStatement.groupBy.contains(columnName)) sqlStatement.groupBy.add(columnName);
@@ -196,7 +199,7 @@ public class QueryWrapper implements Serializable {
     }
 
 
-    public QueryWrapper insertInto(Column table) {
+    public QueryWrapper insertInto(Table table) {
         sqlStatement.statementType = StatementType.INSERT;
         sqlStatement.tables.add(table.getFullTable());
         return this;
@@ -251,7 +254,7 @@ public class QueryWrapper implements Serializable {
     }
 
 
-    public QueryWrapper update(Column table) {
+    public QueryWrapper update(Table table) {
         sqlStatement.statementType = StatementType.UPDATE;
         sqlStatement.tables.add(table.getFullTable());
         return this;
@@ -273,7 +276,7 @@ public class QueryWrapper implements Serializable {
         return sqlStatement.sql(new StringBuilder(), true);
     }
 
-    public QueryWrapper from(Column... tables) {
+    public QueryWrapper from(Table... tables) {
         sqlStatement.tableList.addAll(Arrays.asList(tables));
         for (Column table : tables
         ) {
@@ -324,7 +327,7 @@ public class QueryWrapper implements Serializable {
         List<String> sets = new ArrayList<>();
         List<String> select = new ArrayList<>();
         List<String> tables = new ArrayList<>();
-        List<Column> tableList = new ArrayList<>();
+        List<Table> tableList = new ArrayList<>();
         List<String> join = new ArrayList<>();
         List<String> innerJoin = new ArrayList<>();
         List<String> outerJoin = new ArrayList<>();
