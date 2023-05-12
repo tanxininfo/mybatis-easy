@@ -220,15 +220,17 @@ public class SqlBuilder {
             name = fieldMap.getName();
             value = entityObject.getValue(name);
 
-            if (value != null) {
-                map.put(name, value);
-                valueList.add(formatUpdateItem(fieldMap, name, ""));
-            }
-            else {
-                updateDefault = fieldMap.getUpdateDefault();
-                if (!updateDefault.isEmpty()) {
-                    map.put(name, updateDefault);
-                    valueList.add(formatUpdateItem(fieldMap, name, updateDefault));
+            // 只有本数据表字段需要更新,isForeign表示非本数据表字段,比如多表连接时，其他表字段。
+            if(!fieldMap.isForeign()) {
+                if (value != null) {
+                    map.put(name, value);
+                    valueList.add(formatUpdateItem(fieldMap, name, ""));
+                } else {
+                    updateDefault = fieldMap.getUpdateDefault();
+                    if (!updateDefault.isEmpty()) {
+                        map.put(name, updateDefault);
+                        valueList.add(formatUpdateItem(fieldMap, name, updateDefault));
+                    }
                 }
             }
         }

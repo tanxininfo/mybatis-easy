@@ -138,7 +138,7 @@ public class EntityMapKids {
                 EntityFieldMap fieldMap = reflectEntityMap(field);
                 if(fieldMap.isId()) primary = fieldMap;
                 if(fieldMap.isVersion()) version = fieldMap;
-                entityFieldMapList.add(fieldMap);
+                if(!fieldMap.isForeign()) entityFieldMapList.add(fieldMap);
             }
 
             String tableName = TypeUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();

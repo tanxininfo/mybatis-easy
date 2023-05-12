@@ -56,6 +56,10 @@ public @interface TableField {
     boolean isLarge() default true;
 
     /**
+     * 是否其他字段，非数据表字段
+     */
+    boolean isForeign() default false;
+    /**
      * JDBC类型
      */
     JdbcType jdbcType() default JdbcType.UNDEFINED;

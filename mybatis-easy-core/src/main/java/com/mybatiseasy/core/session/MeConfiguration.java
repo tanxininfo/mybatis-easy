@@ -36,6 +36,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
+import java.io.Serial;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -231,6 +232,7 @@ public class MeConfiguration extends Configuration {
                 .resultOrdered(ms.isResultOrdered())
                 .resultSets(null)
                 .resultMaps(new ArrayList<ResultMap>() {
+                    @Serial
                     private static final long serialVersionUID = 1L;
                     {
                         add(rm);

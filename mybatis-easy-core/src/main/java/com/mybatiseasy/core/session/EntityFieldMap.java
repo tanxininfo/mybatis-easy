@@ -78,6 +78,10 @@ public class EntityFieldMap {
    */
   private boolean isVersion;
   /**
+   * 是否非数据表字段
+   */
+  private boolean isForeign;
+  /**
    * 字段的JdbcType
    */
   private JdbcType jdbcType;
@@ -142,6 +146,10 @@ public class EntityFieldMap {
     }
     public Builder isVersion(boolean isVersion) {
       entityFieldMap.isVersion = isVersion;
+      return this;
+    }
+    public Builder isForeign(boolean isForeign) {
+      entityFieldMap.isForeign = isForeign;
       return this;
     }
     public Builder jdbcType(JdbcType jdbcType) {
@@ -222,6 +230,9 @@ public class EntityFieldMap {
   }
   public boolean isId() {
     return isId;
+  }
+  public boolean isForeign() {
+    return isForeign;
   }
   public TableIdType  getIdType() {
     return idType;
