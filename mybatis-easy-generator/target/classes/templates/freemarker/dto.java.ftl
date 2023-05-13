@@ -12,30 +12,38 @@ import lombok.experimental.Accessors;
 </#if>
 </#if>
 
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
 <#if column.javaTypeName == "LocalDateTime">
 import java.time.LocalDateTime;
 <#break>
 </#if>
 </#list>
-<#------------  END 字段循环遍历  ---------->
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
 <#if column.javaTypeName == "LocalDate">
 import java.time.LocalDate;
 <#break>
 </#if>
 </#list>
-<#------------  END 字段循环遍历  ---------->
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
 <#if column.javaTypeName == "LocalTime">
 import java.time.LocalTime;
 <#break>
 </#if>
 </#list>
-<#------------  END 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
+<#list table.columns as column>
+<#if column.javaTypeName == "BigDecimal">
+import java.math.BigDecimal;
+<#break>
+</#if>
+</#list>
+<#------------  字段循环遍历 结束  ---------->
 /**
  *
  * ${table.comment!} ${table.name} Dto对象
@@ -55,7 +63,7 @@ import java.time.LocalTime;
 </#if>
 public class ${table.name?cap_first}${dto.suffix} {
 
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
     <#if column.comment!?length gt 0>
     <#if dto.swagger>
@@ -69,7 +77,7 @@ public class ${table.name?cap_first}${dto.suffix} {
     private ${column.javaTypeName} ${column.name};
 
 </#list>
-<#------------  END 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
 
 <#if !dto.enableLombok>
     <#list table.columns as column>

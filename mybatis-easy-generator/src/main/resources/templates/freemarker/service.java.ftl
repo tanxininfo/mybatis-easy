@@ -42,7 +42,7 @@ public interface ${serviceClassName}<#if service.supperClass??> extends ${servic
     * @param ${entityClassName?uncap_first} ${table.comment}信息
     * @return 结果
     */
-    Long create(${entityClassName} ${entityClassName?uncap_first});
+    ${priColumnType} create(${entityClassName} ${entityClassName?uncap_first});
 
     /**
     * ${entityClassName}修改

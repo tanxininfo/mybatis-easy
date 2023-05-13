@@ -65,7 +65,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
     * @param ${entityClassName?uncap_first} ${table.comment!}信息
     * @return 结果
     */
-    public Long create(${entityClassName} ${entityClassName?uncap_first}) {
+    public ${priColumnType} create(${entityClassName} ${entityClassName?uncap_first}) {
         int affectedRows = ${mapperClassName?uncap_first}.insert(${entityClassName?uncap_first});
         if(affectedRows == 1) {
             return ${entityClassName?uncap_first}.get${priColumnName?cap_first}();

@@ -26,30 +26,38 @@ import java.io.Serial;
 <#if table.keyGenerator??>
 import ${table.keyGenerator.name};
 </#if>
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
 <#if column.javaTypeName == "LocalDateTime">
 import java.time.LocalDateTime;
 <#break>
 </#if>
 </#list>
-<#------------  END 字段循环遍历  ---------->
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
 <#if column.javaTypeName == "LocalDate">
 import java.time.LocalDate;
 <#break>
 </#if>
 </#list>
-<#------------  END 字段循环遍历  ---------->
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
 <#if column.javaTypeName == "LocalTime">
 import java.time.LocalTime;
 <#break>
 </#if>
 </#list>
-<#------------  END 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
+<#list table.columns as column>
+<#if column.javaTypeName == "BigDecimal">
+import java.math.BigDecimal;
+<#break>
+</#if>
+</#list>
+<#------------  字段循环遍历 结束  ---------->
 /**
  * ${table.comment!}
  *
@@ -75,7 +83,7 @@ public class ${table.name?cap_first}${entity.suffix} implements Serializable {
     private static final long serialVersionUID = 1L;
 </#if>
 
-<#-- ----------  BEGIN 字段循环遍历  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
 
     <#if column.comment!?length gt 0>
@@ -95,12 +103,12 @@ public class ${table.name?cap_first}${entity.suffix} implements Serializable {
     @TableId(type = TableIdType.${global.idType}<#if global.sequence!?length gt 0>, sequence="${global.sequence}"</#if><#if global.keyGenerator??>, keyGenerator=${global.keyGenerator.simpleName}.class</#if>)
     </#if>
     </#if>
-    @TableField(column = "${column.columnName}"<#if column.insert!?length gt 0>, insert = "${column.insert!}"</#if><#if column.update!?length gt 0>, update = "${column.update!}"</#if><#if column.javaTypeName=="Float" || column.javaTypeName=="BigDecimal">, numericScale = ${column.numericScale}</#if>)
+    @TableField(column = "${column.columnName}"<#if column.insert!?length gt 0>, insert = "${column.insert!}"</#if><#if column.update!?length gt 0>, update = "${column.update!}"</#if><#if column.javaTypeName=="Float" || column.javaTypeName=="BigDecimal">, numericScale = "${column.numericScale}"</#if>)
 
     private ${column.javaTypeName} ${column.name};
 
 </#list>
-<#------------  END 字段循环遍历  ---------->
+<#------------  字段循环遍历 结束  ---------->
 
 <#if !entity.enableLombok>
     <#list table.columns as column>

@@ -14,37 +14,19 @@
  *
  */
 
-package com.mybatiseasy.test.entity;
+package com.mybatiseasy.test.mapper;
 
-
-import java.time.LocalDateTime;
-import java.util.Map;
-
-import com.mybatiseasy.annotation.Table;
-import com.mybatiseasy.annotation.TableField;
-import com.mybatiseasy.annotation.TableId;
-import com.mybatiseasy.emums.TableIdType;
-import com.mybatiseasy.test.typehandler.GoodsPriceTypeHandler;
-import lombok.Data;
+import com.mybatiseasy.core.base.IMapper;
+import com.mybatiseasy.test.entity.Order;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * <p>
- *
- * </p>
- *
- * @author dudley
- * @since 2022-08-21
- */
-@Data
-@Table("order")
-public class Order{
-
-    @TableId( type = TableIdType.AUTO)
-    private Long id;
-    @TableField(column="price_info")
-    private Map<String, Object> priceInfo;
-
-    private Long goodsId;
-    private LocalDateTime createTime;
+*  Mapper 接口
+*
+* @author 
+* @since 2023-05-03
+*/
+@Mapper
+public interface OrderMapper extends IMapper<Order> {
 
 }

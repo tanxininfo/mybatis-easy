@@ -87,11 +87,24 @@ public class MeConfiguration extends Configuration {
                  ) {
                 ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, fieldMap.getName(), SqlUtil.removeBackquote(fieldMap.getColumn()), fieldMap.getJavaType());
                 Class<? extends TypeHandler> typeHandlerClass = fieldMap.getTypeHandler();
+                Class<?> javaType = fieldMap.getJavaType();
+
+                if(typeHandlerClass == null || typeHandlerClass.equals(UnknownTypeHandler.class)){
+                    if(javaType.equals(LocalDateTime.class)) typeHandlerClass = LocalDateTimeTypeHandler.class;
+                    else if(javaType.equals(LocalDate.class)) typeHandlerClass = LocalDateTypeHandler.class;
+                    else if(javaType.equals(LocalTime.class)) typeHandlerClass = LocalTimeTypeHandler.class;
+                    else if(javaType.getName().equals("java.util.Map")) typeHandlerClass = LocalTimeTypeHandler.class;
+                }
 
                 if (typeHandlerClass != null && typeHandlerClass != UnknownTypeHandler.class) {
                     TypeHandlerRegistry typeHandlerRegistry = getTypeHandlerRegistry();
-                    TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), fieldMap.getTypeHandler());
+                    TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), typeHandlerClass);
                     resultMapping.typeHandler(typeHandler);
+                }else{
+                     if(javaType.equals(LocalDateTime.class)){
+                         TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), typeHandlerClass);
+                         resultMapping.typeHandler(typeHandler);
+                     }
                 }
                 if(fieldMap.isId()) resultMapping.flags(List.of(ResultFlag.ID));
                 resultMappingList.add(resultMapping.build());

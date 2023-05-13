@@ -29,7 +29,6 @@ import ${global.packageName}.${service.packageName}.${table.name?cap_first}${ser
 <#assign serviceImplClassName="${table.name?cap_first}${serviceImpl.suffix}" />
 <#assign priColumnName="${table.priColumn.name}"/>
 <#assign priColumnType="${table.priColumn.javaTypeName}"/>
-<#------------  END 字段循环遍历  ---------->
 <#if controller.restful??>
 import org.springframework.web.bind.annotation.RestController;
 <#else>

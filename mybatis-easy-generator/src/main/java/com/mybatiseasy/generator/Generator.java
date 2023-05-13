@@ -91,13 +91,13 @@ public class Generator {
 
     private Connection getConnection() {
         Assert.hasLength(dataSourceConfig.getUrl(), "数据库配置 url 不得为空");
+        Connection connection = null;
         try {
-            return DriverManager.getConnection(dataSourceConfig.getUrl(), dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
-
-        } catch (Exception ex) {
+            connection = DriverManager.getConnection(dataSourceConfig.getUrl(), dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
+        } catch(SQLException ex){
             Assert.isTrue(true, "数据库连接失败:"+ex.getMessage());
         }
-        return null;
+        return connection;
     }
 
     public void generate() {
