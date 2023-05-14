@@ -18,6 +18,7 @@ package com.mybatiseasy.test.entity;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import com.mybatiseasy.annotation.Table;
@@ -43,6 +44,9 @@ public class Order{
     private Long id;
     @TableField(column="price_info")
     private Map<String, Object> priceInfo;
+
+    @TableField(column="tourist_info")
+    private List<Map<String, Object>> touristInfo;
 
     private Long goodsId;
     private LocalDateTime createTime;

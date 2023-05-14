@@ -19,9 +19,7 @@ package com.mybatiseasy.core.session;
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
-import com.mybatiseasy.core.typehandler.LocalDateTimeTypeHandler;
-import com.mybatiseasy.core.typehandler.LocalDateTypeHandler;
-import com.mybatiseasy.core.typehandler.LocalTimeTypeHandler;
+import com.mybatiseasy.core.typehandler.*;
 import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.keygen.CustomKeyGenerator;
 import com.mybatiseasy.core.utils.SqlUtil;
@@ -90,22 +88,15 @@ public class MeConfiguration extends Configuration {
                 Class<?> javaType = fieldMap.getJavaType();
 
                 if(typeHandlerClass == null || typeHandlerClass.equals(UnknownTypeHandler.class)){
-                    if(javaType.equals(LocalDateTime.class)) typeHandlerClass = LocalDateTimeTypeHandler.class;
-                    else if(javaType.equals(LocalDate.class)) typeHandlerClass = LocalDateTypeHandler.class;
-                    else if(javaType.equals(LocalTime.class)) typeHandlerClass = LocalTimeTypeHandler.class;
-                    else if(javaType.getName().equals("java.util.Map")) typeHandlerClass = LocalTimeTypeHandler.class;
+                    if(javaType.getName().equals("java.util.Map")) typeHandlerClass = MapTypeHandler.class;
+                    else if(javaType.getName().equals("java.util.List")) typeHandlerClass = ListMapTypeHandler.class;
                 }
 
                 if (typeHandlerClass != null && typeHandlerClass != UnknownTypeHandler.class) {
-                    TypeHandlerRegistry typeHandlerRegistry = getTypeHandlerRegistry();
                     TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), typeHandlerClass);
                     resultMapping.typeHandler(typeHandler);
-                }else{
-                     if(javaType.equals(LocalDateTime.class)){
-                         TypeHandler<?> typeHandler = typeHandlerRegistry.getInstance(fieldMap.getJavaType(), typeHandlerClass);
-                         resultMapping.typeHandler(typeHandler);
-                     }
                 }
+
                 if(fieldMap.isId()) resultMapping.flags(List.of(ResultFlag.ID));
                 resultMappingList.add(resultMapping.build());
             }

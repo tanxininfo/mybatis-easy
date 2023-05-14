@@ -18,5 +18,5 @@ package com.mybatiseasy.core.typehandler;
 
 import java.util.Map;
 
-public class JackJsonTypeHandler extends BaseAttributeTypeHandler<Map<String, Object>> {
+public class MapTypeHandler extends BaseAttributeTypeHandler<Map<String, Object>> {
 }
