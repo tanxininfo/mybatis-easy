@@ -45,6 +45,18 @@ public class ColumnInfo {
      * 是否主键
      */
     private boolean pri;
+    /**
+     * 是否逻辑删除
+     */
+    private boolean logicDelete;
+    /**
+     * 是否tenantId
+     */
+    private boolean tenantId;
+    /**
+     * 是否version
+     */
+    private boolean version;
 
     private int numericScale;
 
@@ -113,6 +125,12 @@ public class ColumnInfo {
     public boolean isPri() {
         return pri;
     }
+    public boolean isTenantId() {
+        return tenantId;
+    }
+    public boolean isLogicDelete() {
+        return logicDelete;
+    }
 
     public String getName() {
         return name;
@@ -132,6 +150,15 @@ public class ColumnInfo {
 
     public void setPri(boolean isPri) {
         this.pri = isPri;
+    }
+    public void setTenantId(boolean tenantId) {
+        this.tenantId = tenantId;
+    }
+    public void setLogicDelete(boolean logicDelete) {
+        this.logicDelete = logicDelete;
+    }
+    public void setVersion(boolean version) {
+        this.version = version;
     }
 
     public void setNumericScale(int numericScale) {

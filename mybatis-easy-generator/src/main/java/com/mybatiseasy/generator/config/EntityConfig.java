@@ -20,6 +20,7 @@ import com.mybatiseasy.generator.pojo.ColumnAutoSet;
 import com.mybatiseasy.generator.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EntityConfig {
@@ -67,9 +68,16 @@ public class EntityConfig {
     private String logicDeleteName;
 
     /**
+     * 租户Id字段名称
+     */
+    private String tenantIdName;
+
+    /**
      * 自动填充的字段
      */
     private final List<ColumnAutoSet> columnAutoSetList = new ArrayList<>();
+
+    private final List<String> prefix = new ArrayList<>();
 
     public List<ColumnAutoSet> getColumnAutoSetList() {
         return columnAutoSetList;
@@ -87,8 +95,14 @@ public class EntityConfig {
         return swagger;
     }
 
+    public List<String> getPrefix() {
+        return prefix;
+    }
     public String getSuffix() {
         return suffix;
+    }
+    public String getTenantIdName() {
+        return tenantIdName;
     }
 
     public String getPackageName() {
@@ -148,6 +162,11 @@ public class EntityConfig {
             return this;
         }
 
+        public Builder prefix(String ... prefix){
+            Collections.addAll(config.prefix, prefix);
+            return this;
+        }
+
         public Builder swagger(boolean swagger){
             config.swagger = swagger;
             return this;
@@ -160,6 +179,10 @@ public class EntityConfig {
 
         public Builder logicDeleteName(String logicDeleteName){
             config.logicDeleteName = logicDeleteName;
+            return this;
+        }
+        public Builder tenantIdName(String tenantIdName){
+            config.tenantIdName = tenantIdName;
             return this;
         }
         public EntityConfig build(){

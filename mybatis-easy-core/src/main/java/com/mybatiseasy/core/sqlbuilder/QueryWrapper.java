@@ -64,7 +64,7 @@ public class QueryWrapper implements Serializable {
     }
 
     /**
-     * 添加 preparestatement 的 parameter参数
+     * 添加 prepareStatement 的 parameter参数
      * @param key 键名
      * @param value 键值
      * @return QueryWrapper

@@ -49,6 +49,10 @@ public class Generator {
 
     private final Map<String, Class<? extends IKeyGenerator>> keyGeneratorMap = new HashMap<>();
 
+    private String versionName = "";
+    private String logicDeleteName = "";
+    private String tenantIdName = "";
+
 
     public Generator dataSourceConfig(DataSourceConfig dataSourceConfig){
          this.dataSourceConfig = dataSourceConfig;
@@ -147,6 +151,9 @@ public class Generator {
         if(this.serviceImplConfig == null){
             this.serviceImplConfig = new ServiceImplConfig.Builder("service.impl", "ServiceImpl").build();
         }
+        if(Utils.isNotEmpty(this.entityConfig.getVersionName())) this.versionName = this.entityConfig.getVersionName();
+        if(Utils.isNotEmpty(this.entityConfig.getLogicDeleteName())) this.logicDeleteName = this.entityConfig.getLogicDeleteName();
+        if(Utils.isNotEmpty(this.entityConfig.getTenantIdName())) this.tenantIdName = this.entityConfig.getTenantIdName();
     }
 
     /**
@@ -176,6 +183,20 @@ public class Generator {
         }
     }
 
+    /**
+     * 表名映射为类名
+     * @param tableName 表名
+     * @return name
+     */
+    private String getName(String tableName){
+        String name = Utils.snakeToCamel(tableName);
+        for (String prefix: entityConfig.getPrefix()
+             ) {
+            if(name.startsWith(prefix)) return name.substring(prefix.length());
+        }
+        return name;
+    }
+
     private List<TableInfo> formatToTableInfo(ResultSet recordSet, Connection conn){
         List<TableInfo> tableInfoList = new ArrayList<>();
         try {
@@ -186,7 +207,7 @@ public class Generator {
                 TableInfo tableInfo = new TableInfo();
                 tableInfo.setSchema(schema);
                 tableInfo.setTableName(tableName);
-                tableInfo.setName(Utils.snakeToCamel(tableName));
+                tableInfo.setName(getName(tableName));
                 tableInfo.setComment(tableComment);
                 List<ColumnInfo> columns = formatToColumnInfo(schema, tableName, conn);
                 ColumnInfo priColumn = columns.stream().filter(ColumnInfo::isPri).findFirst().orElse(null);
@@ -231,6 +252,15 @@ public class Generator {
                 if(columnAutoSet!= null){
                     if(columnAutoSet.getInsert()!=null) columnInfo.setInsert(columnAutoSet.getInsert());
                     if(columnAutoSet.getUpdate()!=null) columnInfo.setUpdate(columnAutoSet.getUpdate());
+                }
+                if(tenantIdName.equals(columnInfo.getName())){
+                    columnInfo.setTenantId(true);
+                }
+                if(versionName.equals(columnInfo.getName())){
+                    columnInfo.setVersion(true);
+                }
+                if(logicDeleteName.equals(columnInfo.getName())){
+                    columnInfo.setLogicDelete(true);
                 }
                 if(columnInfo.isPri() && !columnInfo.isAutoIncrement() && (globalConfig.getKeyGenerator()!=null)){
                     keyGeneratorMap.put(Utils.snakeToCamel(tableName), globalConfig.getKeyGenerator());
