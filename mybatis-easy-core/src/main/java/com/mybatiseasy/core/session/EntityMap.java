@@ -47,6 +47,14 @@ public class EntityMap {
    * 乐观锁字段
    */
   private EntityFieldMap version;
+  /**
+   * 逻辑删除字段
+   */
+  private EntityFieldMap logicDelete;
+  /**
+   * 租户字段
+   */
+  private EntityFieldMap tenantId;
 
   /**
    * 实体的字段映射
@@ -74,6 +82,12 @@ public class EntityMap {
 
   public EntityFieldMap  getVersion() {
     return version;
+  }
+  public EntityFieldMap  getLogicDelete() {
+    return logicDelete;
+  }
+  public EntityFieldMap  getTenantId() {
+    return tenantId;
   }
 
   public List<EntityFieldMap> getEntityFieldMapList() {
@@ -150,6 +164,14 @@ public class EntityMap {
 
     public Builder version(EntityFieldMap version) {
       entityMap.version = version;
+      return this;
+    }
+    public Builder logicDelete(EntityFieldMap logicDelete) {
+      entityMap.logicDelete = logicDelete;
+      return this;
+    }
+    public Builder tenantId(EntityFieldMap tenantId) {
+      entityMap.tenantId = tenantId;
       return this;
     }
 

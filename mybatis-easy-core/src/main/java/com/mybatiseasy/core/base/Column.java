@@ -37,14 +37,15 @@ public class Column {
         this("", "");
     }
 
-    public Column(String table) {
-        this(table, "");
+    public Column(String entity, String table) {
+        this(entity, table, "");
     }
 
-    public Column(String table, String tableAlias) {
+    public Column(String entity, String table, String tableAlias) {
         this.columns = new ArrayList<>();
         this.column = new ColumnData();
         this.parameterMap = new HashMap<>();
+        this.column.setEntityName(entity);
         this.column.setTableAlias(tableAlias);
         this.column.setTable(table);
     }

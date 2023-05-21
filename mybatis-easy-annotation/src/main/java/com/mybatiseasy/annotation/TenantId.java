@@ -19,13 +19,12 @@ package com.mybatiseasy.annotation;
 import java.lang.annotation.*;
 
 /**
- * 逻辑删除
+ * 标识乐观锁
  *
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface LogicDelete {
-    String value() default "null";
+public @interface TenantId {
 
 }

@@ -107,8 +107,8 @@ public class ${table.name?cap_first}${entity.suffix} implements Serializable {
     <#if column.version>
     @Version
     </#if>
-    <#if column.logicDelete>
-    @LogicDelete
+    <#if column.logicDelete??>
+    @LogicDelete("${column.logicDeleteValue}")
     </#if>
     <#if column.tenantId>
     @TenantId

@@ -17,12 +17,15 @@
 package com.mybatiseasy.core.sqlbuilder;
 
 import com.mybatiseasy.core.base.Column;
+import com.mybatiseasy.core.base.ColumnData;
 import com.mybatiseasy.core.base.Table;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
+import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.utils.SqlUtil;
+import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.AbstractSQL;
 import org.apache.ibatis.reflection.MetaObject;
@@ -34,6 +37,8 @@ import java.util.*;
 @Slf4j
 public class QueryWrapper implements Serializable {
 
+    private boolean ignoreTenantId = false;
+
     public QueryWrapper(){
     }
 
@@ -42,6 +47,11 @@ public class QueryWrapper implements Serializable {
     }
 
     private final SQLStatement sqlStatement = new SQLStatement();
+
+    public QueryWrapper ignoreTenant(){
+        this.ignoreTenantId = true;
+        return this;
+    }
 
     public QueryWrapper orderBy(Column column, boolean isDesc){
         column.removeLastColumn();
@@ -55,6 +65,19 @@ public class QueryWrapper implements Serializable {
     }
 
     private String formatJoin(Table table, Condition condition) {
+        if(ignoreTenantId) {
+            String entityName = table.getColumn().getEntityName();
+            EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
+            assert entityMap != null;
+            EntityFieldMap tenantIdField = entityMap.getTenantId();
+            if(tenantIdField != null){
+                ColumnData columnData = table.getColumn();
+                String tableName = columnData.getTable();
+                String tableAlias = columnData.getTableAlias();
+                if(!TypeUtil.isEmpty(tableAlias)) tableName = tableAlias;
+                condition.and(new Condition(tableName+"."+ tenantIdField.getColumn()  +" = "));
+            }
+        }
         return table.getFullTable()+ Sql.SPACE + "ON" + Sql.SPACE + condition.getSql();
     }
 

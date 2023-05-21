@@ -27,6 +27,11 @@ public class ColumnData {
     private String column = "";
 
     /**
+     * entity　完整的路径如: com.mybatiseasy.mapper.User
+     */
+    private String entityName = "";
+
+    /**
      * 聚合查询名称
      */
     private String method = "";

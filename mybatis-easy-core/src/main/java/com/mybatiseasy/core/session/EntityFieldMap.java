@@ -78,6 +78,18 @@ public class EntityFieldMap {
    */
   private boolean isVersion;
   /**
+   * 是否逻辑删除
+   */
+  private boolean isLogicDelete;
+  /**
+   * 逻辑删除值
+   */
+  private String logicDeleteValue;
+  /**
+   * 是否租户Id
+   */
+  private boolean isTenantId;
+  /**
    * 是否非数据表字段
    */
   private boolean isForeign;
@@ -146,6 +158,18 @@ public class EntityFieldMap {
     }
     public Builder isVersion(boolean isVersion) {
       entityFieldMap.isVersion = isVersion;
+      return this;
+    }
+    public Builder isLogicDelete(boolean isLogicDelete) {
+      entityFieldMap.isLogicDelete = isLogicDelete;
+      return this;
+    }
+    public Builder logicDeleteValue(String logicDeleteValue) {
+      entityFieldMap.logicDeleteValue = logicDeleteValue;
+      return this;
+    }
+    public Builder isTenantId(boolean isTenantId) {
+      entityFieldMap.isTenantId = isTenantId;
       return this;
     }
     public Builder isForeign(boolean isForeign) {
@@ -233,6 +257,15 @@ public class EntityFieldMap {
   }
   public boolean isForeign() {
     return isForeign;
+  }
+  public boolean isLogicDelete() {
+    return isLogicDelete;
+  }
+  public String getLogicDeleteValue() {
+    return logicDeleteValue;
+  }
+  public boolean isTenantId() {
+    return isTenantId;
   }
   public TableIdType  getIdType() {
     return idType;

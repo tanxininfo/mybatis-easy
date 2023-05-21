@@ -16,10 +16,7 @@
 
 package com.mybatiseasy.core.session;
 
-import com.mybatiseasy.annotation.Table;
-import com.mybatiseasy.annotation.TableField;
-import com.mybatiseasy.annotation.TableId;
-import com.mybatiseasy.annotation.Version;
+import com.mybatiseasy.annotation.*;
 import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +65,7 @@ public class EntityMapKids {
      * @return 实体类映射对象
      */
     public static EntityMap getEntityMap(String entityName) {
+        log.info("entityName={}", entityName);
         if (!hasEntityMap(entityName)) {
             EntityMap entityMap = EntityMapKids.reflectEntity(entityName);
             if (entityMap == null) return null;
@@ -132,12 +130,16 @@ public class EntityMapKids {
 
             EntityFieldMap primary = null;
             EntityFieldMap version = null;
+            EntityFieldMap logicDelete = null;
+            EntityFieldMap tenantId = null;
             List<EntityFieldMap> entityFieldMapList = new ArrayList<>();
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {
-                EntityFieldMap fieldMap = reflectEntityMap(field);
+                EntityFieldMap fieldMap = reflectEntityField(field);
                 if(fieldMap.isId()) primary = fieldMap;
                 if(fieldMap.isVersion()) version = fieldMap;
+                if(fieldMap.isTenantId()) tenantId = fieldMap;
+                if(fieldMap.isLogicDelete()) logicDelete = fieldMap;
                 if(!fieldMap.isForeign()) entityFieldMapList.add(fieldMap);
             }
 
@@ -145,6 +147,8 @@ public class EntityMapKids {
             return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList)
                     .primary(primary)
                     .version(version)
+                    .logicDelete(logicDelete)
+                    .tenantId(tenantId)
                     .build();
         } catch (Exception ignored) {
             return null;
@@ -156,10 +160,12 @@ public class EntityMapKids {
      * @param field 类属性
      * @return EntityFieldMap
      */
-    public static EntityFieldMap reflectEntityMap(Field field) {
+    public static EntityFieldMap reflectEntityField(Field field) {
         TableField tableField = AnnotationUtils.findAnnotation(field, TableField.class);
         TableId tableId = AnnotationUtils.findAnnotation(field, TableId.class);
         Version version = AnnotationUtils.findAnnotation(field, Version.class);
+        LogicDelete logicDelete = AnnotationUtils.findAnnotation(field, LogicDelete.class);
+        TenantId tenantId = AnnotationUtils.findAnnotation(field, TenantId.class);
         String name = field.getName();
         String column = StringUtil.camelToSnake(field.getName());
         EntityFieldMap.Builder builder = new EntityFieldMap.Builder(name, column).javaType(field.getType());
@@ -177,6 +183,11 @@ public class EntityMapKids {
         }
         if (tableId != null) builder.isId(true).keyGenerator(tableId.keyGenerator()).sequence(tableId.sequence()).idType(tableId.type());
         if(version != null) builder.isVersion(true);
+        if(logicDelete!= null) {
+            builder.isLogicDelete(true)
+                    .logicDeleteValue(logicDelete.value());
+        }
+        if(tenantId != null) builder.isTenantId(true);
         return builder.build();
 
     }

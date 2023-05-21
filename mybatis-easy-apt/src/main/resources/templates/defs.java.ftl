@@ -4,16 +4,18 @@ import com.mybatiseasy.core.base.Column;
 
 public class ${defClassName} extends Column {
 
+    public static String className = "${entityClassFullName}";
+
     public ${defClassName}(){
 
     }
 
     public ${defClassName}(String table) {
-        super(table);
+        super(className, table);
     }
 
     public ${defClassName}(String table, String tableAlias) {
-        super(table, tableAlias);
+        super(className, table, tableAlias);
     }
 
 <#-- ----------  BEGIN 字段循环遍历  ---------->

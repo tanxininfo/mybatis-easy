@@ -49,6 +49,10 @@ public class FileGenerator {
                 .swagger(true)
                 .enableLombok(false)
                 .chain(true)
+                .versionName("version")
+                .tenantIdName("tenantId")
+                .logicDeleteName("deleted")
+                .logicDeleteValue("null")
                 .columnAutoSet(new ColumnAutoSet().setName("createTime").setInsert("NOW()"))
                 .columnAutoSet(new ColumnAutoSet().setName("updateTime").setInsert("NOW()").setUpdate("NOW()"))
                 .build();

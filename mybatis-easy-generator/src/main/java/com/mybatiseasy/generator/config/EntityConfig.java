@@ -66,6 +66,10 @@ public class EntityConfig {
      * 逻辑删除实体属性名称
      */
     private String logicDeleteName;
+    /**
+     * 逻辑删除实体属性值
+     */
+    private String logicDeleteValue;
 
     /**
      * 租户Id字段名称
@@ -125,6 +129,9 @@ public class EntityConfig {
     public String getLogicDeleteName() {
         return logicDeleteName;
     }
+    public String getLogicDeleteValue() {
+        return logicDeleteValue;
+    }
 
     public static class Builder{
 
@@ -181,6 +188,10 @@ public class EntityConfig {
             config.logicDeleteName = logicDeleteName;
             return this;
         }
+        public Builder logicDeleteValue(String logicDeleteValue){
+            config.logicDeleteValue = logicDeleteValue;
+            return this;
+        }
         public Builder tenantIdName(String tenantIdName){
             config.tenantIdName = tenantIdName;
             return this;
@@ -188,6 +199,9 @@ public class EntityConfig {
         public EntityConfig build(){
             if(Utils.isEmpty(config.suffix)) config.suffix = "";
             if(Utils.isEmpty(config.packageName)) config.packageName = "entity";
+            if(Utils.isNotEmpty(config.logicDeleteName)) {
+                if (Utils.isEmpty(config.logicDeleteValue)) config.logicDeleteValue = "null";
+            }
             return this.config;
         }
     }
