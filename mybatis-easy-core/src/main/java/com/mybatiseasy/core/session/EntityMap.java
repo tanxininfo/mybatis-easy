@@ -41,20 +41,20 @@ public class EntityMap {
   /**
    * 主键字段
    */
-  private EntityFieldMap primary;
+  private EntityFieldMap primaryFieldMap;
 
   /**
    * 乐观锁字段
    */
-  private EntityFieldMap version;
+  private EntityFieldMap versionFieldMap;
   /**
    * 逻辑删除字段
    */
-  private EntityFieldMap logicDelete;
+  private EntityFieldMap logicDeleteFieldMap;
   /**
    * 租户字段
    */
-  private EntityFieldMap tenantId;
+  private EntityFieldMap tenantIdFieldMap;
 
   /**
    * 实体的字段映射
@@ -76,18 +76,18 @@ public class EntityMap {
     return schema;
   }
 
-  public EntityFieldMap  getPrimary() {
-    return primary;
+  public EntityFieldMap  getPrimaryFieldMap() {
+    return primaryFieldMap;
   }
 
-  public EntityFieldMap  getVersion() {
-    return version;
+  public EntityFieldMap  getVersionFieldMap() {
+    return versionFieldMap;
   }
-  public EntityFieldMap  getLogicDelete() {
-    return logicDelete;
+  public EntityFieldMap  getLogicDeleteFieldMap() {
+    return logicDeleteFieldMap;
   }
-  public EntityFieldMap  getTenantId() {
-    return tenantId;
+  public EntityFieldMap  getTenantIdFieldMap() {
+    return tenantIdFieldMap;
   }
 
   public List<EntityFieldMap> getEntityFieldMapList() {
@@ -157,21 +157,21 @@ public class EntityMap {
       return this;
     }
 
-    public Builder primary(EntityFieldMap primary) {
-      entityMap.primary = primary;
+    public Builder primaryFieldMap(EntityFieldMap primaryFieldMap) {
+      entityMap.primaryFieldMap = primaryFieldMap;
       return this;
     }
 
-    public Builder version(EntityFieldMap version) {
-      entityMap.version = version;
+    public Builder versionFieldMap(EntityFieldMap versionFieldMap) {
+      entityMap.versionFieldMap = versionFieldMap;
       return this;
     }
-    public Builder logicDelete(EntityFieldMap logicDelete) {
-      entityMap.logicDelete = logicDelete;
+    public Builder logicDeleteFieldMap(EntityFieldMap logicDeleteFieldMap) {
+      entityMap.logicDeleteFieldMap = logicDeleteFieldMap;
       return this;
     }
-    public Builder tenantId(EntityFieldMap tenantId) {
-      entityMap.tenantId = tenantId;
+    public Builder tenantIdFieldMap(EntityFieldMap tenantIdFieldMap) {
+      entityMap.tenantIdFieldMap = tenantIdFieldMap;
       return this;
     }
 

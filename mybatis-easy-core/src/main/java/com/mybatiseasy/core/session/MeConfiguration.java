@@ -155,7 +155,7 @@ public class MeConfiguration extends Configuration {
         EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
         if(entityMap==null) return ms;
 
-        EntityFieldMap primary = entityMap.getPrimary();
+        EntityFieldMap primary = entityMap.getPrimaryFieldMap();
         if(primary == null) return ms;
 
         TableIdType primaryType = primary.getIdType();

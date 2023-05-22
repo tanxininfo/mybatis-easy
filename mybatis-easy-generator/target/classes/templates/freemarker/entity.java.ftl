@@ -1,8 +1,6 @@
 package ${global.packageName}.${entity.packageName};
 
-import com.mybatiseasy.annotation.Table;
-import com.mybatiseasy.annotation.TableField;
-import com.mybatiseasy.annotation.TableId;
+import com.mybatiseasy.annotation.*;
 import com.mybatiseasy.emums.TableIdType;
 
 <#if entity.swagger>
@@ -104,13 +102,13 @@ public class ${table.name?cap_first}${entity.suffix} implements Serializable {
     </#if>
     </#if>
     @TableField(column = "${column.columnName}"<#if column.insert!?length gt 0>, insert = "${column.insert!}"</#if><#if column.update!?length gt 0>, update = "${column.update!}"</#if><#if column.javaTypeName=="Float" || column.javaTypeName=="BigDecimal">, numericScale = "${column.numericScale}"</#if>)
-    <#if column.version>
+    <#if column.version!false>
     @Version
     </#if>
-    <#if column.logicDelete>
-    @LogicDelete
+    <#if column.logicDelete!false>
+    @LogicDelete("${column.logicDeleteValue}")
     </#if>
-    <#if column.tenantId>
+    <#if column.tenantId!false>
     @TenantId
     </#if>
     private ${column.javaTypeName} ${column.name};

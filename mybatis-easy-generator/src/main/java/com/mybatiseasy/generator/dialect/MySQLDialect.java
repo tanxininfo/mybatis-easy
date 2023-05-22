@@ -25,6 +25,7 @@ import com.mybatiseasy.generator.pojo.TableInfo;
 import java.sql.Connection;
 import java.util.List;
 
+
 public class MySQLDialect extends BaseDialect implements IDialect {
 
     public MySQLDialect(DataSourceConfig dataSourceConfig, GlobalConfig globalConfig, EntityConfig entityConfig) {
@@ -53,7 +54,6 @@ public class MySQLDialect extends BaseDialect implements IDialect {
             assert conn != null;
 
             List<TableInfo> tableInfoList = getOriginTableList(conn);
-
             String tableName;
 
             for (TableInfo tableInfo : tableInfoList) {

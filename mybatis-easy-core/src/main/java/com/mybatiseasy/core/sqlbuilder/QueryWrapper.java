@@ -19,6 +19,7 @@ package com.mybatiseasy.core.sqlbuilder;
 import com.mybatiseasy.core.base.Column;
 import com.mybatiseasy.core.base.ColumnData;
 import com.mybatiseasy.core.base.Table;
+import com.mybatiseasy.core.config.GlobalConfig;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityFieldMap;
@@ -65,20 +66,55 @@ public class QueryWrapper implements Serializable {
     }
 
     private String formatJoin(Table table, Condition condition) {
-        if(ignoreTenantId) {
-            String entityName = table.getColumn().getEntityName();
-            EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
-            assert entityMap != null;
-            EntityFieldMap tenantIdField = entityMap.getTenantId();
-            if(tenantIdField != null){
-                ColumnData columnData = table.getColumn();
-                String tableName = columnData.getTable();
-                String tableAlias = columnData.getTableAlias();
-                if(!TypeUtil.isEmpty(tableAlias)) tableName = tableAlias;
-                condition.and(new Condition(tableName+"."+ tenantIdField.getColumn()  +" = "));
-            }
+        Condition logicDeleteCondition = getLogicDeleteCondition(table);
+        if (logicDeleteCondition != null) condition.and(logicDeleteCondition);
+
+        Condition tenantCondition = getTenantCondition(table);
+        if (tenantCondition != null) condition.and(tenantCondition);
+
+        return table.getFullTable() + Sql.SPACE + "ON" + Sql.SPACE + condition.getSql();
+    }
+
+    /**
+     * 取得tenantId语句
+     * @param table Table
+     * @return Condition
+     */
+    private Condition getTenantCondition(Table table){
+        if(ignoreTenantId) return null;
+        String entityName = table.getColumn().getEntityName();
+        EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
+        assert entityMap != null;
+        EntityFieldMap tenantIdField = entityMap.getTenantIdFieldMap();
+        if(tenantIdField != null){
+            ColumnData columnData = table.getColumn();
+            String tableName = columnData.getTable();
+            String tableAlias = columnData.getTableAlias();
+            if(!TypeUtil.isEmpty(tableAlias)) tableName = tableAlias;
+           return new Condition(tableName+"."+ tenantIdField.getColumn()  +" = " + GlobalConfig.getTenantFactory().getTenantId());
         }
-        return table.getFullTable()+ Sql.SPACE + "ON" + Sql.SPACE + condition.getSql();
+        return null;
+    }
+
+    /**
+     * 取得tenantId语句
+     * @param table Table
+     * @return Condition
+     */
+    private Condition getLogicDeleteCondition(Table table){
+        String entityName = table.getColumn().getEntityName();
+        EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
+        assert entityMap != null;
+        EntityFieldMap logicDeleteField = entityMap.getLogicDeleteFieldMap();
+        if(logicDeleteField != null){
+            ColumnData columnData = table.getColumn();
+            String tableName = columnData.getTable();
+            String tableAlias = columnData.getTableAlias();
+            if(!TypeUtil.isEmpty(tableAlias)) tableName = tableAlias;
+            String value = logicDeleteField.getLogicDeleteValue();
+            return new Condition(tableName+"."+ logicDeleteField.getColumn() + (value.equals("null")? "IS NULL":" = "+ value));
+        }
+        return null;
     }
 
     public QueryWrapper join(Table table, Condition condition){
@@ -181,6 +217,13 @@ public class QueryWrapper implements Serializable {
 
         sqlStatement.tableList.add(table);
         sqlStatement.tables.add(table.getFullTable());
+
+        Condition logicDeleteCondition = getLogicDeleteCondition(table);
+        if (logicDeleteCondition != null) where(logicDeleteCondition);
+
+        Condition tenantCondition = getTenantCondition(table);
+        if (tenantCondition != null) where(tenantCondition);
+
 
         return this;
     }
@@ -301,9 +344,14 @@ public class QueryWrapper implements Serializable {
 
     public QueryWrapper from(Table... tables) {
         sqlStatement.tableList.addAll(Arrays.asList(tables));
-        for (Column table : tables
+        for (Table table : tables
         ) {
             sqlStatement.tables.add(table.getFullTable());
+            Condition logicDeleteCondition = getLogicDeleteCondition(table);
+            if (logicDeleteCondition != null) where(logicDeleteCondition);
+
+            Condition tenantCondition = getTenantCondition(table);
+            if (tenantCondition != null) where(tenantCondition);
         }
         return this;
     }

@@ -61,7 +61,7 @@ public class ProviderKid {
     }
 
     public static void putIdValueToMap(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj){
-        String idKey = entityMap.getPrimary().getName();
+        String idKey = entityMap.getPrimaryFieldMap().getName();
         Object idValue = (entityObj!=null ? entityObj.getValue(idKey): map.get(MethodParam.PRIMARY_KEY));
         Assert.notNull(idValue, "请指定实体主键值");
         map.put(idKey, idValue);
@@ -74,13 +74,13 @@ public class ProviderKid {
      */
     public static String getWhereId(EntityMap entityMap){
 
-        return entityMap.getPrimary().getColumn() + "=" + Sql.SPACE +
-                "#{" + entityMap.getPrimary().getName() +"}";
+        return entityMap.getPrimaryFieldMap().getColumn() + "=" + Sql.SPACE +
+                "#{" + entityMap.getPrimaryFieldMap().getName() +"}";
     }
 
 
     public static void version(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj, QueryWrapper queryWrapper){
-        EntityFieldMap version = entityMap.getVersion();
+        EntityFieldMap version = entityMap.getVersionFieldMap();
         if(version == null) return;
 
         Object value = entityObj.getValue(version.getName());

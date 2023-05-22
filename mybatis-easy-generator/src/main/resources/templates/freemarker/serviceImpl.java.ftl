@@ -83,7 +83,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
         ${entityClassName?uncap_first}.set${priColumnName?cap_first}(${priColumnName});
         ${entityClassName} old${entityClassName} = ${mapperClassName?uncap_first}.getById(${priColumnName});
         if(old${entityClassName} == null) throw new TanXinException("记录未找到");
-        <#if entity.versionName?? && table.columnNames?contains(entity.versionName) >
+        <#if entity.versionName?? && table.columnNames?seq_contains(entity.versionName) >
         ${entityClassName?uncap_first}.setVersion(old${entityClassName}.getVersion());
         </#if>
 

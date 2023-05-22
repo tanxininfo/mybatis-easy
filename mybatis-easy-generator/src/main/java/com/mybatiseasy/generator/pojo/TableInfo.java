@@ -79,6 +79,9 @@ public class TableInfo {
     public String getComment() {
         return comment;
     }
+    public List<String> getColumnNames() {
+        return columnNames;
+    }
 
     public List<ColumnInfo> getColumns() {
         return columns;

@@ -21,7 +21,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.3.8</version>
+        <version>0.4.0</version>
     </parent>
     <artifactId>mybatis-easy-annotation</artifactId>
     <name>mybatis-easy-annotation</name>

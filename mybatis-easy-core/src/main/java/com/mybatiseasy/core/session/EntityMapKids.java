@@ -145,10 +145,10 @@ public class EntityMapKids {
 
             String tableName = TypeUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
             return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList)
-                    .primary(primary)
-                    .version(version)
-                    .logicDelete(logicDelete)
-                    .tenantId(tenantId)
+                    .primaryFieldMap(primary)
+                    .versionFieldMap(version)
+                    .logicDeleteFieldMap(logicDelete)
+                    .tenantIdFieldMap(tenantId)
                     .build();
         } catch (Exception ignored) {
             return null;

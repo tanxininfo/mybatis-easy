@@ -21,7 +21,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.3.8</version>
+        <version>0.4.0</version>
     </parent>
     <artifactId>mybatis-easy-generator</artifactId>
     <name>mybatis-easy-generator</name>
@@ -40,6 +40,16 @@
             <groupId>com.mybatis-easy</groupId>
             <artifactId>mybatis-easy-annotation</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.14.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
     </dependencies>
 

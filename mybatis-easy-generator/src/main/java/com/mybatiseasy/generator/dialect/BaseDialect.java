@@ -26,14 +26,12 @@ import com.mybatiseasy.generator.pojo.TableInfo;
 import com.mybatiseasy.generator.utils.TypeConvert;
 import com.mybatiseasy.generator.utils.Utils;
 import com.mybatiseasy.keygen.IKeyGenerator;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BaseDialect {
 
@@ -130,6 +128,16 @@ public class BaseDialect {
                     columnInfo.setJavaType(javaType);
                     columnInfo.setJavaTypeName(javaType.getName());
 
+                    if(Objects.equals(entityConfig.getVersionName(), columnInfo.getName())) {
+                        columnInfo.setVersion(true);
+                    }
+                    if(Objects.equals(entityConfig.getTenantIdName(), columnInfo.getName())) {
+                        columnInfo.setTenantId(true);
+                    }
+                    if(Objects.equals(entityConfig.getLogicDeleteName(), columnInfo.getName())) {
+                        columnInfo.setLogicDelete(true);
+                        columnInfo.setLogicDeleteValue(entityConfig.getLogicDeleteValue());
+                    }
 
                     columnInfo.setColumnKey(Utils.isNotEmpty(this.columnKeyColumn) ? rs.getString(this.columnKeyColumn) : "");
 

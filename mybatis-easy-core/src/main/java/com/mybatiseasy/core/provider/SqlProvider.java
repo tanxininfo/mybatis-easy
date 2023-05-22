@@ -88,7 +88,7 @@ public class SqlProvider {
      */
     public static String updateById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
+        Assert.notNull(entityMap.getPrimaryFieldMap(), "实体类未标注TableId");
         MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
         ProviderKid.putIdValueToMap(map, entityMap, entityObj);
 
@@ -171,7 +171,7 @@ public class SqlProvider {
      */
     public static String deleteById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
+        Assert.notNull(entityMap.getPrimaryFieldMap(), "实体类未标注TableId");
         ProviderKid.putIdValueToMap(map, entityMap, null);
 
         QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.DELETE, entityMap);
@@ -227,7 +227,7 @@ public class SqlProvider {
      */
     public static String getById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        Assert.notNull(entityMap.getPrimary(), "实体类未标注TableId");
+        Assert.notNull(entityMap.getPrimaryFieldMap(), "实体类未标注TableId");
         ProviderKid.putIdValueToMap(map, entityMap, null);
 
         QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap);
