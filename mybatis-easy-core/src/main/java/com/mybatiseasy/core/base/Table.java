@@ -22,11 +22,11 @@ public class Table extends Column {
         super("", "");
     }
 
-    public Table(String table) {
-        super(table, "");
+    public Table(String entity, String table) {
+        super(entity, table);
     }
 
-    public Table(String table, String tableAlias) {
-        super(table, tableAlias);
+    public Table(String entity, String table, String tableAlias) {
+        super(entity, table, tableAlias);
     }
 }

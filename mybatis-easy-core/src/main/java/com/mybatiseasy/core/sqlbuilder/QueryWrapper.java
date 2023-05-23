@@ -111,8 +111,8 @@ public class QueryWrapper implements Serializable {
             String tableName = columnData.getTable();
             String tableAlias = columnData.getTableAlias();
             if(!TypeUtil.isEmpty(tableAlias)) tableName = tableAlias;
-            String value = logicDeleteField.getLogicDeleteValue();
-            return new Condition(tableName+"."+ logicDeleteField.getColumn() + (value.equals("null")? "IS NULL":" = "+ value));
+            String value = logicDeleteField.getLogicNotDeleteValue();
+            return new Condition(tableName+"."+ logicDeleteField.getColumn() + (value.equals("null")? " IS NULL":" = "+ value));
         }
         return null;
     }

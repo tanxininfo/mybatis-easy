@@ -85,6 +85,7 @@ public class EntityFieldMap {
    * 逻辑删除值
    */
   private String logicDeleteValue;
+  private String logicNotDeleteValue;
   /**
    * 是否租户Id
    */
@@ -164,8 +165,9 @@ public class EntityFieldMap {
       entityFieldMap.isLogicDelete = isLogicDelete;
       return this;
     }
-    public Builder logicDeleteValue(String logicDeleteValue) {
+    public Builder logicDeleteValue(String logicDeleteValue, String logicNotDeleteValue) {
       entityFieldMap.logicDeleteValue = logicDeleteValue;
+      entityFieldMap.logicNotDeleteValue = logicNotDeleteValue;
       return this;
     }
     public Builder isTenantId(boolean isTenantId) {
@@ -263,6 +265,9 @@ public class EntityFieldMap {
   }
   public String getLogicDeleteValue() {
     return logicDeleteValue;
+  }
+  public String getLogicNotDeleteValue() {
+    return logicNotDeleteValue;
   }
   public boolean isTenantId() {
     return isTenantId;

@@ -144,7 +144,10 @@ public class EntityMapKids {
             }
 
             String tableName = TypeUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
-            return new EntityMap.Builder(tableName, table.desc()).schema(table.schema()).entityFieldMapList(entityFieldMapList)
+            return new EntityMap.Builder(tableName, table.desc())
+                    .fullName(entityName)
+                    .schema(table.schema())
+                    .entityFieldMapList(entityFieldMapList)
                     .primaryFieldMap(primary)
                     .versionFieldMap(version)
                     .logicDeleteFieldMap(logicDelete)
@@ -185,7 +188,7 @@ public class EntityMapKids {
         if(version != null) builder.isVersion(true);
         if(logicDelete!= null) {
             builder.isLogicDelete(true)
-                    .logicDeleteValue(logicDelete.value());
+                    .logicDeleteValue(logicDelete.deleteValue(), logicDelete.notDeleteValue());
         }
         if(tenantId != null) builder.isTenantId(true);
         return builder.build();

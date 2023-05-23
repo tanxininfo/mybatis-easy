@@ -30,6 +30,8 @@ public class EntityMap {
    * 实体的name
    */
   private String name;
+
+  private String fullName;
   /**
    * 实体的desc
    */
@@ -66,6 +68,9 @@ public class EntityMap {
 
   public String getName() {
     return name;
+  }
+  public String getFullName() {
+    return fullName;
   }
 
   public String getDesc() {
@@ -146,6 +151,10 @@ public class EntityMap {
 
     public Builder name(String name) {
       entityMap.name = name;
+      return this;
+    }
+    public Builder fullName(String fullName) {
+      entityMap.fullName = fullName;
       return this;
     }
     public Builder desc(String desc) {

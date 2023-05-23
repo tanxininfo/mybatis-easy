@@ -36,7 +36,6 @@ public class EntityConfig {
      */
     private String packageName;
 
-
     /**
      * 是否覆盖已有文件
      */
@@ -70,6 +69,10 @@ public class EntityConfig {
      * 逻辑删除实体属性值
      */
     private String logicDeleteValue;
+    /**
+     * 逻辑删除实体属性值(非删除)
+     */
+    private String logicNotDeleteValue;
 
     /**
      * 租户Id字段名称
@@ -188,8 +191,9 @@ public class EntityConfig {
             config.logicDeleteName = logicDeleteName;
             return this;
         }
-        public Builder logicDeleteValue(String logicDeleteValue){
+        public Builder logicDeleteValue(String logicDeleteValue, String logicNotDeleteValue){
             config.logicDeleteValue = logicDeleteValue;
+            config.logicNotDeleteValue = logicNotDeleteValue;
             return this;
         }
         public Builder tenantIdName(String tenantIdName){

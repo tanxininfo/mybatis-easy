@@ -26,6 +26,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface LogicDelete {
-    String value() default "null";
+    String deleteValue() default "null";
+    String notDeleteValue() default "0";
 
 }

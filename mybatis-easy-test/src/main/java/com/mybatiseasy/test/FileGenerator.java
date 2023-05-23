@@ -50,7 +50,7 @@ public class FileGenerator {
                 .versionName("version")
                 .tenantIdName("tenantId")
                 .logicDeleteName("deleted")
-                .logicDeleteValue("null")
+                .logicDeleteValue("null", "0")
                 .columnAutoSet(new ColumnAutoSet().setName("createTime").setInsert("NOW()"))
                 .columnAutoSet(new ColumnAutoSet().setName("updateTime").setInsert("NOW()").setUpdate("NOW()"))
                 .build();

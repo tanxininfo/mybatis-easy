@@ -20,7 +20,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="mybatis-easy" options="" />
       <module name="mybatis-easy-annotation" options="" />
-      <module name="mybatis-easy-apt" options="" />
+      <module name="mybatis-easy-apt" options="-proc:none" />
       <module name="mybatis-easy-boot-starter" options="" />
       <module name="mybatis-easy-core" options="" />
       <module name="mybatis-easy-generator" options="" />

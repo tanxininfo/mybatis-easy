@@ -37,24 +37,26 @@ public class ProviderKid {
     }
 
     public static QueryWrapper getQueryWrapper(StatementType statementType, EntityMap entityMap, QueryWrapper wrapper){
-        String entityName = entityMap.getName();
+
+        Table table = new Table(entityMap.getFullName(), entityMap.getName());
+
         switch (statementType) {
             case SELECT -> {
                 if (!wrapper.hasSelect()) wrapper.select("*");
-                if (!wrapper.hasTable()) wrapper.from(new Table(entityName));
+                if (!wrapper.hasTable()) wrapper.from(table);
             }
             case COUNT -> {
                 if (!wrapper.hasSelect()) wrapper.select("count(*)");
-                if (!wrapper.hasTable()) wrapper.from(new Table(entityName));
+                if (!wrapper.hasTable()) wrapper.from(table);
             }
             case DELETE ->{
-                if (!wrapper.hasTable()) wrapper.deleteFrom(new Table(entityName));
+                if (!wrapper.hasTable()) wrapper.deleteFrom(table);
             }
             case INSERT -> {
-                if (!wrapper.hasTable()) wrapper.insertInto(new Table(entityName));
+                if (!wrapper.hasTable()) wrapper.insertInto(table);
             }
             case UPDATE -> {
-                if (!wrapper.hasTable()) wrapper.update(new Table(entityName));
+                if (!wrapper.hasTable()) wrapper.update(table);
             }
         }
         return wrapper;
