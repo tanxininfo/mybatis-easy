@@ -27,6 +27,8 @@ import com.mybatiseasy.core.utils.SqlUtil;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ProviderKid {
@@ -81,7 +83,7 @@ public class ProviderKid {
     }
 
 
-    public static void version(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj, QueryWrapper queryWrapper){
+    public static void versionHandle(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj, QueryWrapper queryWrapper){
         EntityFieldMap version = entityMap.getVersionFieldMap();
         if(version == null) return;
 
@@ -91,5 +93,17 @@ public class ProviderKid {
 
         queryWrapper.where(SqlUtil.addBackquote(version.getColumn()) +" = "+ valueTag);
         queryWrapper.addParameter(key, value);
+    }
+
+    public static void logicDeleteHandle(QueryWrapper wrapper, EntityMap entityMap){
+        EntityFieldMap logicDeleteFieldMap =  entityMap.getLogicDeleteFieldMap();
+        if(logicDeleteFieldMap == null) {
+            getQueryWrapper(StatementType.DELETE, entityMap, wrapper);
+        }else{
+            getQueryWrapper(StatementType.UPDATE, entityMap, wrapper);
+            List<String> values = new ArrayList<>();
+            values.add(logicDeleteFieldMap.getColumn()+" = " + logicDeleteFieldMap.getLogicDeleteValue());
+            wrapper.setValues(values);
+        }
     }
 }
