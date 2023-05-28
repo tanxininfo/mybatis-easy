@@ -189,12 +189,15 @@ public class Generator {
      * @return name
      */
     private String getName(String tableName){
-        String name = Utils.snakeToCamel(tableName);
+        String name = tableName;
         for (String prefix: entityConfig.getPrefix()
-             ) {
-            if(name.startsWith(prefix)) return name.substring(prefix.length());
+        ) {
+            if(tableName.startsWith(prefix)) {
+                name = tableName.substring(prefix.length());
+                break;
+            }
         }
-        return name;
+        return Utils.snakeToCamel(name);
     }
 
     private List<TableInfo> formatToTableInfo(ResultSet recordSet, Connection conn){
