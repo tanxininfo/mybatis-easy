@@ -21,7 +21,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.4.2</version>
+        <version>0.4.3</version>
     </parent>
     <artifactId>mybatis-easy-apt</artifactId>
     <name>mybatis-easy-apt</name>
