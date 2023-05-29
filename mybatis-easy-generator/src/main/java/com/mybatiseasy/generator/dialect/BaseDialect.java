@@ -72,6 +72,23 @@ public class BaseDialect {
     }
 
     /**
+     * 表名映射为类名
+     * @param tableName 表名
+     * @return name
+     */
+    private String getName(String tableName){
+        String name = tableName;
+        for (String prefix: entityConfig.getPrefix()
+        ) {
+            if(tableName.startsWith(prefix)) {
+                name = tableName.substring(prefix.length());
+                break;
+            }
+        }
+        return Utils.snakeToCamel(name);
+    }
+
+    /**
      * 取得所有表信息，未包含字段信息和主键信息
      *
      * @param conn Connection
@@ -95,7 +112,7 @@ public class BaseDialect {
                         tableInfo.setTableName(tableName);
                         tableInfo.setComment(tableComment);
                         tableInfo.setExtra(extra);
-                        tableInfo.setName(Utils.snakeToCamel(tableName));
+                        tableInfo.setName(getName(tableName));
                         tableInfoList.add(tableInfo);
                     }
                     return tableInfoList;

@@ -70,7 +70,7 @@ import java.math.BigDecimal;
 </#if>
 @Table("${table.tableName}")
 <#if entity.swagger>
-@ApiModel(value = "${table.name}对象", description = "${table.comment!}")
+@ApiModel(value = "${table.name?cap_first}对象", description = "${table.comment!}")
 </#if>
 <#if entity.supperClass??>
 public class ${table.name?cap_first}${entity.suffix} extends ${entity.supperClass.simpleName} {

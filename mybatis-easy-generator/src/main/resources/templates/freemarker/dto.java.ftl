@@ -46,7 +46,7 @@ import java.math.BigDecimal;
 <#------------  字段循环遍历 结束  ---------->
 /**
  *
- * ${table.comment!} ${table.name} Dto对象
+ * ${table.comment!} ${table.name?cap_first} Dto对象
  *
  *
 * @author ${global.author!}
@@ -59,7 +59,7 @@ import java.math.BigDecimal;
 </#if>
 </#if>
 <#if dto.swagger>
-@ApiModel(value = "${table.name} Dto对象"<#if table.comment!?length gt 0>, description = "${table.comment!}"</#if>)
+@ApiModel(value = "${table.name?cap_first} Dto对象"<#if table.comment!?length gt 0>, description = "${table.comment!}"</#if>)
 </#if>
 public class ${table.name?cap_first}${dto.suffix} {
 

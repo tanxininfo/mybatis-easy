@@ -27,6 +27,7 @@ import java.util.Map;
 public class FileGenerator {
 
     public static void main(String[] args) {
+
         String url = "jdbc:sqlite:mybatis-easy-test/sqlite/test.db";
         String username = "";
         String password = "";
@@ -47,6 +48,7 @@ public class FileGenerator {
                 .swagger(true)
                 .enableLombok(false)
                 .chain(true)
+                .prefix("tx_")
                 .versionName("version")
                 .tenantIdName("tenantId")
                 .logicDeleteName("deleted")

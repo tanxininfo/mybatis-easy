@@ -3,6 +3,16 @@ package ${global.packageName}.${controller.packageName};
 <#if controller.swagger>
 import io.swagger.annotations.ApiOperation;
 </#if>
+<#function formatRestful(s)>
+    <#return s
+    <#-- "fooBar" to "foo-bar": -->
+    ?replace('([a-z])([A-Z])', '$1-$2', 'r')
+    <#-- "FOOBar" to "FOO-Bar": -->
+    ?replace('([A-Z])([A-Z][a-z])', '$1-$2', 'r')
+    <#-- All of those to "FOO-BAR": -->
+    ?upper_case
+    >
+</#function>
 import com.mybatiseasy.core.paginate.Page;
 import com.mybatiseasy.core.paginate.PageList;
 import info.tanxin.system.common.annotation.ParamConvert;
@@ -46,7 +56,7 @@ import ${controller.superClass};
 <#else>
 @Controller
 </#if>
-@RequestMapping("/${entityClassName?uncap_first}")
+@RequestMapping("/${formatRestful(entityClassName?uncap_first)}")
 <#if controller.supperClass??>
 public class ${controllerClassName} extends ${controller.supperClass} {
 <#else>
@@ -74,15 +84,15 @@ public class ${controllerClassName} {
         return Response.success(list);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     <#if controller.swagger>
     @ApiOperation("${table.comment}新增")
     </#if>
-    public Response<AddResult> create(@Validated @RequestBody ${entityClassName} ${entityClassName?uncap_first}) {
-        return Response.success(new AddResult(${entityClassName?uncap_first}Service.create(${entityClassName?uncap_first})));
+    public Response<AddResult<${priColumnType}>> create(@Validated @RequestBody ${entityClassName} ${entityClassName?uncap_first}) {
+        return Response.success(new AddResult<>(${entityClassName?uncap_first}Service.create(${entityClassName?uncap_first})));
     }
 
-    @PutMapping("/{${priColumnName}}")
+    @PostMapping("/update/{${priColumnName}}")
     <#if controller.swagger>
     @ApiOperation("${table.comment}修改")
     </#if>
@@ -91,7 +101,7 @@ public class ${controllerClassName} {
         return Response.success();
     }
 
-    @DeleteMapping("/{${priColumnName}}")
+    @PostMapping("/remove/{${priColumnName}}")
     <#if controller.swagger>
     @ApiOperation("${table.comment}删除")
     </#if>
