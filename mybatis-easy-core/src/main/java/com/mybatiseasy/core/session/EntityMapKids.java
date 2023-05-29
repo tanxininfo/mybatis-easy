@@ -24,6 +24,7 @@ import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 @Slf4j
@@ -65,7 +66,6 @@ public class EntityMapKids {
      * @return 实体类映射对象
      */
     public static EntityMap getEntityMap(String entityName) {
-        log.info("entityName={}", entityName);
         if (!hasEntityMap(entityName)) {
             EntityMap entityMap = EntityMapKids.reflectEntity(entityName);
             if (entityMap == null) return null;
@@ -135,6 +135,7 @@ public class EntityMapKids {
             List<EntityFieldMap> entityFieldMapList = new ArrayList<>();
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {
+                if(Modifier.isStatic(field.getModifiers())) continue;
                 EntityFieldMap fieldMap = reflectEntityField(field);
                 if(fieldMap.isId()) primary = fieldMap;
                 if(fieldMap.isVersion()) version = fieldMap;

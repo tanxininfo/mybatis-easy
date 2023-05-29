@@ -17,6 +17,8 @@
 package com.mybatiseasy.test.entity;
 
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,10 @@ import lombok.Data;
  */
 @Data
 @Table("order")
-public class Order{
+public class Order implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @TableId( type = TableIdType.AUTO)
     private Long id;

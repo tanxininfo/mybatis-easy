@@ -512,7 +512,6 @@ public class QueryWrapper implements Serializable {
         private String insertSQL(SafeAppendable builder) {
             sqlClause(builder, "INSERT INTO", tables, "", "", "");
             sqlClause(builder, "", columns, "(", ")", ", ");
-            log.info("valuesList={}",valuesList);
             for (int i = 0; i < valuesList.size(); i++) {
                 sqlClause(builder, (i > 0) ? "," : "VALUES", valuesList.get(i), "(", ")", ", ");
             }
