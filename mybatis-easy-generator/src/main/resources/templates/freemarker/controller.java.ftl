@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiOperation;
     <#-- "FOOBar" to "FOO-Bar": -->
     ?replace('([A-Z])([A-Z][a-z])', '$1-$2', 'r')
     <#-- All of those to "FOO-BAR": -->
-    ?upper_case
+    ?lower_case
     >
 </#function>
 import com.mybatiseasy.core.paginate.Page;
