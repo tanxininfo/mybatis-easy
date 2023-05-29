@@ -93,6 +93,7 @@ public class ProviderKid {
 
         queryWrapper.where(SqlUtil.addBackquote(version.getColumn()) +" = "+ valueTag);
         queryWrapper.addParameter(key, value);
+        map.put(key, value);
     }
 
     public static void logicDeleteHandle(QueryWrapper wrapper, EntityMap entityMap){
