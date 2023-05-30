@@ -163,6 +163,27 @@ public class SqlProvider {
         return wrapper.getSql();
     }
 
+
+    /**
+     * 更新一组记录
+     *
+     * @param map 参数
+     * @param context  上下文
+     * @return String
+     */
+    public static String updateByIdBatch(Map<String, Object> map, ProviderContext context) {
+        EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+        SqlBuilder builder = new SqlBuilder();
+        builder.generateInsertBatchParts(map, entityMap);
+
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.insertInto(entityMap.getName());
+        wrapper.columns(builder.getInsertSymbolList().toArray());
+        wrapper.valuesList(builder.getInsertValuesList());
+
+        return wrapper.getSql();
+    }
+
     /**
      * 删除一条记录
      *

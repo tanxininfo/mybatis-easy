@@ -242,4 +242,13 @@ public class SqlBuilder {
         return fieldMap.getColumn() + "=" + columValue;
     }
 
+    @SuppressWarnings("unchecked")
+    public   void generateUpdateByIdBatchParts(Map<String, Object> map, EntityMap entityMap) {
+        List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
+        Assert.notEmpty(entityList, "实体不得为空");
+        MetaObject entityObject = MetaObjectUtil.forObject(entityList.get(0));
+
+        List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
+    }
+
 }

@@ -56,7 +56,7 @@ public interface IMapper<T> {
      * @param entity 实例
      * @return 影响条数
      */
-    @InsertProvider(type = SqlProvider.class, method = Method.UPDATE_BY_ID)
+    @UpdateProvider(type = SqlProvider.class, method = Method.UPDATE_BY_ID)
     int updateById(@Param(MethodParam.ENTITY) T entity);
 
     /**
@@ -64,7 +64,7 @@ public interface IMapper<T> {
      * @param entity 实例
      * @return 影响条数
      */
-    @InsertProvider(type = SqlProvider.class, method = Method.UPDATE_BY_CONDITION)
+    @UpdateProvider(type = SqlProvider.class, method = Method.UPDATE_BY_CONDITION)
     int updateByCondition(@Param(MethodParam.ENTITY) T entity, Condition condition);
 
     /**
@@ -72,8 +72,16 @@ public interface IMapper<T> {
      * @param entity 实例
      * @return 影响条数
      */
-    @InsertProvider(type = SqlProvider.class, method = Method.UPDATE_BY_WRAPPER)
+    @UpdateProvider(type = SqlProvider.class, method = Method.UPDATE_BY_WRAPPER)
     int updateByWrapper(@Param(MethodParam.ENTITY) T entity, QueryWrapper queryWrapper);
+
+    /**
+     * 插入一组实体
+     * @param entityList 实例列表
+     * @return 插入行数
+     */
+    @UpdateProvider(type = SqlProvider.class, method = Method.UPDATE_BY_ID_BATCH)
+    int updateByIdBatch(@Param(MethodParam.ENTITY_LIST) List<T> entityList);
 
     /**
      * 根据 主键删除行

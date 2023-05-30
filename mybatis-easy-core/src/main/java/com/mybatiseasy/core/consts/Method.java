@@ -41,5 +41,7 @@ public interface Method {
     String UPDATE_BY_CONDITION = "updateByCondition";
     String UPDATE_BY_WRAPPER = "updateByWrapper";
 
+    String UPDATE_BY_ID_BATCH = "updateByIdBatch";
+
     String UPDATE = "update";
 }
