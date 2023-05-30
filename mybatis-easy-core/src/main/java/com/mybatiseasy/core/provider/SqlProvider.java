@@ -220,7 +220,7 @@ public class SqlProvider {
         //逻辑删除处理
         ProviderKid.logicDeleteHandle(wrapper, entityMap);
 
-        Assert.isTrue(!wrapper.hasWhere() && map.get("force")==null, "删除条件不得为空");
+        Assert.isTrue(wrapper.hasWhere() || (map.get("force") != null), "删除条件不得为空");
 
         return wrapper.getSql();
     }

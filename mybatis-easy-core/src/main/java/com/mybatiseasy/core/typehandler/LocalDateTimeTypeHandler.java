@@ -19,18 +19,21 @@ public class LocalDateTimeTypeHandler extends org.apache.ibatis.type.LocalDateTi
     @Override
     public LocalDateTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String dateTime = rs.getString(columnName);
+        if(dateTime == null) return null;
         return LocalDateTime.parse(dateTime, getDateTimeFormatter(dateTime));
     }
 
     @Override
     public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String dateTime = rs.getString(columnIndex);
+        if(dateTime == null) return null;
         return LocalDateTime.parse(dateTime, getDateTimeFormatter(dateTime));
     }
 
     @Override
     public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String dateTime = cs.getString(columnIndex);
+        if(dateTime == null) return null;
         return LocalDateTime.parse(dateTime, getDateTimeFormatter(dateTime));
     }
 

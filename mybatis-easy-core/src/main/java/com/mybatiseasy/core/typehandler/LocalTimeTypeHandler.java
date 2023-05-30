@@ -20,18 +20,21 @@ public class LocalTimeTypeHandler extends org.apache.ibatis.type.LocalTimeTypeHa
     @Override
     public LocalTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String time = rs.getString(columnName);
+        if(time == null) return null;
         return LocalTime.parse(time, getTimeFormatter(time));
     }
 
     @Override
     public LocalTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String time = rs.getString(columnIndex);
+        if(time == null) return null;
         return LocalTime.parse(time, getTimeFormatter(time));
     }
 
     @Override
     public LocalTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String time = cs.getString(columnIndex);
+        if(time == null) return null;
         return LocalTime.parse(time, getTimeFormatter(time));
     }
 

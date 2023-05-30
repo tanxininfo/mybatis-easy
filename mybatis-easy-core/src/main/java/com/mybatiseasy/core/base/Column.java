@@ -63,8 +63,12 @@ public class Column {
     public void addColumn(String columnName, String columnAlias) {
         ColumnData newColumn = new ColumnData();
         newColumn.setColumn(columnName);
-        newColumn.setTable(this.column.getTable());
-        if (TypeUtil.isNotEmpty(this.column.getTableAlias())) newColumn.setTableAlias(this.column.getTableAlias());
+        if(this.column!= null) {
+            newColumn.setEntityName(this.column.getEntityName());
+            newColumn.setTable(this.column.getTable());
+            if (TypeUtil.isNotEmpty(this.column.getTableAlias())) newColumn.setTableAlias(this.column.getTableAlias());
+        }
+
         if (TypeUtil.isNotEmpty(columnAlias)) newColumn.setColumnAlias(columnAlias);
         if(this.columns.stream().noneMatch(item ->
                 item.getTable().equals(newColumn.getTable())

@@ -19,13 +19,12 @@ package com.mybatiseasy.apt.generate;
 
 import com.mybatiseasy.annotation.Table;
 import com.mybatiseasy.annotation.TableField;
+import org.springframework.core.annotation.AnnotationUtils;
 
 
 import javax.annotation.processing.Messager;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
+import javax.tools.Diagnostic;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +67,8 @@ public class TableInfo {
 
     private void setTableName(TypeElement classElement){
         if(root.get("entityClassName") == null) this.setClassName(classElement);
-        String tableName = Utils.isEmpty(table.name())? Utils.camelToSnake(root.get("entityClassName").toString()): table.name();
+        String name = Utils.isNotEmpty(table.name())? table.name(): table.value();
+        String tableName = Utils.isEmpty(name)? Utils.camelToSnake(root.get("entityClassName").toString()): name;
         root.put("tableName", tableName);
     }
 
@@ -79,6 +79,7 @@ public class TableInfo {
              ) {
             if(element.getKind() == ElementKind.FIELD){
                 VariableElement fieldElement = (VariableElement) element;
+                if(element.getModifiers().contains(Modifier.STATIC)) continue;;
                 Map<String, Object> column = new HashMap<>();
                 column.put("name", fieldElement.getSimpleName().toString());
                 column.put("capitalName", Utils.camelToSnake(fieldElement.getSimpleName().toString()).toUpperCase());
@@ -86,8 +87,9 @@ public class TableInfo {
 
                 TableField tableField = element.getAnnotation(TableField.class);
                 if(tableField != null){
-                   if(Utils.isNotEmpty(tableField.column())) {
-                       column.put("column", tableField.column());
+                    String columnName =  Utils.isNotEmpty(tableField.column())? tableField.column(): tableField.value();
+                   if(Utils.isNotEmpty(columnName)) {
+                       column.put("column", columnName);
                    }
                 }
                 columnList.add(column);

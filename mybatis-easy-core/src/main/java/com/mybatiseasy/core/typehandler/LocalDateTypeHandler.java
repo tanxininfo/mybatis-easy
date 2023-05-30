@@ -20,18 +20,21 @@ public class LocalDateTypeHandler extends org.apache.ibatis.type.LocalDateTypeHa
     @Override
     public LocalDate getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String date = rs.getString(columnName);
+        if(date == null) return null;
         return LocalDate.parse(date, getDateFormatter());
     }
 
     @Override
     public LocalDate getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String date = rs.getString(columnIndex);
+        if(date == null) return null;
         return LocalDate.parse(date, getDateFormatter());
     }
 
     @Override
     public LocalDate getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String date = cs.getString(columnIndex);
+        if(date == null) return null;
         return LocalDate.parse(date, getDateFormatter());
     }
 

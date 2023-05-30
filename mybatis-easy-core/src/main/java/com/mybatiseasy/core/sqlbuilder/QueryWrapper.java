@@ -102,8 +102,10 @@ public class QueryWrapper implements Serializable {
      * @return Condition
      */
     private Condition getLogicDeleteCondition(Table table){
+        log.info("table={}", table);
         String entityName = table.getColumn().getEntityName();
         EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
+        log.info("entityName={}", entityName);
         assert entityMap != null;
         EntityFieldMap logicDeleteField = entityMap.getLogicDeleteFieldMap();
         if(logicDeleteField != null){

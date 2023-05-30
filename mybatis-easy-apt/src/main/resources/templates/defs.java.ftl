@@ -1,8 +1,9 @@
 package com.mybatiseasy.core.defs;
 
 import com.mybatiseasy.core.base.Column;
+import com.mybatiseasy.core.base.Table;
 
-public class ${defClassName} extends Column {
+public class ${defClassName} extends Table {
 
     public static String className = "${entityClassFullName}";
 
