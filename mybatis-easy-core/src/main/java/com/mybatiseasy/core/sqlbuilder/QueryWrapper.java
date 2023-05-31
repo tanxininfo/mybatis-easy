@@ -161,17 +161,27 @@ public class QueryWrapper implements Serializable {
     }
 
     public QueryWrapper where(Condition condition){
-        sqlStatement.where.add(condition.getSql());
-        sqlStatement.parameterMap.putAll(condition.getParameterMap());
+        return where(true, condition);
+    }
 
+    public QueryWrapper where(boolean apply, Condition condition){
+        if(apply) {
+            sqlStatement.where.add(condition.getSql());
+            sqlStatement.parameterMap.putAll(condition.getParameterMap());
+        }
         return this;
     }
 
     public QueryWrapper where(String condition){
-        sqlStatement.where.add(condition);
-        return this;
+        return where(true, condition);
     }
 
+    public QueryWrapper where(boolean apply, String condition){
+        if(apply) {
+            sqlStatement.where.add(condition);
+        }
+        return this;
+    }
 
     public QueryWrapper limit(Long offset, Long limit){
         sqlStatement.offset = offset;

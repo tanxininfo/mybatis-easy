@@ -51,7 +51,7 @@ public class Condition {
     }
 
 
-    public Condition logic(Condition nextCondition, String keyword, boolean apply) {
+    public Condition logic(boolean apply, Condition nextCondition, String keyword) {
         if (!apply) return new Condition(sql.toString());
 
         boolean preEmpty = sql.isEmpty();
@@ -76,18 +76,18 @@ public class Condition {
     }
 
     public Condition and(Condition nextCondition) {
-        return logic(nextCondition, "AND", true);
+        return logic(true, nextCondition, "AND");
     }
 
     public Condition or(Condition nextCondition) {
-        return logic(nextCondition, "OR", true);
+        return logic(true, nextCondition, "OR");
     }
 
-    public Condition and(Condition nextCondition, boolean apply) {
-        return logic(nextCondition, "AND", apply);
+    public Condition and(boolean apply, Condition nextCondition) {
+        return logic(apply, nextCondition, "AND");
     }
 
-    public Condition or(Condition nextCondition, boolean apply) {
-        return logic(nextCondition, "OR", apply);
+    public Condition or(boolean apply, Condition nextCondition) {
+        return logic(apply, nextCondition, "OR");
     }
 }

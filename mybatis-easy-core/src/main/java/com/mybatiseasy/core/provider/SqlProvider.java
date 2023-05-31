@@ -173,15 +173,9 @@ public class SqlProvider {
      */
     public static String updateByIdBatch(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
+
         SqlBuilder builder = new SqlBuilder();
-        builder.generateInsertBatchParts(map, entityMap);
-
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.insertInto(entityMap.getName());
-        wrapper.columns(builder.getInsertSymbolList().toArray());
-        wrapper.valuesList(builder.getInsertValuesList());
-
-        return wrapper.getSql();
+        return builder.generateUpdateByIdBatchSql(map, entityMap);
     }
 
     /**

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,21 +40,20 @@ public class OrderController {
     private OrderMapper orderMapper;
 
     @GetMapping
-    public void get(){
-        Order one = orderMapper.getById(2301010015420437L);
-        log.info("one={}", one);
+    public void test(){
+        List<Order> orderList = new ArrayList<>();
+
+        Order order1= new Order();
+        order1.setId(1L);
+        order1.setGoodsId(1L);
+        orderList.add(order1);
+
+        Order order2= new Order();
+        order2.setId(2L);
+        order2.setGoodsId(2L);
+        orderList.add(order2);
+
+        orderMapper.updateByIdBatch(orderList);
+
     }
-//
-//    @GetMapping
-//    public void getList(){
-//
-////        List<Order> orderList = orderMapper.list(_ORDER.ID().eq(1).or(_ORDER.ID().eq(2)).and(_ORDER.ID().eq(3).or(_ORDER.ID().eq(4))));
-////        Condition condition = _ORDER.ID().gt(1).and(_ORDER.ID().gt(2).and(_ORDER.ID().ne(3)));
-////        Condition condition = _ORDER.ID().gt(1, true).and(_ORDER.ID().gt(2, true).and(_ORDER.ID().ne(3, true), false));
-////        Condition condition =  _ORDER.ID().gt(2, true).and(_ORDER.ID().ne(3, true));
-//
-//        List<Order> orderList = orderMapper.list(new QueryWrapper().limit(5L));
-//
-//        log.info("orderList={}", orderList);
-//    }
 }

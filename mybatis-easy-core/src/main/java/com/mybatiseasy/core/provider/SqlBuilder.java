@@ -17,9 +17,12 @@
 package com.mybatiseasy.core.provider;
 
 import com.mybatiseasy.core.consts.MethodParam;
+import com.mybatiseasy.core.enums.StatementType;
 import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
+import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.utils.MetaObjectUtil;
+import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
@@ -242,13 +245,81 @@ public class SqlBuilder {
         return fieldMap.getColumn() + "=" + columValue;
     }
 
+    /**
+     * 生成批量更新的sql
+     * @param map 上下文
+     * @param entityMap  实体
+     * @return String
+     */
     @SuppressWarnings("unchecked")
-    public   void generateUpdateByIdBatchParts(Map<String, Object> map, EntityMap entityMap) {
+    public String generateUpdateByIdBatchSql(Map<String, Object> map, EntityMap entityMap) {
         List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
         Assert.notEmpty(entityList, "实体不得为空");
-        MetaObject entityObject = MetaObjectUtil.forObject(entityList.get(0));
+        List<String> sqlList = new ArrayList<>();
+        int index = 0;
+        for (Object object: entityList
+             ) {
+            MetaObject entityObject = MetaObjectUtil.forObject(object);
+            sqlList.add(generateUpdateForEach(map, entityMap, entityObject, index));
+            index++;
+        }
+        return String.join(";", sqlList);
+    }
 
-        List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
+
+    /**
+     * 生成批量更新里的每一句
+     * @param map 上下文
+     * @param entityMap 实体
+     * @param entityObject 实体对象
+     * @param index 序号
+     * @return String
+     */
+    public String generateUpdateForEach(Map<String, Object> map, EntityMap entityMap, MetaObject entityObject, int index) {
+        List<String> valueList = new ArrayList<>();
+
+        String name;
+        Object value;
+        String updateDefault;
+        Object id = null;
+
+        for (EntityFieldMap fieldMap : entityMap.getEntityFieldMapList()
+        ) {
+            //主键不参与更新
+            if(fieldMap.isId()) {
+                id = entityObject.getValue(fieldMap.getName());
+                continue;
+            }
+
+            value = entityObject.getValue(fieldMap.getName());
+            name = fieldMap.getName() + "_" + index;
+
+
+            // 只有本数据表字段需要更新,isForeign表示非本数据表字段,比如多表连接时，其他表字段。
+            if(!fieldMap.isForeign()) {
+                if (value != null) {
+                    map.put(name, value);
+                    valueList.add(formatUpdateItem(fieldMap, name, ""));
+                } else {
+                    updateDefault = fieldMap.getUpdateDefault();
+                    if (!updateDefault.isEmpty()) {
+                        map.put(name, updateDefault);
+                        valueList.add(formatUpdateItem(fieldMap, name, updateDefault));
+                    }
+                }
+            }
+        }
+        Assert.notEmpty(valueList, "您没有更新任何数据");
+
+        QueryWrapper wrapper = new QueryWrapper();
+        ProviderKid.getQueryWrapper(StatementType.UPDATE, entityMap, wrapper);
+        wrapper.setValues(valueList);
+        wrapper.where(ProviderKid.getWhereId(entityMap, index));
+        map.put(SqlUtil.getMapKey(entityMap.getPrimaryFieldMap().getColumn(), index), id);
+
+        // 乐观锁处理
+        ProviderKid.versionHandle(map, entityMap, entityObject, wrapper);
+        return wrapper.getSql();
     }
 
 }

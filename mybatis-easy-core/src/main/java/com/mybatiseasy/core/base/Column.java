@@ -186,8 +186,11 @@ public class Column {
      * @param symbol 比较符，如: =,<,<=,>,>=,!=
      * @return Condition
      */
-    private Condition compare(Object val, String symbol, boolean apply) {
+    private Condition compare(boolean apply, Object val, String symbol) {
         this.removeLastColumn();
+        //值为null时，舍弃不参与条件查询
+        if(val == null) return new Condition();
+
         String nextConditionSql = "";
         if (val instanceof Condition) nextConditionSql = ((Condition) val).getSql();
         else if (val instanceof Column) {
@@ -205,21 +208,21 @@ public class Column {
         return new Condition(sql, this.parameterMap);
     }
 
-    private Condition compare(Object[] array, String symbol, boolean apply) {
+    private Condition compare(boolean apply, Object[] array, String symbol) {
         this.removeLastColumn();
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagArray(array) +")";
         return new Condition(sql, this.parameterMap);
     }
 
-    private Condition compare(Collection<?> collection, String symbol, boolean apply) {
+    private Condition compare(boolean apply, Collection<?> collection, String symbol) {
         this.removeLastColumn();
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + symbol + Sql.SPACE + "("+ getValueTagCollection(collection) +")";
         return new Condition(sql, this.parameterMap);
     }
 
-    private Condition compareBetween(Object val1, Object val2, boolean apply) {
+    private Condition compareBetween(boolean apply, Object val1, Object val2) {
         this.removeLastColumn();
         if (!apply) return new Condition();
         String sql = this.getTableColumn() + Sql.SPACE + "BETWEEN" + Sql.SPACE + getValueTag(val1) + Sql.SPACE + "AND" + Sql.SPACE + getValueTag(val2);
@@ -242,59 +245,59 @@ public class Column {
     }
 
     public Condition eq(Object val) {
-        return compare(val, "=", true);
+        return compare(true, val, "=");
     }
 
     public Condition lt(Object val) {
-        return compare(val, "<", true);
+        return compare(true, val, "<");
     }
 
     public Condition le(Object val) {
-        return compare(val, "<=", true);
+        return compare(true, val, "<=");
     }
 
     public Condition gt(Object val) {
-        return compare(val, ">", true);
+        return compare(true, val, ">");
     }
 
     public Condition ge(Object val) {
-        return compare(val, ">=", true);
+        return compare(true, val, ">=");
     }
 
     public Condition ne(Object val) {
-        return compare(val, "!=", true);
+        return compare(true, val, "!=");
     }
 
     public Condition in(Collection<?> collection) {
-        return compare(collection, "IN", true);
+        return compare(true, collection, "IN");
     }
 
     public Condition in(Object... array) {
-        return compare(array, "IN", true);
+        return compare(true, array, "IN");
     }
 
     public Condition notIn(Collection<?> collection) {
-        return compare(collection, "NOT IN", true);
+        return compare(true, collection, "NOT IN");
     }
 
     public Condition notIn(Object... array) {
-        return compare(array, "NOT IN", true);
+        return compare(true, array, "NOT IN");
     }
 
     public Condition between(Object val1, Object val2) {
-        return compareBetween(val1, val2, true);
+        return compareBetween(true, val1, val2);
     }
 
     public Condition like(Object val) {
-        return compare(formatLike(val.toString().trim()), "LIKE", true);
+        return compare(true, formatLike(val.toString().trim()), "LIKE");
     }
 
     public Condition notLike(Object val) {
-        return compare(formatLike(val.toString().trim()), "NOT LIKE", true);
+        return compare(true, formatLike(val.toString().trim()), "NOT LIKE");
     }
 
     public Condition leftLike(Object val) {
-        return compare(formatLeftLike(val.toString().trim()), "LIKE", true);
+        return compare(true, formatLeftLike(val.toString().trim()), "LIKE");
     }
 
     public Condition likeLeft(Object val) {
@@ -302,7 +305,7 @@ public class Column {
     }
 
     public Condition rightLike(Object val) {
-        return compare(formatRightLike(val.toString().trim()), "LIKE", true);
+        return compare(true, formatRightLike(val.toString().trim()), "LIKE");
     }
 
     public Condition likeRight(Object val) {
@@ -314,64 +317,64 @@ public class Column {
      * @param val   值
      * @return Condition
      */
-    public Condition eq(Object val, boolean apply) {
-        return compare(val, "=", apply);
+    public Condition eq(boolean apply, Object val) {
+        return compare(apply, val, "=");
     }
 
-    public Condition lt(Object val, boolean apply) {
-        return compare(val, "<", apply);
+    public Condition lt(boolean apply, Object val) {
+        return compare(apply, val, "<");
     }
 
-    public Condition le(Object val, boolean apply) {
-        return compare(val, "<=", apply);
+    public Condition le(boolean apply, Object val) {
+        return compare(apply, val, "<=");
     }
 
-    public Condition gt(Object val, boolean apply) {
-        return compare(val, ">", apply);
+    public Condition gt(boolean apply, Object val) {
+        return compare(apply, val, ">");
     }
 
-    public Condition ge(Object val, boolean apply) {
-        return compare(val, ">=", apply);
+    public Condition ge(boolean apply, Object val) {
+        return compare(apply, val, ">=");
     }
 
-    public Condition ne(Object val, boolean apply) {
-        return compare(val, "!=", apply);
+    public Condition ne(boolean apply, Object val) {
+        return compare(apply, val, "!=");
     }
 
-    public Condition in(Object[] array, boolean apply) {
-        return compare(array, "IN", apply);
+    public Condition in(boolean apply, Object[] array) {
+        return compare(apply, array, "IN");
     }
 
-    public Condition in(Collection<?> collection, boolean apply) {
-        return compare(collection, "IN", apply);
+    public Condition in(boolean apply, Collection<?> collection) {
+        return compare(apply, collection, "IN");
     }
 
-    public Condition notIn(Object[] array, boolean apply) {
-        return compare(array, "NOT IN", apply);
+    public Condition notIn(boolean apply, Object[] array) {
+        return compare(apply, array, "NOT IN");
     }
 
-    public Condition notIn(Collection<?> collection, boolean apply) {
-        return compare(collection, "NOT IN", apply);
+    public Condition notIn(boolean apply, Collection<?> collection) {
+        return compare(apply, collection, "NOT IN");
     }
 
-    public Condition between(Object val1, Object val2, boolean apply) {
-        return compareBetween(val1, val2, apply);
+    public Condition between(boolean apply, Object val1, Object val2) {
+        return compareBetween(apply, val1, val2);
     }
 
-    public Condition like(Object val, boolean apply) {return compare(formatLike(val.toString().trim()), "LIKE", apply);}
+    public Condition like(boolean apply, Object val) {return compare(apply, formatLike(val.toString().trim()), "LIKE");}
 
-    public Condition notLike(Object val, boolean apply) { return compare(formatLike(val.toString().trim()), "NOT LIKE", apply);}
+    public Condition notLike(boolean apply, Object val) { return compare(apply, formatLike(val.toString().trim()), "NOT LIKE");}
 
-    public Condition leftLike(Object val, boolean apply) { return compare(formatLeftLike(val.toString().trim()), "LIKE", apply);}
+    public Condition leftLike(boolean apply, Object val) { return compare(apply, formatLeftLike(val.toString().trim()), "LIKE");}
 
-    public Condition likeLeft(Object val, boolean apply) {
-        return leftLike(val, apply);
+    public Condition likeLeft(boolean apply, Object val) {
+        return leftLike(apply, val);
     }
 
-    public Condition rightLike(Object val, boolean apply) { return compare(formatRightLike(val.toString().trim()), "LIKE", apply);}
+    public Condition rightLike(boolean apply, Object val) { return compare(apply, formatRightLike(val.toString().trim()), "LIKE");}
 
-    public Condition likeRight(Object val, boolean apply) {
-        return leftLike(val, apply);
+    public Condition likeRight(boolean apply, Object val) {
+        return leftLike(apply, val);
     }
 
     protected void setMethod(String method){

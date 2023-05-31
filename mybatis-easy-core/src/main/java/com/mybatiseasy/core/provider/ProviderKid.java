@@ -82,6 +82,15 @@ public class ProviderKid {
                 "#{" + entityMap.getPrimaryFieldMap().getName() +"}";
     }
 
+    /**
+     * 取得 where id={#id} 的 id={#id_1}部份
+     * @param entityMap 实体映射对象
+     * @return String `id`={#id_1}
+     */
+    public static String getWhereId(EntityMap entityMap, int index){
+        return entityMap.getPrimaryFieldMap().getColumn() + "=" + Sql.SPACE +
+                SqlUtil.getValueTag(SqlUtil.getMapKey(entityMap.getPrimaryFieldMap().getColumn(), index));
+    }
 
     public static void versionHandle(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj, QueryWrapper queryWrapper){
         EntityFieldMap version = entityMap.getVersionFieldMap();

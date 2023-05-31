@@ -135,7 +135,12 @@ public class SqlUtil {
 
     public static String getMapKey(String column) {
         String originColumn = SqlUtil.removeBackquote(column);
-        return originColumn + IdUtil.uniqueId().id();
+        return originColumn + "_" + IdUtil.uniqueId().id();
+    }
+
+    public static String getMapKey(String column, int index) {
+        String originColumn = SqlUtil.removeBackquote(column);
+        return originColumn +"_" + index;
     }
 
     public static String getValueTag(String key) {
