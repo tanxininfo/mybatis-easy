@@ -7,7 +7,7 @@ public class ${tableClassName} {
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list columnList as column>
     public static ${defClassName} ${column.capitalName}() {
-        return new ${defClassName}().${column.capitalName}();
+        return new ${defClassName}("`${tableName}`", "`${tableName}`").${column.capitalName}();
     }
 
 </#list>
@@ -17,7 +17,7 @@ public class ${tableClassName} {
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list columnList as column>
     public static ${defClassName} ${column.capitalName}(String alias) {
-        return new ${defClassName}().${column.capitalName}(alias);
+        return new ${defClassName}("`${tableName}`", "`${tableName}`").${column.capitalName}(alias);
     }
 
 </#list>

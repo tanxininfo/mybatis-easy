@@ -26,7 +26,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @author 
 * @since 2023-05-03
 */
-@Mapper
+
 public interface OrderMapper extends IMapper<Order> {
 
 }

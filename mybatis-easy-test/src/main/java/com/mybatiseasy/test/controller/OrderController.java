@@ -16,7 +16,11 @@
 
 package com.mybatiseasy.test.controller;
 
-import com.mybatiseasy.test.entity.Order;
+import com.mybatiseasy.core.mapper.DbMapper;
+import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.tables.ORDER;
+import com.mybatiseasy.core.tables.USER;
+import com.mybatiseasy.test.entity.User;
 import com.mybatiseasy.test.mapper.OrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author dudley
@@ -39,21 +42,14 @@ public class OrderController {
     @Autowired
     private OrderMapper orderMapper;
 
+    @Autowired
+    private DbMapper dbMapper;
+
+
     @GetMapping
     public void test(){
-        List<Order> orderList = new ArrayList<>();
 
-        Order order1= new Order();
-        order1.setId(1L);
-        order1.setGoodsId(1L);
-        orderList.add(order1);
-
-        Order order2= new Order();
-        order2.setId(2L);
-        order2.setGoodsId(2L);
-        orderList.add(order2);
-
-        orderMapper.updateByIdBatch(orderList);
-
+    User user = dbMapper.getSingle(QueryWrapper.create().select(USER.ID().NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as()).where(USER.ID().eq(1))).toEntity(User.class);
+    log.info("list={}", user);
     }
 }

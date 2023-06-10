@@ -16,9 +16,11 @@
 
 package com.mybatiseasy.core.session;
 
+
 import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
+import com.mybatiseasy.core.mapper.DbMapper;
 import com.mybatiseasy.core.typehandler.*;
 import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.keygen.CustomKeyGenerator;
@@ -31,7 +33,7 @@ import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
+
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.io.Serial;
@@ -58,6 +60,8 @@ public class MeConfiguration extends Configuration {
 
     public void init(){
         this.addTotalResultMap();
+        this.mapperRegistry.addMapper(DbMapper.class);
+
         /**
          * 在sqlite中不支持数据类型:LocalDateTime, LocalDate, LocalTime
          */
@@ -251,6 +255,7 @@ public class MeConfiguration extends Configuration {
     }
 
     private MappedStatement replaceResultMapOfMappedStatement(String mapperName, String methodName, MappedStatement ms){
+        if(mapperName.contains(".DbMapper")) return ms;
         String keyProperty = ArrayToDelimitedString(ms.getKeyProperties());
         String keyColumn = ArrayToDelimitedString(ms.getKeyColumns());
         String resultSets = ArrayToDelimitedString(ms.getResultSets());

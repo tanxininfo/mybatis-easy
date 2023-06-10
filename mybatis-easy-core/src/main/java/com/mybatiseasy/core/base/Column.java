@@ -38,7 +38,7 @@ public class Column {
     }
 
     public Column(String entity, String table) {
-        this(entity, table, "");
+        this(entity, table, table);
     }
 
     public Column(String entity, String table, String tableAlias) {

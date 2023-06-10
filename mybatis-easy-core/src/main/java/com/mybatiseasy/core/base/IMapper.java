@@ -241,5 +241,5 @@ public interface IMapper<T> {
     default int update(T entity, QueryWrapper wrapper) {
         return updateByWrapper(entity, wrapper);
     }
-    default int delete(T entity, Condition condition){ return updateByWrapper(entity, QueryWrapper.create().where(condition)); }
+    default int update(T entity, Condition condition){ return updateByWrapper(entity, QueryWrapper.create().where(condition)); }
 }

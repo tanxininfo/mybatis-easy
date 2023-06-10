@@ -26,6 +26,7 @@ import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.utils.SqlUtil;
+import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.AbstractSQL;
@@ -66,6 +67,7 @@ public class QueryWrapper implements Serializable {
     }
 
     private String formatJoin(Table table, Condition condition) {
+        sqlStatement.tableList.add(table);
         Condition logicDeleteCondition = getLogicDeleteCondition(table);
         if (logicDeleteCondition != null) condition.and(logicDeleteCondition);
 
@@ -402,7 +404,7 @@ public class QueryWrapper implements Serializable {
     }
 
     public boolean hasTable(){
-        return sqlStatement.tables.size()>0;
+        return sqlStatement.tableList.size()>0;
     }
     private static class SQLStatement {
 
@@ -521,6 +523,30 @@ public class QueryWrapper implements Serializable {
             }
         }
 
+        /**
+         * 表别名处理
+         * @param sql
+         * @return
+         */
+        private String replaceAlias(String sql) {
+            int tableCount = this.tableList.size();
+            if (tableCount <= 0) return sql;
+
+            for (Table table : this.tableList
+            ) {
+                String tableAlias = table.getColumn().getTableAlias();
+                String tableName = table.getColumn().getTable();
+                String target = tableAlias + "\\.";
+                if (TypeUtil.isEmpty(tableAlias)) {
+                    if (tableCount == 1) target = "";
+                    else target = tableName + "\\.";
+                }
+                sql = sql.replaceAll(tableName + "\\.", target);
+            }
+
+            return sql;
+        }
+
         private String insertSQL(SafeAppendable builder) {
             sqlClause(builder, "INSERT INTO", tables, "", "", "");
             sqlClause(builder, "", columns, "(", ")", ", ");
@@ -553,12 +579,13 @@ public class QueryWrapper implements Serializable {
                 return null;
             }
 
-            return switch (statementType) {
+            String sql =  switch (statementType) {
                 case DELETE -> deleteSQL(builder);
                 case INSERT -> insertSQL(builder);
                 case SELECT, COUNT -> selectSQL(builder);
                 case UPDATE -> updateSQL(builder);
             };
+            return replaceAlias(sql);
         }
     }
 }

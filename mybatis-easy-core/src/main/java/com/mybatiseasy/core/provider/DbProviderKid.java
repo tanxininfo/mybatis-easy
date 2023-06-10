@@ -31,36 +31,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ProviderKid {
+public class DbProviderKid {
 
 
-    public static QueryWrapper getQueryWrapper(StatementType statementType, EntityMap entityMap){
-        return getQueryWrapper(statementType, entityMap, new QueryWrapper());
+    public static QueryWrapper getQueryWrapper(StatementType statementType){
+        return getQueryWrapper(statementType, new QueryWrapper());
     }
 
-    public static QueryWrapper getQueryWrapper(StatementType statementType, EntityMap entityMap, QueryWrapper wrapper){
-
-        Table table = new Table(entityMap.getFullName(), entityMap.getName(), "");
-
-        switch (statementType) {
-            case SELECT -> {
-                if (!wrapper.hasSelect()) wrapper.select("*");
-                if (!wrapper.hasTable()) wrapper.from(table);
-            }
-            case COUNT -> {
-                if (!wrapper.hasSelect()) wrapper.select("count(*)");
-                if (!wrapper.hasTable()) wrapper.from(table);
-            }
-            case DELETE ->{
-                if (!wrapper.hasTable()) wrapper.deleteFrom(table);
-            }
-            case INSERT -> {
-                if (!wrapper.hasTable()) wrapper.insertInto(table);
-            }
-            case UPDATE -> {
-                if (!wrapper.hasTable()) wrapper.update(table);
-            }
+    public static QueryWrapper getQueryWrapper(StatementType statementType,  QueryWrapper wrapper) {
+        if(statementType.equals(StatementType.SELECT)){
+            if (!wrapper.hasSelect()) wrapper.select("*");
         }
+        else if(statementType.equals(StatementType.COUNT)){
+            if (!wrapper.hasSelect()) wrapper.select("count(*)");
+        }
+
         return wrapper;
     }
 
@@ -108,9 +93,9 @@ public class ProviderKid {
     public static void logicDeleteHandle(QueryWrapper wrapper, EntityMap entityMap){
         EntityFieldMap logicDeleteFieldMap =  entityMap.getLogicDeleteFieldMap();
         if(logicDeleteFieldMap == null) {
-            getQueryWrapper(StatementType.DELETE, entityMap, wrapper);
+            getQueryWrapper(StatementType.DELETE,  wrapper);
         }else{
-            getQueryWrapper(StatementType.UPDATE, entityMap, wrapper);
+            getQueryWrapper(StatementType.UPDATE, wrapper);
             List<String> values = new ArrayList<>();
             values.add(logicDeleteFieldMap.getColumn()+" = " + logicDeleteFieldMap.getLogicDeleteValue());
             wrapper.setValues(values);
