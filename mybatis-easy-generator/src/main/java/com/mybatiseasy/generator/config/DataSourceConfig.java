@@ -18,7 +18,6 @@ package com.mybatiseasy.generator.config;
 
 
 import com.mybatiseasy.generator.utils.Utils;
-import org.springframework.util.Assert;
 
 public class DataSourceConfig {
 
@@ -74,7 +73,7 @@ public class DataSourceConfig {
         }
 
         public DataSourceConfig build(){
-            Assert.hasLength(config.url, "url不得为空");
+            if(Utils.isEmpty(config.url)) throw new RuntimeException("url不得为空");
             return this.config;
         }
     }

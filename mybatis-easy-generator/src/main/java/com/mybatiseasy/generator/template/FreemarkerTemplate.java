@@ -20,7 +20,7 @@ import com.mybatiseasy.generator.config.*;
 import com.mybatiseasy.generator.pojo.TableInfo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.springframework.util.StringUtils;
+import freemarker.template.utility.StringUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -93,7 +93,7 @@ public class FreemarkerTemplate implements ITemplate{
 
         return path
                 +File.separator
-                + StringUtils.capitalize(tableName)
+                + StringUtil.capitalize(tableName)
                 + suffix
                 + ".java";
     }

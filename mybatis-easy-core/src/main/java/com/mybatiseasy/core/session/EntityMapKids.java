@@ -21,8 +21,8 @@ import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
-import org.springframework.core.annotation.AnnotationUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -125,7 +125,7 @@ public class EntityMapKids {
     public static EntityMap reflectEntity(String entityName) {
         try {
             Class<?> entityClass = Class.forName(entityName);
-            Table table = AnnotationUtils.findAnnotation(entityClass, Table.class);
+            Table table = entityClass.getAnnotation(Table.class);
             if (table == null) return null;
 
             EntityFieldMap primary = null;
@@ -143,8 +143,12 @@ public class EntityMapKids {
                 if(fieldMap.isLogicDelete()) logicDelete = fieldMap;
                 if(!fieldMap.isForeign()) entityFieldMapList.add(fieldMap);
             }
+            String tableName = TypeUtil.isEmpty(table.name())? table.value(): table.name();
+            if(TypeUtil.isEmpty(tableName)) {
+                String[] nameSplits = entityClass.getName().split(".");
+                tableName = StringUtil.camelToSnake(nameSplits[nameSplits.length-1]);
+            }
 
-            String tableName = TypeUtil.isEmpty(table.name())? StringUtil.camelToSnake(entityClass.getName()): table.name();
             return new EntityMap.Builder(tableName, table.desc())
                     .fullName(entityName)
                     .schema(table.schema())
@@ -165,11 +169,14 @@ public class EntityMapKids {
      * @return EntityFieldMap
      */
     public static EntityFieldMap reflectEntityField(Field field) {
-        TableField tableField = AnnotationUtils.findAnnotation(field, TableField.class);
-        TableId tableId = AnnotationUtils.findAnnotation(field, TableId.class);
-        Version version = AnnotationUtils.findAnnotation(field, Version.class);
-        LogicDelete logicDelete = AnnotationUtils.findAnnotation(field, LogicDelete.class);
-        TenantId tenantId = AnnotationUtils.findAnnotation(field, TenantId.class);
+        TableField tableField = field.getAnnotation(TableField.class);
+        TableId tableId = field.getAnnotation( TableId.class);
+        Version version = field.getAnnotation( Version.class);
+        LogicDelete logicDelete = field.getAnnotation( LogicDelete.class);
+        TenantId tenantId = field.getAnnotation( TenantId.class);
+
+        Annotation[] annotationList = field.getAnnotations();
+
         String name = field.getName();
         String column = StringUtil.camelToSnake(field.getName());
         EntityFieldMap.Builder builder = new EntityFieldMap.Builder(name, column).javaType(field.getType());
@@ -181,6 +188,7 @@ public class EntityMapKids {
                     .updateDefault(tableField.update())
                     .jdbcType(tableField.jdbcType())
                     .isLarge(tableField.isLarge())
+                    .annatationList(Arrays.stream(annotationList).toList())
                     .numericScale(tableField.numericScale())
                     .typeHandler(tableField.typeHandler());
             if (!tableField.column().isEmpty()) builder.column(tableField.column());

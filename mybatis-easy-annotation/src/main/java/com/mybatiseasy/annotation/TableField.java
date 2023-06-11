@@ -19,7 +19,6 @@ package com.mybatiseasy.annotation;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
-import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
@@ -34,10 +33,8 @@ public @interface TableField {
     /**
      * 数据库字段名称，不填则默认为名称转下划线
      */
-    @AliasFor("column")
     String value() default "";
 
-    @AliasFor("value")
     String column() default "";
 
     /**

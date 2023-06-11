@@ -24,6 +24,7 @@ import com.mybatiseasy.core.paginate.Total;
 import com.mybatiseasy.core.provider.SqlProvider;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.type.Record;
 import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
@@ -210,10 +211,20 @@ public interface IMapper<T> {
     }
 
     default T getOne(QueryWrapper wrapper) {
-        return getByWrapper(wrapper);
+        List<T> objList = listByWrapper(wrapper);
+        if (objList.size() == 0) return null;
+        if (objList.size() > 1) throw new RuntimeException("查询结果不唯一");
+        return objList.get(0);
     }
     default T getOne(Condition condition){
-        return getByWrapper(QueryWrapper.create().where(condition));
+        return getOne(QueryWrapper.create().where(condition));
+    }
+
+    default T getSingle(QueryWrapper wrapper) {
+        return getByWrapper(wrapper);
+    }
+    default T getSingle(Condition condition){
+        return getSingle(QueryWrapper.create().where(condition));
     }
 
     default long count(QueryWrapper wrapper) {

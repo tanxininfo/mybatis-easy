@@ -1,6 +1,11 @@
 package com.mybatiseasy.core.utils;
 
 
+import com.mybatiseasy.core.session.EntityFieldMap;
+import com.mybatiseasy.core.session.EntityMap;
+import com.mybatiseasy.core.session.EntityMapKids;
+import org.apache.ibatis.reflection.MetaObject;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -37,6 +42,7 @@ public class BeanMapUtil {
      */
     public static <T> T mapToBean(Map<String, Object> map, Class<T> beanClass) throws Exception {
         T object = beanClass.getDeclaredConstructor().newInstance();
+
         Field[] fields = object.getClass().getDeclaredFields();
         for (Field field : fields) {
             int mod = field.getModifiers();
@@ -44,8 +50,9 @@ public class BeanMapUtil {
                 continue;
             }
             field.setAccessible(true);
-            if (map.containsKey(field.getName())) {
-                field.set(object, map.get(field.getName()));
+            String snakeName = StringUtil.camelToSnake(field.getName());
+            if (map.containsKey(snakeName)) {
+                field.set(object, ConversionUtil.convertValue(map.get(snakeName), field.getType()));
             }
         }
         return object;

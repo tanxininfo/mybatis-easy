@@ -61,6 +61,8 @@ public class CustomKeyGenerator implements KeyGenerator {
     private void processGeneratedKeys(Executor executor, MappedStatement ms, Object parameter) {
         try {
             if (parameter != null && ms != null && ms.getKeyProperties() != null) {
+                Map<String, Object> map = BeanMapUtil.beanToMap(parameter);
+
                 String[] keyProperties = ms.getKeyProperties();
                 String keyProperty = keyProperties[0];
                 String[] keyPath = keyProperty.split("\\.");
@@ -91,7 +93,7 @@ public class CustomKeyGenerator implements KeyGenerator {
                     generator = KeyGeneratorFactory.getInstance(clazz);
                 }
 
-                Map<String, Object> map = BeanMapUtil.beanToMap(parameter);
+
                 Object entityOrList = map.get(key);
                 if(Objects.equals(key, MethodParam.ENTITY)){
                     MetaObject metaParam = configuration.newMetaObject(entityOrList);

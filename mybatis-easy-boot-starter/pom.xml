@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>com.mybatis-easy</groupId>
-		<version>0.6.3</version>
+		<version>0.6.6</version>
 	</parent>
 	<artifactId>mybatis-easy-boot-starter</artifactId>
 
@@ -50,6 +50,10 @@
 			<groupId>com.mybatis-easy</groupId>
 			<artifactId>mybatis-easy-core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>

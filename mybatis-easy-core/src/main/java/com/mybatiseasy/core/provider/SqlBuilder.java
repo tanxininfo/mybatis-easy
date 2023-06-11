@@ -27,7 +27,6 @@ import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.type.UnknownTypeHandler;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +69,13 @@ public class SqlBuilder {
         for (EntityFieldMap fieldMap:entityMap.getEntityFieldMapList()
         ) {
             name = fieldMap.getName();
-            value = entityObj.getValue(name);
+            value = null;
+            if(entityObj.hasGetter(name)) value = entityObj.getValue(name);
+            else{
+                String otherName = SqlUtil.removeBackquote(fieldMap.getColumn());
+                if(entityObj.hasGetter(otherName)) value = entityObj.getValue(otherName);
+            }
+
             if(value != null) {
                 map.put(name, value);
                 valueList.add(getColumnValue(fieldMap, name));
@@ -154,12 +159,26 @@ public class SqlBuilder {
      * @return ['columns', 'values']
      */
     public void generateInsertParts(Map<String, Object> map, EntityMap entityMap){
-        MetaObject entityObject = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
+        generateInsertParts(map, entityMap, MethodParam.ENTITY);
+    }
+
+
+    /**
+     * 构建insert语句需要的columns和values
+     * @param map 上下文
+     * @param entityMap  实体
+     * @return ['columns', 'values']
+     */
+    public void generateInsertParts(Map<String, Object> map, EntityMap entityMap, String entityKey){
+        MetaObject entityObject = MetaObjectUtil.forObject(map.get(entityKey));
 
         List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
         insertValuesList.add(getInsertValues(map, entityMap, entityObject));
         insertSymbolList = getInsertColumnSymbolList(insertColumnList);
+        log.info("insertValuesList={}", insertValuesList);
+        log.info("insertSymbolList={}", insertSymbolList);
     }
+
 
     public List<String> getInsertSymbolList(){
         return this.insertSymbolList;
@@ -178,11 +197,18 @@ public class SqlBuilder {
         List<EntityFieldMap> columnList = new ArrayList<>();
 
         Object value;
+        String key;
         String insertDefault;
 
         for (EntityFieldMap fieldMap : entityMap.getEntityFieldMapList()
         ) {
-            value = entityObj.getValue(fieldMap.getName());
+            key = fieldMap.getName();
+            value = null;
+            if(entityObj.hasGetter(key)) value = entityObj.getValue(key);
+            else{
+                key = SqlUtil.removeBackquote(fieldMap.getColumn());
+                if(entityObj.hasGetter(key)) value = entityObj.getValue(key);
+            }
             if (value != null) columnList.add(fieldMap);
             else {
                 insertDefault = fieldMap.getInsertDefault();
@@ -197,7 +223,8 @@ public class SqlBuilder {
     @SuppressWarnings("unchecked")
     public  void generateInsertBatchParts(Map<String, Object> map, EntityMap entityMap){
         List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
-        Assert.notEmpty(entityList, "实体不得为空");
+        if(entityList.size()<=0) throw new RuntimeException("实体不得为空");
+
         MetaObject entityObject = MetaObjectUtil.forObject(entityList.get(0));
 
         List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
@@ -254,7 +281,7 @@ public class SqlBuilder {
     @SuppressWarnings("unchecked")
     public String generateUpdateByIdBatchSql(Map<String, Object> map, EntityMap entityMap) {
         List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
-        Assert.notEmpty(entityList, "实体不得为空");
+        if(entityList.size()<=0) throw new RuntimeException("实体不得为空");
         List<String> sqlList = new ArrayList<>();
         int index = 0;
         for (Object object: entityList
@@ -309,7 +336,8 @@ public class SqlBuilder {
                 }
             }
         }
-        Assert.notEmpty(valueList, "您没有更新任何数据");
+        if(valueList.size()<=0) throw new RuntimeException("您没有更新任何数据");
+
 
         QueryWrapper wrapper = new QueryWrapper();
         ProviderKid.getQueryWrapper(StatementType.UPDATE, entityMap, wrapper);

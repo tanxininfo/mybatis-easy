@@ -25,7 +25,6 @@ import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.utils.SqlUtil;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,8 @@ public class DbProviderKid {
     public static void putIdValueToMap(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj){
         String idKey = entityMap.getPrimaryFieldMap().getName();
         Object idValue = (entityObj!=null ? entityObj.getValue(idKey): map.get(MethodParam.PRIMARY_KEY));
-        Assert.notNull(idValue, "请指定实体主键值");
+        if(idValue == null) throw new RuntimeException("请指定实体主键值");
+
         map.put(idKey, idValue);
     }
 

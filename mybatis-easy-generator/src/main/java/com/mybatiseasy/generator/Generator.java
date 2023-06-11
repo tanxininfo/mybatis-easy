@@ -22,14 +22,10 @@ import com.mybatiseasy.generator.dialect.IDialect;
 import com.mybatiseasy.generator.pojo.*;
 import com.mybatiseasy.generator.template.FreemarkerTemplate;
 import com.mybatiseasy.generator.template.ITemplate;
-import com.mybatiseasy.generator.utils.TypeConvert;
 import com.mybatiseasy.generator.utils.Utils;
 import com.mybatiseasy.keygen.IKeyGenerator;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.Assert;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,12 +89,12 @@ public class Generator {
 
 
     private Connection getConnection() {
-        Assert.hasLength(dataSourceConfig.getUrl(), "数据库配置 url 不得为空");
+        if(Utils.isEmpty(dataSourceConfig.getUrl())) throw new RuntimeException("数据库配置 url 不得为空");
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(dataSourceConfig.getUrl(), dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
         } catch(SQLException ex){
-            Assert.isTrue(false, "数据库连接失败:"+ex.getMessage());
+            throw new RuntimeException("数据库连接失败:"+ex.getMessage());
         }
         return connection;
     }

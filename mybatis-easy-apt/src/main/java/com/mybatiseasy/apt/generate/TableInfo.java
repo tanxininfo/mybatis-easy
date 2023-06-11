@@ -19,12 +19,10 @@ package com.mybatiseasy.apt.generate;
 
 import com.mybatiseasy.annotation.Table;
 import com.mybatiseasy.annotation.TableField;
-import org.springframework.core.annotation.AnnotationUtils;
 
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.*;
-import javax.tools.Diagnostic;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

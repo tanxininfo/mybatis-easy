@@ -23,10 +23,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.springframework.core.ResolvableType;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -51,15 +50,17 @@ public class BaseAttributeTypeHandler<T> extends BaseTypeHandler<Object> {
      * 构造方法
      */
     public BaseAttributeTypeHandler() {
-        ResolvableType resolvableType = ResolvableType.forClass(getClass());
-        Type type = resolvableType.as(BaseAttributeTypeHandler.class).getGeneric().getType();
+        ParameterizedType parameterizedType = (ParameterizedType)getClass().getGenericSuperclass();
+        Type type = parameterizedType.getActualTypeArguments()[0];
+
         javaType = constructType(type);
+
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
         OBJECT_MAPPER.setPropertyNamingStrategy(new PropertyNamingStrategies.SnakeCaseStrategy());
     }
 
     public static JavaType constructType(Type type) {
-        Assert.notNull(type, "[Assertion failed] - type is required; it must not be null");
+        if(type == null) throw new RuntimeException("[Assertion failed] - type is required; it must not be null");
         return TypeFactory.defaultInstance().constructType(type);
     }
 
@@ -111,8 +112,8 @@ public class BaseAttributeTypeHandler<T> extends BaseTypeHandler<Object> {
 
 
     public static <T> T toObject(String json, JavaType javaType) {
-        Assert.hasText(json, "[Assertion failed] - this json must have text; it must not be null, empty, or blank");
-        Assert.notNull(javaType, "[Assertion failed] - javaType is required; it must not be null");
+        if(json == null || json.isEmpty()) throw new RuntimeException("[Assertion failed] - this json must have text; it must not be null, empty, or blank");
+        if(javaType == null) throw new RuntimeException("[Assertion failed] - javaType is required; it must not be null");
         try {
             return OBJECT_MAPPER.readValue(json, javaType);
         } catch (com.fasterxml.jackson.core.JsonParseException e) {

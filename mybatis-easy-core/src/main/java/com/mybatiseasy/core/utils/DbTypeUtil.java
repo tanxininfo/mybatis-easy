@@ -17,24 +17,11 @@
 package com.mybatiseasy.core.utils;
 
 import com.mybatiseasy.core.enums.DbType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
-@Component
+
 public class DbTypeUtil {
-    /**
-     * 数据库连接url
-     */
-    @Value("${spring.datasource.url}")
-    private String datasourceUrl;
-
-    private static String url;
-
-    @PostConstruct
-    public void setUrl(){ url = this.datasourceUrl; }
 
     /**
      * 通过DataSource获取数据库类型
@@ -55,17 +42,6 @@ public class DbTypeUtil {
      * @return DbType
      */
     public static DbType getDbType(String url){
-        url = url.toLowerCase();
-        if(url.contains(":mysql:")) return DbType.MYSQL;
-        else if(url.contains(":sqlite:")) return DbType.SQLITE;
-        else return DbType.OTHER;
-    }
-
-    /**
-     * 数据数据库连接url获取数据库方言
-     * @return DbType
-     */
-    public static DbType getDbType(){
         url = url.toLowerCase();
         if(url.contains(":mysql:")) return DbType.MYSQL;
         else if(url.contains(":sqlite:")) return DbType.SQLITE;

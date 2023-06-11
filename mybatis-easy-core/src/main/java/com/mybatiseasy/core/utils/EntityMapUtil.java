@@ -4,17 +4,18 @@ package com.mybatiseasy.core.utils;
 import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
+import com.mybatiseasy.core.type.Record;
+import com.mybatiseasy.core.type.RecordList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Slf4j
 public class EntityMapUtil { 
@@ -35,11 +36,15 @@ public class EntityMapUtil {
         assert entityMap != null;
         for (EntityFieldMap field : entityMap.getEntityFieldMapList()
         ) {
-            String columnName = field.getName();
-            Object value = map.get(field.getName());
+            // 数据库字段
+            String columnName = SqlUtil.removeBackquote(field.getColumn());
+            // entity字段
+            String fieldName = field.getName();
+            Object value = map.get(columnName);
 
-            if (value != null && metaObject.hasGetter(columnName)) {
-                metaObject.setValue(columnName, convertValue(value, metaObject.getGetterType(columnName)));
+            if (value != null && metaObject.hasGetter(fieldName)) {
+                Object convertedValue = ConversionUtil.convertValue(value, field.getJavaType());
+                metaObject.setValue(fieldName, convertedValue);
             }
         }
 
@@ -47,16 +52,12 @@ public class EntityMapUtil {
 
     }
 
-    private static Object convertValue(Object value, Class<?> toType){
-        Class<?> fromType = value.getClass();
-        log.info("fromType={}", fromType);
-        log.info("toType={}", toType);
-        if(fromType == BigInteger.class && toType == Long.class){
-            return ((BigInteger)value).longValue();
+    public static <T> List<T> mapToEntityList(List<Map<String, Object>> mapList, Class<T> entityClass) throws Exception {
+        List<T> objList = new ArrayList<>();
+        for (Map<String, Object> item: mapList
+        ) {
+            objList.add(mapToEntity(item, entityClass));
         }
-        else if(fromType == BigInteger.class && toType == Integer.class){
-            return ((BigInteger)value).intValue();
-        }
-        return value;
+        return objList;
     }
 }

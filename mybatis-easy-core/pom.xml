@@ -21,7 +21,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.mybatis-easy</groupId>
-        <version>0.6.3</version>
+        <version>0.6.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>mybatis-easy-core</name>
@@ -34,6 +34,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>com.mybatis-easy</groupId>
             <artifactId>mybatis-easy-annotation</artifactId>
@@ -53,10 +54,7 @@
             <artifactId>mybatis-easy-apt</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
@@ -75,11 +73,6 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>${annotation-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 

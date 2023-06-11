@@ -30,7 +30,6 @@ import com.mybatiseasy.core.utils.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +91,8 @@ public class SqlProvider {
      */
     public static String updateById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        Assert.notNull(entityMap.getPrimaryFieldMap(), "实体类未标注TableId");
+        if(entityMap.getPrimaryFieldMap() == null) throw new RuntimeException("实体类未标注TableId");
+
         MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
         ProviderKid.putIdValueToMap(map, entityMap, entityObj);
 
@@ -187,7 +187,8 @@ public class SqlProvider {
      */
     public static String deleteById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        Assert.notNull(entityMap.getPrimaryFieldMap(), "实体类未标注TableId");
+        if(entityMap.getPrimaryFieldMap() == null) throw new RuntimeException("实体类未标注TableId");
+
         ProviderKid.putIdValueToMap(map, entityMap, null);
 
         QueryWrapper wrapper = new QueryWrapper();
@@ -235,7 +236,8 @@ public class SqlProvider {
         //逻辑删除处理
         ProviderKid.logicDeleteHandle(wrapper, entityMap);
 
-        Assert.isTrue(wrapper.hasWhere() || (map.get("force") != null), "删除条件不得为空");
+        if(!wrapper.hasWhere() && (map.get("force") == null)) throw new RuntimeException("删除条件不得为空");
+
 
         return wrapper.getSql();
     }
@@ -249,7 +251,9 @@ public class SqlProvider {
      */
     public static String getById(Map<String, Object> map, ProviderContext context) {
         EntityMap entityMap = EntityMapKids.getEntityMapByContext(context);
-        Assert.notNull(entityMap.getPrimaryFieldMap(), "实体类未标注TableId");
+
+        if(entityMap.getPrimaryFieldMap() == null) throw new RuntimeException("实体类未标注TableId");
+
         ProviderKid.putIdValueToMap(map, entityMap, null);
 
         QueryWrapper wrapper = ProviderKid.getQueryWrapper(StatementType.SELECT, entityMap);

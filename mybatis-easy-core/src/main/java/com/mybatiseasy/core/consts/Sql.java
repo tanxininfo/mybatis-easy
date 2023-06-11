@@ -23,4 +23,6 @@ public interface Sql {
     String RIGHT_BRACKET = ")";
 
     String TOTAL_CLASS_NAME = "com.mybatiseasy.core.paginate.Total";
+
+    String MAP_LIST_CLASS_NAME = "com.mybatiseasy.core.type.Record";
 }

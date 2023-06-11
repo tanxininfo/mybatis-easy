@@ -17,18 +17,22 @@
 package com.mybatiseasy.test.controller;
 
 import com.mybatiseasy.core.mapper.DbMapper;
+import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
-import com.mybatiseasy.core.tables.ORDER;
 import com.mybatiseasy.core.tables.USER;
+import com.mybatiseasy.core.type.Record;
+import com.mybatiseasy.core.type.RecordList;
+import com.mybatiseasy.core.utils.ObjectUtil;
 import com.mybatiseasy.test.entity.User;
 import com.mybatiseasy.test.mapper.OrderMapper;
+import com.mybatiseasy.test.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author dudley
@@ -43,13 +47,45 @@ public class OrderController {
     private OrderMapper orderMapper;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private DbMapper dbMapper;
 
 
-    @GetMapping
-    public void test(){
+    @GetMapping("query")
+    public void query(){
+    QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
 
-    User user = dbMapper.getSingle(QueryWrapper.create().select(USER.ID().NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as()).where(USER.ID().eq(1))).toEntity(User.class);
-    log.info("list={}", user);
+//        PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
+//        log.info("users={}", ObjectUtil.toJson(users));
+//
+        List<User> list = dbMapper.list(QueryWrapper.create().from(USER.as())).toBeanList(User.class);
+        log.info("lists={}", ObjectUtil.toJson(list));
+
+//        PageList<User> userList = dbMapper.paginate(queryWrapper, 10, 1, User.class);
+//        log.info("list={}", ObjectUtil.toJson(userList));
+    }
+
+
+    @GetMapping("add")
+    public void add(){
+
+//        User user = new User();
+//        user.setName("user1");
+//        int affectedRows = userMapper.insert(user);
+//        log.info("affectedRows={}", affectedRows);
+//        log.info("record={}", ObjectUtil.toJson(user));
+
+        Record record = new Record();
+        record.set(USER.NAME(), "addName3");
+        record.set("parent_id", 3);
+
+        int affectedRows = dbMapper.insert(record, User.class);
+        log.info("affectedRows={}", affectedRows);
+        log.info("record={}", ObjectUtil.toJson(record));
+
+
+
     }
 }

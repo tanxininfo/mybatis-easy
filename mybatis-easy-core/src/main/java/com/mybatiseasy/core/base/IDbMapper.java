@@ -24,6 +24,8 @@ import com.mybatiseasy.core.paginate.Total;
 import com.mybatiseasy.core.provider.DbProvider;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.type.Record;
+import com.mybatiseasy.core.type.RecordList;
+import com.mybatiseasy.core.utils.EntityMapUtil;
 import org.apache.ibatis.annotations.*;
 
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public interface IDbMapper {
      * @return 插入行数
      */
     @InsertProvider(type = DbProvider.class, method = Method.INSERT)
-    int insert(@Param(MethodParam.RECORD) Map<String, Object> record);
+    int insert(@Param(MethodParam.RECORD) Record record, @Param(MethodParam.ENTITY_CLASS) Class<?> entityClass);
 
     /**
      * 插入一组实体
@@ -49,7 +51,7 @@ public interface IDbMapper {
      * @return 插入行数
      */
     @InsertProvider(type = DbProvider.class, method = Method.INSERT_BATCH)
-    int insertBatch(@Param(MethodParam.RECORD_LIST) List<Map<String, Object>> recordList);
+    int insertBatch(@Param(MethodParam.RECORD_LIST) List<Record> recordList, @Param(MethodParam.ENTITY_CLASS) Class<?> entityClass);
 
 
     /**
@@ -79,7 +81,7 @@ public interface IDbMapper {
      * @return List<Record>
      */
     @SelectProvider(type = DbProvider.class, method = Method.LIST_BY_WRAPPER)
-    List<Map<String, Object>> listByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+    List<Record> listByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
 
 
     /**
@@ -96,7 +98,7 @@ public interface IDbMapper {
      * @return List<Record>
      */
     @SelectProvider(type = DbProvider.class, method = Method.QUERY_EASY)
-    List<Object> queryEasy(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
+    List<Map<String, Object>> queryEasy(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
 
 
     /**
@@ -104,10 +106,10 @@ public interface IDbMapper {
      * @param queryWrapper 包装类
      * @param size 页尺寸
      * @param current 当前页
-     * @return PageList<Record>
+     * @return PageList<T>
      */
     @SuppressWarnings("unchecked")
-    default PageList<Map<String, Object>> paginate(QueryWrapper queryWrapper, int size, int current) {
+    default <T> PageList<T> paginate(QueryWrapper queryWrapper, int size, int current, Class<T> entityClass) {
         long offset = (long)size * (current - 1);
         if(offset < 0) offset = 0L;
 
@@ -115,7 +117,7 @@ public interface IDbMapper {
         List<Total> totalList = new ArrayList<>();
 
 
-        List<Object> objList = queryEasy(queryWrapper.limit(offset, (long)size));
+        List<Map<String, Object>> objList = queryEasy(queryWrapper.limit(offset, (long)size));
         if(objList.get(0) instanceof List<?>){
             list = (List<Map<String, Object>>) objList.get(0);
         }
@@ -125,16 +127,29 @@ public interface IDbMapper {
 
         long total =totalList.get(0).getTotal();
         Page page = new Page(total, size, current);
-
-        return new PageList<>(list, page);
+        try {
+            return new PageList<>(EntityMapUtil.mapToEntityList(list, entityClass), page);
+        }catch (Exception ex){
+            throw new RuntimeException("data converted to List<T> failed");
+        }
     }
 
-    default List<Map<String, Object>> list(QueryWrapper wrapper){
-        return listByWrapper(wrapper);
+    default RecordList list(QueryWrapper wrapper){
+        List<Record> recordList = listByWrapper(wrapper);
+        return new RecordList(recordList);
     }
 
     default Record getSingle(QueryWrapper wrapper) {
-        return getByWrapper(wrapper);
+        List<Record> recordList = listByWrapper(wrapper);
+        if (recordList.size() == 0) return null;
+        if (recordList.size() > 1) throw new RuntimeException("查询结果不唯一");
+        return recordList.get(0);
+    }
+
+    default Record getOne(QueryWrapper wrapper) {
+        List<Record> recordList = listByWrapper(wrapper);
+        if (recordList.size() == 0) return null;
+        return recordList.get(0);
     }
 
     default long count(QueryWrapper wrapper) {

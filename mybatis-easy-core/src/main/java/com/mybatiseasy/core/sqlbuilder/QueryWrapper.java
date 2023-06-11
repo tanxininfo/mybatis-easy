@@ -26,11 +26,8 @@ import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.utils.SqlUtil;
-import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.jdbc.AbstractSQL;
-import org.apache.ibatis.reflection.MetaObject;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,6 +46,10 @@ public class QueryWrapper implements Serializable {
     }
 
     private final SQLStatement sqlStatement = new SQLStatement();
+
+    public List<Table> getTableList() {
+        return this.sqlStatement.tableList;
+    }
 
     public QueryWrapper ignoreTenant(){
         this.ignoreTenantId = true;
@@ -104,10 +105,8 @@ public class QueryWrapper implements Serializable {
      * @return Condition
      */
     private Condition getLogicDeleteCondition(Table table){
-        log.info("table={}", table);
         String entityName = table.getColumn().getEntityName();
         EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
-        log.info("entityName={}", entityName);
         assert entityMap != null;
         EntityFieldMap logicDeleteField = entityMap.getLogicDeleteFieldMap();
         if(logicDeleteField != null){

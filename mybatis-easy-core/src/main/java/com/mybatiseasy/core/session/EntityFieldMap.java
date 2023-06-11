@@ -24,6 +24,10 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 实体类字段映射成对象
  */
@@ -53,6 +57,11 @@ public class EntityFieldMap {
    * 当主键类型为 CUSTOM 时设置此值
    */
   private Class<? extends IKeyGenerator> keyGenerator;
+
+  /**
+   * 字段注解
+   */
+  private List<Annotation> annotationList = new ArrayList<>();
   /**
    * 数据表中的字段名
    */
@@ -163,6 +172,10 @@ public class EntityFieldMap {
     }
     public Builder isLogicDelete(boolean isLogicDelete) {
       entityFieldMap.isLogicDelete = isLogicDelete;
+      return this;
+    }
+    public Builder annatationList(List<Annotation> annotationList) {
+      entityFieldMap.annotationList = annotationList;
       return this;
     }
     public Builder logicDeleteValue(String logicDeleteValue, String logicNotDeleteValue) {
@@ -288,6 +301,9 @@ public class EntityFieldMap {
     return keyGenerator;
   }
 
+  public List<Annotation> getAnnotationList(){
+    return annotationList;
+  }
 
   @Override
   public boolean equals(Object o) {
