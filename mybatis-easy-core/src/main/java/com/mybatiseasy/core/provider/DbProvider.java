@@ -73,7 +73,7 @@ public class DbProvider {
         EntityMap entityMap = EntityMapKids.getEntityMap(clazz.getName());
         assert entityMap != null;
         SqlBuilder builder = new SqlBuilder();
-        builder.generateInsertBatchParts(map, entityMap);
+        builder.generateInsertBatchParts(map, entityMap, MethodParam.RECORD_LIST);
 
         QueryWrapper wrapper = new QueryWrapper();
 

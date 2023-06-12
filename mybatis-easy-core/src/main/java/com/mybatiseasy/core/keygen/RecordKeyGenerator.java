@@ -21,17 +21,15 @@ import com.mybatiseasy.core.session.EntityFieldMap;
 import com.mybatiseasy.core.session.EntityMap;
 import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.session.MeConfiguration;
-import com.mybatiseasy.core.utils.BeanMapUtil;
 import com.mybatiseasy.core.utils.CollectionUtil;
+import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.keygen.IKeyGenerator;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
-import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 
 import java.sql.Statement;
@@ -42,7 +40,7 @@ import java.util.Objects;
 /**
  * Record记录主键
  */
-public class RecordKeyGenerator implements KeyGenerator {
+public class RecordKeyGenerator extends Jdbc3KeyGenerator {
 
     public static final RecordKeyGenerator INSTANCE = new RecordKeyGenerator();
 
@@ -76,55 +74,56 @@ public class RecordKeyGenerator implements KeyGenerator {
 
                 EntityFieldMap primary = entityMap.getPrimaryFieldMap();
                 if (primary == null) return;
+                String column = SqlUtil.removeBackquote(primary.getColumn());
 
                 TableIdType idType = primary.getIdType();
                 Class<? extends IKeyGenerator> clazz = primary.getKeyGenerator();
 
                 final MeConfiguration configuration = (MeConfiguration) ms.getConfiguration();
+                String suffix = (ms.getId().contains("insertBatch")?".insertBatch":".insert");
 
                 IKeyGenerator generator;
                 if(idType == TableIdType.NONE) return;
                 else if(idType == TableIdType.AUTO) {
                     if(isBefore) return;
-                    String newMsId = configuration.entityMapperMap.get(entityMap.getFullName())+".insert";
-                    Jdbc3KeyGenerator.INSTANCE.processAfter(executor, configuration.getMappedStatement(newMsId), stmt, parameter);
+                    String newMsId = configuration.entityMapperMap.get(entityMap.getFullName())+ suffix;
+                    RecordJdbc3KeyGenerator.INSTANCE.processAfter(executor, configuration.getMappedStatement(newMsId), stmt, parameter);
                     return;
                 }
                 else if(idType == TableIdType.SNOW_FLAKE) clazz = SnowFlakeKeyGenerator.class;
                 else if(idType == TableIdType.UUID) clazz = UUIDKeyGenerator.class;
                 else if(idType == TableIdType.ID_MAKER) clazz = IdMakerKeyGenerator.class;
 
-                new CustomKeyGenerator(primary);
+                if(idType == TableIdType.SEQUENCE){
+                    String newMsId = configuration.entityMapperMap.get(entityMap.getFullName())+ suffix;
+                    this.keyExecutor = ms.getConfiguration().newExecutor(executor.getTransaction(), ExecutorType.SIMPLE);
+                    generator = new SelectKeyGenerator(ms.getConfiguration(),
+                            keyExecutor,
+                            parameter,
+                            newMsId + org.apache.ibatis.executor.keygen.SelectKeyGenerator.SELECT_KEY_SUFFIX,
+                            column
+                            );
+                }
+                else{
+                    generator = KeyGeneratorFactory.getInstance(clazz);
+                }
+                String key = (ms.getId().contains("insertBatch")?"recordList":"record");
 
-//                if(idType == TableIdType.SEQUENCE){
-//                    this.keyExecutor = ms.getConfiguration().newExecutor(executor.getTransaction(), ExecutorType.SIMPLE);
-//                    generator = new SelectKeyGenerator(ms.getConfiguration(),
-//                            keyExecutor,
-//                            parameter,
-//                            ms.getId() + org.apache.ibatis.executor.keygen.SelectKeyGenerator.SELECT_KEY_SUFFIX,
-//                            column
-//                            );
-//                }
-//                else{
-//                    generator = KeyGeneratorFactory.getInstance(clazz);
-//                }
-//
-//                Map<String, Object> map = BeanMapUtil.beanToMap(parameter);
-//                Object entityOrList = map.get(key);
-//                if(Objects.equals(key, MethodParam.ENTITY)){
-//                    MetaObject metaParam = configuration.newMetaObject(entityOrList);
-//                    Object nextId = generator.generateId();
-//                    setValue(metaParam, column, nextId);
-//                }
-//                else{
-//                    Collection<?> list = CollectionUtil.collectionize(entityOrList);
-//                    for (Object entity: list
-//                         ) {
-//                        MetaObject metaParam = configuration.newMetaObject(entity);
-//                        Object nextId = generator.generateId();
-//                        setValue(metaParam, column, nextId);
-//                    }
-//                }
+                Object entityOrList = map.get(key);
+                if(Objects.equals(key, MethodParam.RECORD)){
+                    MetaObject metaParam = configuration.newMetaObject(entityOrList);
+                    Object nextId = generator.generateId();
+                    setValue(metaParam, column, nextId);
+                }
+                else{
+                    Collection<?> list = CollectionUtil.collectionize(entityOrList);
+                    for (Object entity: list
+                         ) {
+                        MetaObject metaParam = configuration.newMetaObject(entity);
+                        Object nextId = generator.generateId();
+                        setValue(metaParam, column, nextId);
+                    }
+                }
             }
         } catch (ExecutorException e) {
             throw e;
@@ -132,7 +131,6 @@ public class RecordKeyGenerator implements KeyGenerator {
             throw new ExecutorException("Error generating key or setting result to parameter object. Cause: " + e, e);
         }
     }
-
 
     private void setValue(MetaObject metaParam, String property, Object value) {
         if (!metaParam.hasSetter(property)) {

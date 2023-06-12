@@ -103,13 +103,20 @@ public class SqlBuilder {
         String name;
         Object value;
         String insertDefault;
+        String key;
 
         for (int i = 0; i < entityList.size(); i++) {
             List<String> joiner = new ArrayList<>();
             for (EntityFieldMap fieldMap : insertColumnList
             ) {
                 MetaObject entityObj = MetaObjectUtil.forObject(entityList.get(i));
-                value = entityObj.getValue(fieldMap.getName());
+                key = fieldMap.getName();
+                value = null;
+                if(entityObj.hasGetter(key)) value = entityObj.getValue(key);
+                else{
+                    key = SqlUtil.removeBackquote(fieldMap.getColumn());
+                    if(entityObj.hasGetter(key)) value = entityObj.getValue(key);
+                }
                 name = fieldMap.getName() + "_" + i;
 
                 if (value != null) {
@@ -222,7 +229,12 @@ public class SqlBuilder {
 
     @SuppressWarnings("unchecked")
     public  void generateInsertBatchParts(Map<String, Object> map, EntityMap entityMap){
-        List<Object> entityList = (List<Object>) map.get(MethodParam.ENTITY_LIST);
+        generateInsertBatchParts(map, entityMap, MethodParam.ENTITY_LIST);
+    }
+
+    @SuppressWarnings("unchecked")
+    public  void generateInsertBatchParts(Map<String, Object> map, EntityMap entityMap, String entityKey){
+        List<Object> entityList = (List<Object>) map.get(entityKey);
         if(entityList.size()<=0) throw new RuntimeException("实体不得为空");
 
         MetaObject entityObject = MetaObjectUtil.forObject(entityList.get(0));

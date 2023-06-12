@@ -27,6 +27,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @since 2023-05-03
 */
 
+@Mapper
 public interface UserMapper extends IMapper<User> {
 
 }

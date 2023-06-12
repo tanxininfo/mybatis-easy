@@ -32,7 +32,6 @@ import javax.sql.DataSource;
  * Springboot 环境是自动装配
  */
 @Configuration
-@MapperScan("com.mybatiseasy.core.mapper")
 public class MybatisEasyAutoConfig {
     @Value("${spring.datasource.driver-class-name}")
     private String driver;

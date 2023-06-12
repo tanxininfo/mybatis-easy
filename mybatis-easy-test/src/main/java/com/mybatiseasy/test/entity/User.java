@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 @Table("user")
 public class User implements Serializable{
 
-    @TableId( type = TableIdType.AUTO, sequence = "SELECT id+1 as id from `user` order by id desc limit 1")
+    @TableId( type = TableIdType.SEQUENCE, sequence = "SELECT id+1 as id from `user` order by id desc limit 1")
     private Long id;
     private String name;
     private Integer age;
