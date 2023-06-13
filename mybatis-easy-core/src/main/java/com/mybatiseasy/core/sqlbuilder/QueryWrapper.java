@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
-@Slf4j
 public class QueryWrapper implements Serializable {
 
     private boolean ignoreTenantId = false;

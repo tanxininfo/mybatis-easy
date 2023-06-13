@@ -27,7 +27,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-@Slf4j
+
 public class EntityMapKids {
 
     /**

@@ -31,7 +31,6 @@ import java.util.List;
 /**
  * 实体类字段映射成对象
  */
-@Slf4j
 public class EntityFieldMap {
 
   /**

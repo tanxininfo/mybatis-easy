@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Slf4j
 public class Column {
     protected List<ColumnData> columns;
     protected Map<String, Object> parameterMap;

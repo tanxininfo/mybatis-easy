@@ -12,7 +12,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-@Slf4j
+
 public class ConversionUtil {
     public static Object convertValue(Object value, Class<?> toType){
         Class<?> fromType = value.getClass();

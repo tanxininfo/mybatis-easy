@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
-@Slf4j
+
 public class SqlUtil {
     /**
      * 判断是否需要加括号，如果只有一个条件时，不用加括号。

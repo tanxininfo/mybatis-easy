@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 /**
  * 获得insert和update语句
  */
-@Slf4j
 public class SqlBuilder {
 
 
@@ -182,8 +181,6 @@ public class SqlBuilder {
         List<EntityFieldMap> insertColumnList = getInsertColumnList(entityMap, entityObject);
         insertValuesList.add(getInsertValues(map, entityMap, entityObject));
         insertSymbolList = getInsertColumnSymbolList(insertColumnList);
-        log.info("insertValuesList={}", insertValuesList);
-        log.info("insertSymbolList={}", insertSymbolList);
     }
 
 

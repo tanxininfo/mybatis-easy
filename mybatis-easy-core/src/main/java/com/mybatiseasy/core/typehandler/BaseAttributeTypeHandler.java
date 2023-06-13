@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Slf4j
+
 public class BaseAttributeTypeHandler<T> extends BaseTypeHandler<Object> {
 
     private final JavaType javaType;

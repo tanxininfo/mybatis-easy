@@ -49,7 +49,6 @@ import java.util.*;
 
 import static com.mybatiseasy.core.utils.TypeUtil.ArrayToDelimitedString;
 
-@Slf4j
 public class MeConfiguration extends Configuration {
 
     public MeConfiguration(Environment environment) {
@@ -113,7 +112,7 @@ public class MeConfiguration extends Configuration {
              ResultMap newMap = new ResultMap.Builder(this, mapperName, Class.forName(entityName), resultMappingList).build();
             addResultMap(newMap);
         }catch (Exception ex){
-            log.error("ResultMap format error:{}",ex.getMessage());
+            throw new RuntimeException("ResultMap format error:" + ex.getMessage());
         }
     }
 
@@ -134,7 +133,7 @@ public class MeConfiguration extends Configuration {
             ResultMap newMap = new ResultMap.Builder(this, mapperName, Class.forName(mapperName), resultMappingList).build();
             addResultMap(newMap);
         }catch (Exception ex){
-            log.error("ResultMap format error:{}",ex.getMessage());
+            throw new RuntimeException("ResultMap format error:" + ex.getMessage());
         }
     }
 

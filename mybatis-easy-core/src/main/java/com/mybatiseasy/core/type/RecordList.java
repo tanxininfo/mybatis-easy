@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
+
 public class RecordList  implements Serializable {
     private List<Record> recordList;
 

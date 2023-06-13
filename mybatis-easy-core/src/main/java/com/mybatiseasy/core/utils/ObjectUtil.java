@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * 对象和map的互相转换
  */
-@Slf4j
+
 public class ObjectUtil {
 
     /**

@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 对象和map的互相转换
  */
-@Slf4j
+
 public class ArrayUtil {
 
     public static boolean isEmpty(Object[] array){

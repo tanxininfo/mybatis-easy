@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-@Slf4j
+
 public class LocalTimeTypeHandler extends org.apache.ibatis.type.LocalTimeTypeHandler {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, LocalTime parameter, JdbcType jdbcType) throws SQLException {

@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@Slf4j
+
 public class EntityMapUtil { 
      
     /**
