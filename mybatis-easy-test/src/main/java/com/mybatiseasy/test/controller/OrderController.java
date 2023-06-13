@@ -16,7 +16,8 @@
 
 package com.mybatiseasy.test.controller;
 
-import com.mybatiseasy.test.mapper.DbMapper;
+import com.mybatiseasy.core.type.RecordList;
+import com.mybatiseasy.core.mapper.DbMapper;
 import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.tables.USER;
@@ -26,6 +27,9 @@ import com.mybatiseasy.test.entity.User;
 import com.mybatiseasy.test.mapper.OrderMapper;
 import com.mybatiseasy.test.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,9 +52,12 @@ public class OrderController {
 
     @Autowired
     private UserMapper userMapper;
+//
+//    @Autowired
+//    private DbMapper dbMapper;
 
     @Autowired
-    private DbMapper dbMapper;
+    private SqlSessionFactoryBean sqlSessionFactoryBean;
 
 
     @GetMapping("query")
@@ -60,8 +67,8 @@ public class OrderController {
         PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
         log.info("users={}", ObjectUtil.toJson(users));
 
-        List<User> list = dbMapper.list(QueryWrapper.create().from(USER.as())).toBeanList(User.class);
-        log.info("lists={}", ObjectUtil.toJson(list));
+//        List<User> list = dbMapper.list(QueryWrapper.create().from(USER.as())).toBeanList(User.class);
+//        log.info("lists={}", ObjectUtil.toJson(list));
 
 //        PageList<User> userList = dbMapper.paginate(queryWrapper, 10, 1, User.class);
 //        log.info("list={}", ObjectUtil.toJson(userList));
@@ -69,7 +76,7 @@ public class OrderController {
 
 
     @GetMapping("add")
-    public void add(){
+    public void add() throws Exception {
 
 //        User user = new User();
 //        user.setName("user1");
@@ -90,17 +97,15 @@ public class OrderController {
         Record record = new Record();
         record.set(USER.NAME(), "addName1");
         record.set("parent_id", 3);
-        Record record2 = new Record();
-        record2.set(USER.NAME(), "addName2");
-        record2.set("parent_id", 3);
 
-        List<Record> recordList = new ArrayList<>();
-        recordList.add(record);
-        //recordList.add(record2);
+        SqlSessionFactory sqlSessionFactory= sqlSessionFactoryBean.getObject();
+        assert sqlSessionFactory != null;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+                DbMapper mapper = sqlSession.getMapper(DbMapper.class);
+                RecordList recordList = mapper.list(new QueryWrapper().from(USER.as()).select(USER.NAME()));
+                log.info("recordList={}", ObjectUtil.toJson(recordList));
+            }
 
-        int affectedRows = dbMapper.insertBatch(recordList, User.class);
-        log.info("affectedRows={}", affectedRows);
-        log.info("recordList={}", ObjectUtil.toJson(recordList));
 
 
 

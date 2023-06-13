@@ -8,11 +8,12 @@ import com.mybatiseasy.core.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 
 @Slf4j
-public class Record extends LinkedHashMap<String, Object> {
+public class Record extends LinkedHashMap<String, Object> implements Serializable {
     public <T> T toEntity(Class<T> entityClass) {
         try {
             return EntityMapUtil.mapToEntity(this, entityClass);

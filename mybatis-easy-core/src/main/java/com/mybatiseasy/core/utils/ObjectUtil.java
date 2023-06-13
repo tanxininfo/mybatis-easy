@@ -44,7 +44,7 @@ public class ObjectUtil {
         try {
             return mapper.writeValueAsString(object);
         }catch (Exception e){
-            return null;
+            throw new RuntimeException("toJson failed:"+e.getMessage());
         }
     }
 

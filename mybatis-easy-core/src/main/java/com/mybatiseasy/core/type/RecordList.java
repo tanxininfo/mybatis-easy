@@ -4,14 +4,23 @@ import com.mybatiseasy.core.utils.EntityMapUtil;
 import com.mybatiseasy.core.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class RecordList {
-    private final List<Record> recordList;
+public class RecordList  implements Serializable {
+    private List<Record> recordList;
+
+    public void setRecordList(List<Record> recordList) {
+        this.recordList = recordList;
+    }
+
+    public List<Record> getRecordList() {
+        return recordList;
+    }
 
     public RecordList(List<Record> list){
         this.recordList = list;
