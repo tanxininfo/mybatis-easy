@@ -65,7 +65,6 @@ public class MeConfiguration extends Configuration {
 
     public void init(){
         this.addTotalResultMap();
-        this.mapperRegistry.addMapper(DbMapper.class);
 
         /**
          * 在sqlite中不支持数据类型:LocalDateTime, LocalDate, LocalTime

@@ -17,7 +17,6 @@
 package com.mybatiseasy.boot.starter;
 
 import com.mybatiseasy.core.session.MeConfiguration;
-import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +31,7 @@ import javax.sql.DataSource;
  * Springboot 环境是自动装配
  */
 @Configuration
+@MapperScan("com.mybatiseasy.core.mapper")
 public class MybatisEasyAutoConfig {
     @Value("${spring.datasource.driver-class-name}")
     private String driver;

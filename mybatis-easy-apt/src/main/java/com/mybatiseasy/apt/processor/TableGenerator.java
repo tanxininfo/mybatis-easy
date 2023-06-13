@@ -32,7 +32,6 @@ import java.util.Set;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedAnnotationTypes("com.mybatiseasy.annotation.Table")
-@Slf4j
 public class TableGenerator extends AbstractProcessor {
 
     private Messager messager;

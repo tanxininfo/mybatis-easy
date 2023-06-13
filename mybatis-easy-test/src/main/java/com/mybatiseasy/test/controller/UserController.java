@@ -42,13 +42,13 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserMapper userMapper;
+//    @Autowired
+//    private UserMapper userMapper;
 
     @GetMapping
     public void get(){
-        User one = userMapper.getById(1L);
-        log.info("one={}", one);
+//        User one = userMapper.getById(1L);
+//        log.info("one={}", one);
     }
 
 

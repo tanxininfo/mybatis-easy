@@ -52,7 +52,7 @@ public class OrderController {
 
     @Autowired
     private UserMapper userMapper;
-//
+
 //    @Autowired
 //    private DbMapper dbMapper;
 
@@ -61,15 +61,15 @@ public class OrderController {
 
 
     @GetMapping("query")
-    public void query(){
-    QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
+    public void query() {
+        QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
 
         PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
         log.info("users={}", ObjectUtil.toJson(users));
 
 //        List<User> list = dbMapper.list(QueryWrapper.create().from(USER.as())).toBeanList(User.class);
 //        log.info("lists={}", ObjectUtil.toJson(list));
-
+//
 //        PageList<User> userList = dbMapper.paginate(queryWrapper, 10, 1, User.class);
 //        log.info("list={}", ObjectUtil.toJson(userList));
     }
@@ -77,7 +77,7 @@ public class OrderController {
 
     @GetMapping("add")
     public void add() throws Exception {
-
+//
 //        User user = new User();
 //        user.setName("user1");
 //        user.setParentId(1L);
@@ -93,20 +93,18 @@ public class OrderController {
 //        int affectedRows = userMapper.insertBatch(userList);
 //        log.info("affectedRows={}", affectedRows);
 //        log.info("userList={}", ObjectUtil.toJson(userList));
+//
+//        Record record = new Record();
+//        record.set(USER.NAME(), "addName1");
+//        record.set("parent_id", 3);
 
-        Record record = new Record();
-        record.set(USER.NAME(), "addName1");
-        record.set("parent_id", 3);
-
-        SqlSessionFactory sqlSessionFactory= sqlSessionFactoryBean.getObject();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBean.getObject();
         assert sqlSessionFactory != null;
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
-                DbMapper mapper = sqlSession.getMapper(DbMapper.class);
-                RecordList recordList = mapper.list(new QueryWrapper().from(USER.as()).select(USER.NAME()));
-                log.info("recordList={}", ObjectUtil.toJson(recordList));
-            }
-
-
+            DbMapper mapper = sqlSession.getMapper(DbMapper.class);
+            RecordList recordList = mapper.list(new QueryWrapper().from(USER.as()).select(USER.NAME()));
+            log.info("recordList={}", ObjectUtil.toJson(recordList));
+        }
 
 
     }
