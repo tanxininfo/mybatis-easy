@@ -16,8 +16,13 @@
 
 package com.mybatiseasy.core.config;
 
+
+import org.apache.ibatis.session.SqlSessionFactory;
+
 public class GlobalConfig {
     private static ITenant tenantFactory;
+
+    private static SqlSessionFactory sqlSessionFactory;
 
     public static ITenant getTenantFactory() {
         return tenantFactory;
@@ -25,5 +30,13 @@ public class GlobalConfig {
 
     public static void setTenantFactory(ITenant tenantFactory) {
         GlobalConfig.tenantFactory = tenantFactory;
+    }
+
+    public static SqlSessionFactory getSqlSessionFactory() {
+        return sqlSessionFactory;
+    }
+
+    public static void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+        GlobalConfig.sqlSessionFactory = sqlSessionFactory;
     }
 }

@@ -16,6 +16,7 @@
 
 package com.mybatiseasy.boot.starter;
 
+import com.mybatiseasy.core.config.GlobalConfig;
 import com.mybatiseasy.core.session.MeConfiguration;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -44,13 +45,13 @@ public class MybatisEasyAutoConfig {
 
     //创建SqlSessionFactoryBean对象
     @Bean
-    public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource){
+    public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         MeConfiguration configuration = new MeConfiguration();
         sqlSessionFactoryBean.setConfiguration(configuration);
 
-
         sqlSessionFactoryBean.setDataSource(dataSource);
+        GlobalConfig.setSqlSessionFactory(sqlSessionFactoryBean.getObject());
         return sqlSessionFactoryBean;
     }
 

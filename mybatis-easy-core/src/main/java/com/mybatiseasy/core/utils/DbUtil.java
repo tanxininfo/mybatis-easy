@@ -16,10 +16,19 @@
 
 package com.mybatiseasy.core.utils;
 
+import com.mybatiseasy.core.config.GlobalConfig;
 import com.mybatiseasy.core.mapper.DbMapper;
+import com.mybatiseasy.core.type.Record;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 public class DbUtil {
-    public static int insert() {
-        return 0;
+    public static int insert(Record record, Class<?> entityClass) {
+        SqlSessionFactory sqlSessionFactory = GlobalConfig.getSqlSessionFactory();
+        assert sqlSessionFactory != null;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+            DbMapper mapper = sqlSession.getMapper(DbMapper.class);
+            return mapper.insert(record, entityClass);
+        }
     }
 }
