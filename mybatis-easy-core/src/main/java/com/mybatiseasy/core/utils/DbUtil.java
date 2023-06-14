@@ -18,17 +18,65 @@ package com.mybatiseasy.core.utils;
 
 import com.mybatiseasy.core.config.GlobalConfig;
 import com.mybatiseasy.core.mapper.DbMapper;
+import com.mybatiseasy.core.paginate.PageList;
+import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.type.Record;
+import com.mybatiseasy.core.type.RecordList;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 public class DbUtil {
-    public static int insert(Record record, Class<?> entityClass) {
+
+    private static <R> R run(Function<DbMapper, R> function) {
         SqlSessionFactory sqlSessionFactory = GlobalConfig.getSqlSessionFactory();
-        assert sqlSessionFactory != null;
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             DbMapper mapper = sqlSession.getMapper(DbMapper.class);
-            return mapper.insert(record, entityClass);
+            return function.apply(mapper);
         }
     }
+
+    public static int insert(Record record, Class<?> entityClass) {
+        return run(mapper -> mapper.insert(record, entityClass));
+    }
+
+    public static int insertBatch(List<Record> recordList, Class<?> entityClass) {
+        return run(mapper -> mapper.insertBatch(recordList, entityClass));
+    }
+
+    public static <T> PageList<T> paginate(QueryWrapper queryWrapper, int size, int current, Class<T> entityClass) {
+        return run(mapper -> mapper.paginate(queryWrapper, size, current, entityClass));
+    }
+
+    public static RecordList list(QueryWrapper wrapper) {
+        return run(mapper -> mapper.list(wrapper));
+    }
+
+    public static Record getSingle(QueryWrapper wrapper) {
+        return run(mapper -> mapper.getSingle(wrapper));
+    }
+
+    public static Record getOne(QueryWrapper wrapper) {
+        return run(mapper -> mapper.getOne(wrapper));
+    }
+
+    public static long count(QueryWrapper wrapper) {
+        return run(mapper -> mapper.count(wrapper));
+    }
+
+    public static int delete(QueryWrapper wrapper) {
+        return run(mapper -> mapper.delete(wrapper));
+    }
+
+    public static int delete(QueryWrapper wrapper, boolean force) {
+        return run(mapper -> mapper.delete(wrapper, force));
+    }
+
+    public static int update(Map<String, Object> record, QueryWrapper wrapper) {
+        return run(mapper -> mapper.update(record, wrapper));
+    }
+
 }

@@ -28,8 +28,6 @@ import com.mybatiseasy.test.entity.User;
 import com.mybatiseasy.test.mapper.OrderMapper;
 import com.mybatiseasy.test.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +35,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,9 +66,9 @@ public class OrderController {
         PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
         log.info("users={}", ObjectUtil.toJson(users));
 
-//        List<User> list = dbMapper.list(QueryWrapper.create().from(USER.as())).toBeanList(User.class);
-//        log.info("lists={}", ObjectUtil.toJson(list));
-//
+        List<User> list = DbUtil.list(QueryWrapper.create().from(USER.as())).toBeanList(User.class);
+        log.info("lists={}", ObjectUtil.toJson(list));
+
 //        PageList<User> userList = dbMapper.paginate(queryWrapper, 10, 1, User.class);
 //        log.info("list={}", ObjectUtil.toJson(userList));
     }
@@ -112,13 +109,7 @@ public class OrderController {
         log.info("affectedRows={}", affectedRows);
         log.info("userList={}", ObjectUtil.toJson(record));
 
-//        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBean.getObject();
-//        assert sqlSessionFactory != null;
-//        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
-//            DbMapper mapper = sqlSession.getMapper(DbMapper.class);
-//            RecordList recordList = mapper.list(new QueryWrapper().from(USER.as()).select(USER.NAME()));
-//            log.info("recordList={}", ObjectUtil.toJson(recordList));
-//        }
+
 
 
 
