@@ -67,6 +67,8 @@ public class OrderController {
 //        log.info("users={}", ObjectUtil.toJson(users));
 
         List<User> list = userMapper.list(QueryWrapper.create().from(USER.as()));
+        log.info("toString={}", list.get(0).getSex().toString());
+
         log.info("lists={}", ObjectUtil.toJson(list));
 
 //        PageList<User> userList = dbMapper.paginate(queryWrapper, 10, 1, User.class);

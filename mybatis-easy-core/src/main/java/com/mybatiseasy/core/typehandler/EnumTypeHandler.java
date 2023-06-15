@@ -15,13 +15,22 @@
  */
 package com.mybatiseasy.core.typehandler;
 
+import com.mybatiseasy.annotation.EnumValue;
+import com.mybatiseasy.core.config.GlobalConfig;
+import com.mybatiseasy.core.utils.MetaObjectUtil;
+import org.apache.ibatis.reflection.MetaClass;
+import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
+import java.lang.reflect.Field;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Clinton Begin
@@ -31,21 +40,27 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
   private final Class<E> type;
   private final E[] enums;
 
+  private Invoker getInvoker;
+
   public EnumTypeHandler(Class<E> type) {
     if (type == null) {
       throw new IllegalArgumentException("Type argument cannot be null");
     }
-    System.out.println("type="+ type.getName());
     this.type = type;
     this.enums = type.getEnumConstants();
     if (this.enums == null) {
       throw new IllegalArgumentException(type.getSimpleName() + " does not represent an enum type.");
     }
+    this.initEnum();
   }
 
   @Override
   public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
-    ps.setInt(i, parameter.ordinal());
+    if (jdbcType == null) {
+      ps.setObject(i, this.getValue(parameter));
+    } else {
+      ps.setObject(i, this.getValue(parameter), jdbcType.TYPE_CODE);
+    }
   }
 
   @Override
@@ -54,46 +69,76 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
     if (dbValue == null) {
       return null;
     }
-    return toEnum(dbValue);
+    return getEnumType(dbValue);
   }
 
   @Override
   public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    int ordinal = rs.getInt(columnIndex);
-    if (ordinal == 0 && rs.wasNull()) {
+    Object dbValue = rs.getObject(columnIndex);
+    if (dbValue == null) {
       return null;
     }
-    return toOrdinalEnum(ordinal);
+    return getEnumType(dbValue);
   }
 
   @Override
   public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    int ordinal = cs.getInt(columnIndex);
-    if (ordinal == 0 && cs.wasNull()) {
+    Object dbValue = cs.getObject(columnIndex);
+    if (dbValue == null) {
       return null;
     }
-    return toOrdinalEnum(ordinal);
+    return getEnumType(dbValue);
   }
 
-
-  private E toEnum(Object dbValue) {
+  /**
+   * 取得数据库值对应的EnumType
+   * @param dbValue 数据库值
+   * @return EnumType
+   */
+  @SuppressWarnings("unchecked")
+  private E getEnumType(Object dbValue) {
     try {
-      for (E e : enums) {
-
-      }
-      return enums[0];
+      return (E)GlobalConfig.getEnumType(this.type).get(dbValue);
     } catch (Exception ex) {
       throw new IllegalArgumentException(
               "Cannot convert " + dbValue + " to " + type.getSimpleName() + " by ordinal value.", ex);
     }
   }
 
-  private E toOrdinalEnum(int ordinal) {
+  /**
+   * 第一次访问Enum, 反射并进行缓存
+   */
+  private void initEnum() {
+    if (GlobalConfig.existsEnumType(this.type)) return;
+
+    MetaClass metaClass = MetaObjectUtil.forClass(this.type);
+    String name = getValueColumn();
+    getInvoker = metaClass.getGetInvoker(name);
+
+    Map<Object, E> enumTypeMap = new HashMap<>();
+    for (E anEnum : this.enums) {
+      Object value = getValue(anEnum);
+      enumTypeMap.put(value, anEnum);
+    }
+    GlobalConfig.addEnumType(this.type, enumTypeMap);
+  }
+
+
+  /**
+   * 取得EnumValue标注的属性名
+   * @return 属性名称
+   */
+  private String getValueColumn() {
+      Field field = Arrays.stream(this.type.getDeclaredFields()).filter(item-> item.getAnnotation(EnumValue.class)!=null).findFirst().orElse(null);
+      assert field != null;
+      return field.getName();
+  }
+
+  private Object getValue(E enumType) {
     try {
-      return enums[ordinal];
+      return getInvoker.invoke(enumType, new Object[0]);
     } catch (Exception ex) {
-      throw new IllegalArgumentException(
-          "Cannot convert " + ordinal + " to " + type.getSimpleName() + " by ordinal value.", ex);
+      throw new RuntimeException("Cannot get value of an enum type [" + enumType.name() + "] of " + this.type);
     }
   }
 }

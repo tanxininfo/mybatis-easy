@@ -17,6 +17,7 @@
 package com.mybatiseasy.core.utils;
 
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
@@ -33,4 +34,7 @@ public class MetaObjectUtil {
         return MetaObject.forObject(object, DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY, DEFAULT_REFLECTOR_FACTORY);
     }
 
+    public static MetaClass forClass(Class<?> clazz) {
+        return MetaClass.forClass(clazz, DEFAULT_REFLECTOR_FACTORY);
+    }
 }

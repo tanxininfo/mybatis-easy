@@ -145,7 +145,7 @@ public class EntityMapKids {
             }
             String tableName = TypeUtil.isEmpty(table.name())? table.value(): table.name();
             if(TypeUtil.isEmpty(tableName)) {
-                String[] nameSplits = entityClass.getName().split(".");
+                String[] nameSplits = entityClass.getName().split("\\.");
                 tableName = StringUtil.camelToSnake(nameSplits[nameSplits.length-1]);
             }
 
@@ -180,7 +180,6 @@ public class EntityMapKids {
         String name = field.getName();
         String column = StringUtil.camelToSnake(field.getName());
         EntityFieldMap.Builder builder = new EntityFieldMap.Builder(name, column).javaType(field.getType());
-
 
         if (tableField != null) {
             builder.desc(tableField.desc())

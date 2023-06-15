@@ -16,11 +16,15 @@
 
 package com.mybatiseasy.core.config;
 
-
 import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GlobalConfig {
     private static ITenant tenantFactory;
+
+    private static  final  Map<Class<?>, Map<Object, ? extends Enum<?>>> enumTypeList = new HashMap<>();
 
     private static SqlSessionFactory sqlSessionFactory;
 
@@ -38,5 +42,17 @@ public class GlobalConfig {
 
     public static void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         GlobalConfig.sqlSessionFactory = sqlSessionFactory;
+    }
+
+    public static boolean existsEnumType(Class<?> clazz){
+        return enumTypeList.containsKey(clazz);
+    }
+
+    public static Map<Object, ? extends Enum<?>> getEnumType(Class<?> clazz) {
+        return enumTypeList.get(clazz);
+    }
+
+    public static <E extends Enum<E>> void addEnumType(Class<?> clazz, Map<Object, E> enumType) {
+        GlobalConfig.enumTypeList.put((Class<?>) clazz, enumType);
     }
 }

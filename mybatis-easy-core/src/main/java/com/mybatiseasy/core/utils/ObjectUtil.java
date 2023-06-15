@@ -19,6 +19,7 @@ package com.mybatiseasy.core.utils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +41,6 @@ public class ObjectUtil {
         mapper.registerModule(new JavaTimeModule());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-
         try {
             return mapper.writeValueAsString(object);
         }catch (Exception e){
@@ -59,7 +59,7 @@ public class ObjectUtil {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         try {
-            return mapper.readValue(jsonStr, new TypeReference<Map<String, Object>>() { });
+            return mapper.readValue(jsonStr, new TypeReference<>() { });
         }catch (Exception e){
            return null;
         }

@@ -37,7 +37,6 @@ public class User implements Serializable{
     private Long id;
     private String name;
     private Integer age;
-    @TableField(typeHandler = EnumTypeHandler.class)
     private SexEnum sex;
     private Long parentId;
 

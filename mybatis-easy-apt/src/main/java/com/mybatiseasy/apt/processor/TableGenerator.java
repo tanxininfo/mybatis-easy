@@ -16,10 +16,8 @@
 
 package com.mybatiseasy.apt.processor;
 
-import com.google.auto.service.AutoService;
 import com.mybatiseasy.apt.generate.FileWriter;
 import com.mybatiseasy.apt.generate.TableInfo;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;

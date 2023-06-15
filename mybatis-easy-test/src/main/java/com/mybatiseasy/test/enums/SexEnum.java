@@ -16,7 +16,11 @@
 
 package com.mybatiseasy.test.enums;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.mybatiseasy.annotation.EnumValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum SexEnum {
 
@@ -35,6 +39,15 @@ public enum SexEnum {
         return desc;
     }
 
+    @EnumValue
     private final int code;
     private final String desc;
+
+    @JsonValue
+    public Map<String,Object> toMap(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("code",getCode());
+        map.put("desc",getDesc());
+        return map;
+    }
 }
