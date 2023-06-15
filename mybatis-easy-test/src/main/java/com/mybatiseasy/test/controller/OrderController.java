@@ -61,12 +61,12 @@ public class OrderController {
 
     @GetMapping("query")
     public void query() {
-        QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
+//        QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
+//
+//        PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
+//        log.info("users={}", ObjectUtil.toJson(users));
 
-        PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
-        log.info("users={}", ObjectUtil.toJson(users));
-
-        List<User> list = DbUtil.list(QueryWrapper.create().from(USER.as())).toBeanList(User.class);
+        List<User> list = userMapper.list(QueryWrapper.create().from(USER.as()));
         log.info("lists={}", ObjectUtil.toJson(list));
 
 //        PageList<User> userList = dbMapper.paginate(queryWrapper, 10, 1, User.class);

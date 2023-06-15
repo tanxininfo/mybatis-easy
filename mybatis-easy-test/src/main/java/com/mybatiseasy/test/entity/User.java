@@ -20,7 +20,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mybatiseasy.annotation.Table;
 import com.mybatiseasy.annotation.TableField;
 import com.mybatiseasy.annotation.TableId;
+import com.mybatiseasy.core.typehandler.EnumTypeHandler;
 import com.mybatiseasy.emums.TableIdType;
+import com.mybatiseasy.test.enums.SexEnum;
 import lombok.Data;
 import org.apache.ibatis.type.LocalDateTimeTypeHandler;
 
@@ -35,7 +37,8 @@ public class User implements Serializable{
     private Long id;
     private String name;
     private Integer age;
-    private Short sex;
+    @TableField(typeHandler = EnumTypeHandler.class)
+    private SexEnum sex;
     private Long parentId;
 
     @TableField(insert = "NOW()")
