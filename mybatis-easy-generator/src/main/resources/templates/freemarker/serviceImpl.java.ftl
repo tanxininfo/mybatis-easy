@@ -10,12 +10,6 @@ import org.springframework.stereotype.Service;
 import com.mybatiseasy.core.paginate.Page;
 import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
-
-import ${global.packageName}.${entity.packageName}.${table.name?cap_first}${entity.suffix};
-import ${global.packageName}.${dto.packageName}.${table.name?cap_first}${dto.suffix};
-import ${global.packageName}.${service.packageName}.${table.name?cap_first}${service.suffix};
-import ${global.packageName}.${mapper.packageName}.${table.name?cap_first}${mapper.suffix};
-
 <#assign entityClassName="${table.name?cap_first}${entity.suffix}" />
 <#assign dtoClassName="${table.name?cap_first}${dto.suffix}" />
 <#assign mapperClassName="${table.name?cap_first}${mapper.suffix}" />
@@ -23,6 +17,17 @@ import ${global.packageName}.${mapper.packageName}.${table.name?cap_first}${mapp
 <#assign serviceImplClassName="${table.name?cap_first}${serviceImpl.suffix}" />
 <#assign priColumnName="${table.priColumn.name}"/>
 <#assign priColumnType="${table.priColumn.javaTypeName}"/>
+
+import com.mybatiseasy.core.defs.${entityClassName}Def;
+import info.tanxin.system.core.utils.DataUtil;
+
+
+import ${global.packageName}.${entity.packageName}.${table.name?cap_first}${entity.suffix};
+import ${global.packageName}.${dto.packageName}.${table.name?cap_first}${dto.suffix};
+import ${global.packageName}.${service.packageName}.${table.name?cap_first}${service.suffix};
+import ${global.packageName}.${mapper.packageName}.${table.name?cap_first}${mapper.suffix};
+
+
 /**
 * ${table.comment!} 服务实现类
 *
@@ -30,10 +35,7 @@ import ${global.packageName}.${mapper.packageName}.${table.name?cap_first}${mapp
 * @since ${global.commentDate!.now?string("yyyy-MM-dd")}
 */
 @Service
-public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${serviceImpl.supperClass!}<${entityClassName}></#if> implements ${serviceClassName} {
-
-    @Autowired
-    private ${mapperClassName} ${mapperClassName?uncap_first};
+public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${serviceImpl.supperClass!}<${mapperClassName}, ${entityClassName}></#if> implements ${serviceClassName} {
 
     /**
     * ${table.comment!}查询
@@ -41,7 +43,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
     * @return 结果
     */
     public ${entityClassName} get(${priColumnType} ${priColumnName}) {
-        return ${mapperClassName?uncap_first}.getById(${priColumnName});
+        return super.getById(${priColumnName});
     }
 
     /**
@@ -54,10 +56,11 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
     public PageList<${entityClassName}> page(${dtoClassName} ${dtoClassName?uncap_first}, Sort sort, Page page) {
         QueryWrapper wrapper = new QueryWrapper();
 
+        sort.setColumn(DataUtil.getColumnByName(DevicePortDef.className, sort.getColumn()));
         Sort formattedSort = SortUtil.format(sort, "${priColumnName}");
-        wrapper.orderBy(formattedSort.getColumn(), formattedSort.isDesc());
+        wrapper.orderBy(formattedSort.getFullColumn(), formattedSort.isDesc());
 
-        return ${mapperClassName?uncap_first}.paginate(wrapper, page.getSize(), page.getCurrent());
+        return super.paginate(wrapper, page.getSize(), page.getCurrent());
     }
 
     /**
@@ -66,7 +69,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
     * @return 结果
     */
     public ${priColumnType} create(${entityClassName} ${entityClassName?uncap_first}) {
-        int affectedRows = ${mapperClassName?uncap_first}.insert(${entityClassName?uncap_first});
+        int affectedRows = super.insert(${entityClassName?uncap_first});
         if(affectedRows == 1) {
             return ${entityClassName?uncap_first}.get${priColumnName?cap_first}();
         }
@@ -87,7 +90,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
         ${entityClassName?uncap_first}.setVersion(old${entityClassName}.getVersion());
         </#if>
 
-        return ${mapperClassName?uncap_first}.updateById(${entityClassName?uncap_first});
+        return super.updateById(${entityClassName?uncap_first});
     }
 
     /**
@@ -99,6 +102,6 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
         ${entityClassName} ${entityClassName?uncap_first} = ${mapperClassName?uncap_first}.getById(${priColumnName});
 
         if(${entityClassName?uncap_first} == null) return 0;
-        return ${mapperClassName?uncap_first}.deleteById(${priColumnName});
+        return super.deleteById(${priColumnName});
     }
 }

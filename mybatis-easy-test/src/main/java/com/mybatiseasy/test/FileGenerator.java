@@ -53,8 +53,8 @@ public class FileGenerator {
                 .tenantIdName("tenantId")
                 .logicDeleteName("deleted")
                 .logicDeleteValue("null", "0")
-                .columnAutoSet(new ColumnAutoSet().setName("createTime").setInsert("NOW()"))
-                .columnAutoSet(new ColumnAutoSet().setName("updateTime").setInsert("NOW()").setUpdate("NOW()"))
+                .columnAutoSet(new ColumnAutoSet().setName("createTime").setInsert("DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i%s')"))
+                .columnAutoSet(new ColumnAutoSet().setName("updateTime").setInsert("DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i%s')").setUpdate("DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i%s')"))
                 .build();
 
         MapperConfig mapperConfig = new MapperConfig.Builder("mapper", "Mapper")

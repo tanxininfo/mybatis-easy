@@ -26,6 +26,15 @@ import ${table.keyGenerator.name};
 </#if>
 <#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
+<#if column.javaTypeName == "LocalDateTime" || column.javaTypeName == "LocalDate" || column.javaTypeName == "LocalTime">
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+<#break>
+</#if>
+</#list>
+<#------------  字段循环遍历 结束  ---------->
+<#-- ----------  字段循环遍历 开始  ---------->
+<#list table.columns as column>
 <#if column.javaTypeName == "LocalDateTime">
 import java.time.LocalDateTime;
 <#break>
@@ -101,12 +110,33 @@ public class ${table.name?cap_first}${entity.suffix} implements Serializable {
     @TableId(type = TableIdType.${global.idType}<#if global.sequence!?length gt 0>, sequence="${global.sequence}"</#if><#if global.keyGenerator??>, keyGenerator=${global.keyGenerator.simpleName}.class</#if>)
     </#if>
     </#if>
+    <#if column.javaTypeName == "LocalDateTime">
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    </#if>
+    <#if column.javaTypeName == "LocalDate">
+    @JsonFormat(
+            pattern = "yyyy-MM-dd",
+            timezone = "GMT+8"
+    )
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    </#if>
+    <#if column.javaTypeName == "LocalTime">
+        @JsonFormat(
+        pattern = "HH:mm:ss",
+        timezone = "GMT+8"
+        )
+        @DateTimeFormat(pattern = "HH:mm:ss")
+    </#if>
     @TableField(column = "${column.columnName}"<#if column.insert!?length gt 0>, insert = "${column.insert!}"</#if><#if column.update!?length gt 0>, update = "${column.update!}"</#if><#if column.javaTypeName=="Float" || column.javaTypeName=="BigDecimal">, numericScale = "${column.numericScale}"</#if>)
     <#if column.version!false>
     @Version
     </#if>
     <#if column.logicDelete!false>
-    @LogicDelete("${column.logicDeleteValue}")
+    @LogicDelete(deleteValue = "${column.logicDeleteValue}", notDeleteValue = "${column.logicNotDeleteValue}")
     </#if>
     <#if column.tenantId!false>
     @TenantId
