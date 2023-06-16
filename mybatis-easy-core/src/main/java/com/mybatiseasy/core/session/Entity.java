@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * 实体类映射成对象
  */
-public class EntityMap {
+public class Entity {
 
   /**
    * 实体的name
@@ -43,27 +43,27 @@ public class EntityMap {
   /**
    * 主键字段
    */
-  private EntityFieldMap primaryFieldMap;
+  private EntityField primaryFieldMap;
 
   /**
    * 乐观锁字段
    */
-  private EntityFieldMap versionFieldMap;
+  private EntityField versionFieldMap;
   /**
    * 逻辑删除字段
    */
-  private EntityFieldMap logicDeleteFieldMap;
+  private EntityField logicDeleteFieldMap;
   /**
    * 租户字段
    */
-  private EntityFieldMap tenantIdFieldMap;
+  private EntityField tenantIdFieldMap;
 
   /**
    * 实体的字段映射
    */
-  private List<EntityFieldMap> entityFieldMapList;
+  private List<EntityField> entityFieldList;
 
-  private EntityMap() {
+  private Entity() {
   }
 
   public String getName() {
@@ -81,22 +81,22 @@ public class EntityMap {
     return schema;
   }
 
-  public EntityFieldMap  getPrimaryFieldMap() {
+  public EntityField getPrimaryFieldMap() {
     return primaryFieldMap;
   }
 
-  public EntityFieldMap  getVersionFieldMap() {
+  public EntityField getVersionFieldMap() {
     return versionFieldMap;
   }
-  public EntityFieldMap  getLogicDeleteFieldMap() {
+  public EntityField getLogicDeleteFieldMap() {
     return logicDeleteFieldMap;
   }
-  public EntityFieldMap  getTenantIdFieldMap() {
+  public EntityField getTenantIdFieldMap() {
     return tenantIdFieldMap;
   }
 
-  public List<EntityFieldMap> getEntityFieldMapList() {
-    return entityFieldMapList;
+  public List<EntityField> getEntityFieldMapList() {
+    return entityFieldList;
   }
 
   @Override
@@ -108,7 +108,7 @@ public class EntityMap {
       return false;
     }
 
-    EntityMap that = (EntityMap) o;
+    Entity that = (Entity) o;
 
     return name != null && name.equals(that.name);
   }
@@ -121,9 +121,9 @@ public class EntityMap {
     sb.append(", schema='").append(schema).append('\'');
     sb.append(", fieldList=[");
 
-    for(int i = 0;i < entityFieldMapList.size(); i++) {
+    for(int i = 0; i < entityFieldList.size(); i++) {
       if (i > 0) sb.append(",");
-      sb.append(entityFieldMapList.get(i).toString());
+      sb.append(entityFieldList.get(i).toString());
     }
     sb.append("]");
     sb.append('}');
@@ -132,12 +132,12 @@ public class EntityMap {
 
 
   public static class Builder {
-    private final EntityMap entityMap = new EntityMap();
+    private final Entity entity = new Entity();
 
-    public Builder(String name, String desc, List<EntityFieldMap>  entityFieldMapList) {
-      entityMap.name = name;
-      entityMap.desc = desc;
-      entityMap.entityFieldMapList = entityFieldMapList;
+    public Builder(String name, String desc, List<EntityField> entityFieldList) {
+      entity.name = name;
+      entity.desc = desc;
+      entity.entityFieldList = entityFieldList;
     }
 
 
@@ -145,53 +145,53 @@ public class EntityMap {
       this(name, desc, new ArrayList<>());
     }
 
-    public Builder(String name, List<EntityFieldMap>  entityFieldMapList) {
-      this(name, "", entityFieldMapList);
+    public Builder(String name, List<EntityField> entityFieldList) {
+      this(name, "", entityFieldList);
     }
 
     public Builder name(String name) {
-      entityMap.name = name;
+      entity.name = name;
       return this;
     }
     public Builder fullName(String fullName) {
-      entityMap.fullName = fullName;
+      entity.fullName = fullName;
       return this;
     }
     public Builder desc(String desc) {
-      entityMap.desc = desc;
+      entity.desc = desc;
       return this;
     }
     public Builder schema(String schema) {
-      entityMap.schema = schema;
+      entity.schema = schema;
       return this;
     }
 
-    public Builder primaryFieldMap(EntityFieldMap primaryFieldMap) {
-      entityMap.primaryFieldMap = primaryFieldMap;
+    public Builder primaryFieldMap(EntityField primaryFieldMap) {
+      entity.primaryFieldMap = primaryFieldMap;
       return this;
     }
 
-    public Builder versionFieldMap(EntityFieldMap versionFieldMap) {
-      entityMap.versionFieldMap = versionFieldMap;
+    public Builder versionFieldMap(EntityField versionFieldMap) {
+      entity.versionFieldMap = versionFieldMap;
       return this;
     }
-    public Builder logicDeleteFieldMap(EntityFieldMap logicDeleteFieldMap) {
-      entityMap.logicDeleteFieldMap = logicDeleteFieldMap;
+    public Builder logicDeleteFieldMap(EntityField logicDeleteFieldMap) {
+      entity.logicDeleteFieldMap = logicDeleteFieldMap;
       return this;
     }
-    public Builder tenantIdFieldMap(EntityFieldMap tenantIdFieldMap) {
-      entityMap.tenantIdFieldMap = tenantIdFieldMap;
-      return this;
-    }
-
-    public Builder entityFieldMapList(List<EntityFieldMap> entityFieldMapList) {
-      entityMap.entityFieldMapList = entityFieldMapList;
+    public Builder tenantIdFieldMap(EntityField tenantIdFieldMap) {
+      entity.tenantIdFieldMap = tenantIdFieldMap;
       return this;
     }
 
-    public EntityMap build() {
-      entityMap.name = SqlUtil.addBackquote(entityMap.name);
-      return entityMap;
+    public Builder entityFieldMapList(List<EntityField> entityFieldList) {
+      entity.entityFieldList = entityFieldList;
+      return this;
+    }
+
+    public Entity build() {
+      entity.name = SqlUtil.addBackquote(entity.name);
+      return entity;
     }
   }
 

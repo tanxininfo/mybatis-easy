@@ -20,8 +20,8 @@ import com.mybatiseasy.core.base.Table;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
-import com.mybatiseasy.core.session.EntityFieldMap;
-import com.mybatiseasy.core.session.EntityMap;
+import com.mybatiseasy.core.session.EntityField;
+import com.mybatiseasy.core.session.Entity;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.utils.SqlUtil;
 import org.apache.ibatis.reflection.MetaObject;
@@ -33,13 +33,13 @@ import java.util.Map;
 public class ProviderKid {
 
 
-    public static QueryWrapper getQueryWrapper(StatementType statementType, EntityMap entityMap){
-        return getQueryWrapper(statementType, entityMap, new QueryWrapper());
+    public static QueryWrapper getQueryWrapper(StatementType statementType, Entity entity){
+        return getQueryWrapper(statementType, entity, new QueryWrapper());
     }
 
-    public static QueryWrapper getQueryWrapper(StatementType statementType, EntityMap entityMap, QueryWrapper wrapper){
+    public static QueryWrapper getQueryWrapper(StatementType statementType, Entity entity, QueryWrapper wrapper){
 
-        Table table = new Table(entityMap.getFullName(), entityMap.getName(), "");
+        Table table = new Table(entity.getFullName(), entity.getName(), "");
 
         switch (statementType) {
             case SELECT -> {
@@ -63,8 +63,8 @@ public class ProviderKid {
         return wrapper;
     }
 
-    public static void putIdValueToMap(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj){
-        String idKey = entityMap.getPrimaryFieldMap().getName();
+    public static void putIdValueToMap(Map<String, Object> map, Entity entity, MetaObject entityObj){
+        String idKey = entity.getPrimaryFieldMap().getName();
         Object idValue = (entityObj!=null ? entityObj.getValue(idKey): map.get(MethodParam.PRIMARY_KEY));
         if(idValue == null) throw new RuntimeException("请指定实体主键值");
         map.put(idKey, idValue);
@@ -72,27 +72,27 @@ public class ProviderKid {
 
     /**
      * 取得 where id={#id} 的 id={#id}部份
-     * @param entityMap 实体映射对象
+     * @param entity 实体映射对象
      * @return String `id`={#id}
      */
-    public static String getWhereId(EntityMap entityMap){
+    public static String getWhereId(Entity entity){
 
-        return entityMap.getPrimaryFieldMap().getColumn() + "=" + Sql.SPACE +
-                "#{" + entityMap.getPrimaryFieldMap().getName() +"}";
+        return entity.getPrimaryFieldMap().getColumn() + "=" + Sql.SPACE +
+                "#{" + entity.getPrimaryFieldMap().getName() +"}";
     }
 
     /**
      * 取得 where id={#id} 的 id={#id_1}部份
-     * @param entityMap 实体映射对象
+     * @param entity 实体映射对象
      * @return String `id`={#id_1}
      */
-    public static String getWhereId(EntityMap entityMap, int index){
-        return entityMap.getPrimaryFieldMap().getColumn() + "=" + Sql.SPACE +
-                SqlUtil.getValueTag(SqlUtil.getMapKey(entityMap.getPrimaryFieldMap().getColumn(), index));
+    public static String getWhereId(Entity entity, int index){
+        return entity.getPrimaryFieldMap().getColumn() + "=" + Sql.SPACE +
+                SqlUtil.getValueTag(SqlUtil.getMapKey(entity.getPrimaryFieldMap().getColumn(), index));
     }
 
-    public static void versionHandle(Map<String, Object> map, EntityMap entityMap, MetaObject entityObj, QueryWrapper queryWrapper){
-        EntityFieldMap version = entityMap.getVersionFieldMap();
+    public static void versionHandle(Map<String, Object> map, Entity entity, MetaObject entityObj, QueryWrapper queryWrapper){
+        EntityField version = entity.getVersionFieldMap();
         if(version == null) return;
 
         Object value = entityObj.getValue(version.getName());
@@ -104,12 +104,12 @@ public class ProviderKid {
         map.put(key, value);
     }
 
-    public static void logicDeleteHandle(QueryWrapper wrapper, EntityMap entityMap){
-        EntityFieldMap logicDeleteFieldMap =  entityMap.getLogicDeleteFieldMap();
+    public static void logicDeleteHandle(QueryWrapper wrapper, Entity entity){
+        EntityField logicDeleteFieldMap =  entity.getLogicDeleteFieldMap();
         if(logicDeleteFieldMap == null) {
-            getQueryWrapper(StatementType.DELETE, entityMap, wrapper);
+            getQueryWrapper(StatementType.DELETE, entity, wrapper);
         }else{
-            getQueryWrapper(StatementType.UPDATE, entityMap, wrapper);
+            getQueryWrapper(StatementType.UPDATE, entity, wrapper);
             List<String> values = new ArrayList<>();
             values.add(logicDeleteFieldMap.getColumn()+" = " + logicDeleteFieldMap.getLogicDeleteValue());
             wrapper.setValues(values);

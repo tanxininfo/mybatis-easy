@@ -23,9 +23,8 @@ import com.mybatiseasy.core.utils.BeanMapUtil;
 import com.mybatiseasy.keygen.IKeyGenerator;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.emums.TableIdType;
-import com.mybatiseasy.core.session.EntityFieldMap;
+import com.mybatiseasy.core.session.EntityField;
 import com.mybatiseasy.core.utils.CollectionUtil;
-import com.mybatiseasy.core.utils.ObjectUtil;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -39,11 +38,11 @@ import org.apache.ibatis.session.ExecutorType;
  */
 public class CustomKeyGenerator implements KeyGenerator {
 
-    private final EntityFieldMap fieldMap;
+    private final EntityField fieldMap;
 
     private Executor keyExecutor;
 
-    public CustomKeyGenerator(EntityFieldMap fieldMap) {
+    public CustomKeyGenerator(EntityField fieldMap) {
         this.fieldMap = fieldMap;;
     }
 

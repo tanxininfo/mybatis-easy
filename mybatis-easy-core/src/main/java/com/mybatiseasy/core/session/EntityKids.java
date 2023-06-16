@@ -20,7 +20,6 @@ import com.mybatiseasy.annotation.*;
 import com.mybatiseasy.core.typehandler.EnumTypeHandler;
 import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -30,20 +29,20 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 
-public class EntityMapKids {
+public class EntityKids {
 
     /**
      * 存放实体类
      */
-    private static final Map<String, EntityMap> entityMaps = new HashMap<>();
+    private static final Map<String, Entity> entityMaps = new HashMap<>();
 
     /**
      * 添加EntityMap(实体类信息)
      * @param entityName 实休类名称
-     * @param entityMap 实体类映射对象
+     * @param entity 实体类映射对象
      */
-    public static void addEntityMap(String entityName, EntityMap entityMap) {
-        entityMaps.put(entityName, entityMap);
+    public static void addEntityMap(String entityName, Entity entity) {
+        entityMaps.put(entityName, entity);
     }
 
     /**
@@ -58,7 +57,7 @@ public class EntityMapKids {
      * 获得所有实体类映射对象
      * @return  所有实体类映射对象
      */
-    public static Collection<EntityMap> getEntityMaps() {
+    public static Collection<Entity> getEntityMaps() {
         return entityMaps.values();
     }
 
@@ -67,11 +66,11 @@ public class EntityMapKids {
      * @param entityName 实体类名称
      * @return 实体类映射对象
      */
-    public static EntityMap getEntityMap(String entityName) {
+    public static Entity getEntityMap(String entityName) {
         if (!hasEntityMap(entityName)) {
-            EntityMap entityMap = EntityMapKids.reflectEntity(entityName);
-            if (entityMap == null) return null;
-            addEntityMap(entityName, entityMap);
+            Entity entity = EntityKids.reflectEntity(entityName);
+            if (entity == null) return null;
+            addEntityMap(entityName, entity);
         }
         return entityMaps.get(entityName);
     }
@@ -81,7 +80,7 @@ public class EntityMapKids {
      * @param mapperName mapperName
      * @return 实体类映射对象
      */
-    public static EntityMap getEntityMapByMapperName(String mapperName) {
+    public static Entity getEntityMapByMapperName(String mapperName) {
         return getEntityMap(getEntityName(mapperName));
     }
 
@@ -90,7 +89,7 @@ public class EntityMapKids {
      * @param context ProviderContext
      * @return 实体类映射对象
      */
-    public static EntityMap getEntityMapByContext(ProviderContext context) {
+    public static Entity getEntityMapByContext(ProviderContext context) {
         Class<?> mapperClass = context.getMapperType();
         return getEntityMapByMapperName(mapperClass.getName());
     }
@@ -124,26 +123,26 @@ public class EntityMapKids {
      * @param entityName 实体类名称
      * @return 实体类映射对象
      */
-    public static EntityMap reflectEntity(String entityName) {
+    public static Entity reflectEntity(String entityName) {
         try {
             Class<?> entityClass = Class.forName(entityName);
             Table table = entityClass.getAnnotation(Table.class);
             if (table == null) return null;
 
-            EntityFieldMap primary = null;
-            EntityFieldMap version = null;
-            EntityFieldMap logicDelete = null;
-            EntityFieldMap tenantId = null;
-            List<EntityFieldMap> entityFieldMapList = new ArrayList<>();
+            EntityField primary = null;
+            EntityField version = null;
+            EntityField logicDelete = null;
+            EntityField tenantId = null;
+            List<EntityField> entityFieldList = new ArrayList<>();
             Field[] fields = entityClass.getDeclaredFields();
             for (Field field : fields) {
                 if(Modifier.isStatic(field.getModifiers())) continue;
-                EntityFieldMap fieldMap = reflectEntityField(field);
+                EntityField fieldMap = reflectEntityField(field);
                 if(fieldMap.isId()) primary = fieldMap;
                 if(fieldMap.isVersion()) version = fieldMap;
                 if(fieldMap.isTenantId()) tenantId = fieldMap;
                 if(fieldMap.isLogicDelete()) logicDelete = fieldMap;
-                if(!fieldMap.isForeign()) entityFieldMapList.add(fieldMap);
+                if(!fieldMap.isForeign()) entityFieldList.add(fieldMap);
             }
             String tableName = TypeUtil.isEmpty(table.name())? table.value(): table.name();
             if(TypeUtil.isEmpty(tableName)) {
@@ -151,10 +150,10 @@ public class EntityMapKids {
                 tableName = StringUtil.camelToSnake(nameSplits[nameSplits.length-1]);
             }
 
-            return new EntityMap.Builder(tableName, table.desc())
+            return new Entity.Builder(tableName, table.desc())
                     .fullName(entityName)
                     .schema(table.schema())
-                    .entityFieldMapList(entityFieldMapList)
+                    .entityFieldMapList(entityFieldList)
                     .primaryFieldMap(primary)
                     .versionFieldMap(version)
                     .logicDeleteFieldMap(logicDelete)
@@ -170,7 +169,7 @@ public class EntityMapKids {
      * @param field 类属性
      * @return EntityFieldMap
      */
-    public static EntityFieldMap reflectEntityField(Field field) {
+    public static EntityField reflectEntityField(Field field) {
         TableField tableField = field.getAnnotation(TableField.class);
         TableId tableId = field.getAnnotation( TableId.class);
         Version version = field.getAnnotation( Version.class);
@@ -181,7 +180,7 @@ public class EntityMapKids {
 
         String name = field.getName();
         String column = StringUtil.camelToSnake(field.getName());
-        EntityFieldMap.Builder builder = new EntityFieldMap.Builder(name, column).javaType(field.getType());
+        EntityField.Builder builder = new EntityField.Builder(name, column).javaType(field.getType());
 
         builder.typeHandler(getTypeHandle(field, tableField));
 

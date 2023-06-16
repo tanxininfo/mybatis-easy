@@ -22,12 +22,11 @@ import com.mybatiseasy.core.base.Table;
 import com.mybatiseasy.core.config.GlobalConfig;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.enums.StatementType;
-import com.mybatiseasy.core.session.EntityFieldMap;
-import com.mybatiseasy.core.session.EntityMap;
-import com.mybatiseasy.core.session.EntityMapKids;
+import com.mybatiseasy.core.session.EntityField;
+import com.mybatiseasy.core.session.Entity;
+import com.mybatiseasy.core.session.EntityKids;
 import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -85,9 +84,9 @@ public class QueryWrapper implements Serializable {
     private Condition getTenantCondition(Table table){
         if(ignoreTenantId) return null;
         String entityName = table.getColumn().getEntityName();
-        EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
-        assert entityMap != null;
-        EntityFieldMap tenantIdField = entityMap.getTenantIdFieldMap();
+        Entity entity = EntityKids.getEntityMap(entityName);
+        assert entity != null;
+        EntityField tenantIdField = entity.getTenantIdFieldMap();
         if(tenantIdField != null){
             ColumnData columnData = table.getColumn();
             String tableName = columnData.getTable();
@@ -105,9 +104,9 @@ public class QueryWrapper implements Serializable {
      */
     private Condition getLogicDeleteCondition(Table table){
         String entityName = table.getColumn().getEntityName();
-        EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
-        assert entityMap != null;
-        EntityFieldMap logicDeleteField = entityMap.getLogicDeleteFieldMap();
+        Entity entity = EntityKids.getEntityMap(entityName);
+        assert entity != null;
+        EntityField logicDeleteField = entity.getLogicDeleteFieldMap();
         if(logicDeleteField != null){
             ColumnData columnData = table.getColumn();
             String tableName = columnData.getTable();

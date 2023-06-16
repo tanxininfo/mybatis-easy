@@ -19,12 +19,11 @@ package com.mybatiseasy.core.provider;
 import com.mybatiseasy.core.base.Table;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.enums.StatementType;
-import com.mybatiseasy.core.session.EntityMap;
-import com.mybatiseasy.core.session.EntityMapKids;
+import com.mybatiseasy.core.session.Entity;
+import com.mybatiseasy.core.session.EntityKids;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.utils.MetaObjectUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.reflection.MetaObject;
 
@@ -46,15 +45,15 @@ public class DbProvider {
      */
     public static String insert(Map<String, Object> map, ProviderContext context) {
         Class<?> clazz = (Class<?>) map.get(MethodParam.ENTITY_CLASS);
-        EntityMap entityMap = EntityMapKids.getEntityMap(clazz.getName());
-        assert entityMap != null;
+        Entity entity = EntityKids.getEntityMap(clazz.getName());
+        assert entity != null;
 
         SqlBuilder builder = new SqlBuilder();
-        builder.generateInsertParts(map, entityMap, MethodParam.RECORD);
+        builder.generateInsertParts(map, entity, MethodParam.RECORD);
 
         QueryWrapper wrapper = new QueryWrapper();
 
-        wrapper.insertInto(entityMap.getName());
+        wrapper.insertInto(entity.getName());
         wrapper.columns(builder.getInsertSymbolList().toArray());
         wrapper.valuesList(builder.getInsertValuesList());
 
@@ -70,14 +69,14 @@ public class DbProvider {
      */
     public static String insertBatch(Map<String, Object> map, ProviderContext context) {
         Class<?> clazz = (Class<?>) map.get(MethodParam.ENTITY_CLASS);
-        EntityMap entityMap = EntityMapKids.getEntityMap(clazz.getName());
-        assert entityMap != null;
+        Entity entity = EntityKids.getEntityMap(clazz.getName());
+        assert entity != null;
         SqlBuilder builder = new SqlBuilder();
-        builder.generateInsertBatchParts(map, entityMap, MethodParam.RECORD_LIST);
+        builder.generateInsertBatchParts(map, entity, MethodParam.RECORD_LIST);
 
         QueryWrapper wrapper = new QueryWrapper();
 
-        wrapper.insertInto(entityMap.getName());
+        wrapper.insertInto(entity.getName());
         wrapper.columns(builder.getInsertSymbolList().toArray());
         wrapper.valuesList(builder.getInsertValuesList());
 
@@ -98,8 +97,8 @@ public class DbProvider {
         List<Table> tableList = wrapper.getTableList();
         assert tableList.size()>0;
 
-        EntityMap entityMap = EntityMapKids.getEntityMap(tableList.get(0).getColumn().getEntityName());
-        assert entityMap != null;
+        Entity entity = EntityKids.getEntityMap(tableList.get(0).getColumn().getEntityName());
+        assert entity != null;
 
         Condition condition = (Condition) map.get(MethodParam.CONDITION);
         map.putAll(condition.getParameterMap());
@@ -108,13 +107,13 @@ public class DbProvider {
         DbProviderKid.getQueryWrapper(StatementType.UPDATE, wrapper);
 
         SqlBuilder builder = new SqlBuilder();
-        builder.generateUpdateParts(map, entityMap);
+        builder.generateUpdateParts(map, entity);
         wrapper.setValues(builder.getUpdateValueList());
 
         MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
 
         // 乐观锁处理
-        ProviderKid.versionHandle(map, entityMap, entityObj, wrapper);
+        ProviderKid.versionHandle(map, entity, entityObj, wrapper);
 
         return wrapper.getSql();
     }
@@ -134,9 +133,9 @@ public class DbProvider {
         List<Table> tableList = wrapper.getTableList();
         assert tableList.size() > 0;
 
-        EntityMap entityMap = EntityMapKids.getEntityMap(tableList.get(0).getColumn().getEntityName());
-        assert entityMap != null;
-        ProviderKid.logicDeleteHandle(wrapper, entityMap);
+        Entity entity = EntityKids.getEntityMap(tableList.get(0).getColumn().getEntityName());
+        assert entity != null;
+        ProviderKid.logicDeleteHandle(wrapper, entity);
 
 
         if (!wrapper.hasWhere() && (map.get("force") == null)) throw new RuntimeException("删除条件不得为空");

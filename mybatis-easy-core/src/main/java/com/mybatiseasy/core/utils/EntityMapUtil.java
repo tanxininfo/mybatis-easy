@@ -1,20 +1,11 @@
 package com.mybatiseasy.core.utils;
 
 
-import com.mybatiseasy.core.session.EntityFieldMap;
-import com.mybatiseasy.core.session.EntityMap;
-import com.mybatiseasy.core.session.EntityMapKids;
-import com.mybatiseasy.core.type.Record;
-import com.mybatiseasy.core.type.RecordList;
-import lombok.extern.slf4j.Slf4j;
+import com.mybatiseasy.core.session.EntityField;
+import com.mybatiseasy.core.session.Entity;
+import com.mybatiseasy.core.session.EntityKids;
 import org.apache.ibatis.reflection.MetaObject;
 
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -32,9 +23,9 @@ public class EntityMapUtil {
 
         T object = entityClass.getDeclaredConstructor().newInstance();
         MetaObject metaObject = MetaObjectUtil.forObject(object);
-        EntityMap entityMap = EntityMapKids.getEntityMap(entityClass.getName());
-        assert entityMap != null;
-        for (EntityFieldMap field : entityMap.getEntityFieldMapList()
+        Entity entity = EntityKids.getEntityMap(entityClass.getName());
+        assert entity != null;
+        for (EntityField field : entity.getEntityFieldMapList()
         ) {
             // 数据库字段
             String columnName = SqlUtil.removeBackquote(field.getColumn());

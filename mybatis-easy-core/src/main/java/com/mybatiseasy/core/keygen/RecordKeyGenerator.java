@@ -17,9 +17,9 @@
 package com.mybatiseasy.core.keygen;
 
 import com.mybatiseasy.core.consts.MethodParam;
-import com.mybatiseasy.core.session.EntityFieldMap;
-import com.mybatiseasy.core.session.EntityMap;
-import com.mybatiseasy.core.session.EntityMapKids;
+import com.mybatiseasy.core.session.EntityField;
+import com.mybatiseasy.core.session.Entity;
+import com.mybatiseasy.core.session.EntityKids;
 import com.mybatiseasy.core.session.MeConfiguration;
 import com.mybatiseasy.core.utils.CollectionUtil;
 import com.mybatiseasy.core.utils.SqlUtil;
@@ -69,10 +69,10 @@ public class RecordKeyGenerator extends Jdbc3KeyGenerator {
                 Map<String, Object> map = (Map<String, Object>) parameter;
                 Class<?> entityClass = (Class<?>)map.get(MethodParam.ENTITY_CLASS);
 
-                EntityMap entityMap = EntityMapKids.getEntityMap(entityClass.getName());
+                Entity entityMap = EntityKids.getEntityMap(entityClass.getName());
                 if (entityMap == null) return;
 
-                EntityFieldMap primary = entityMap.getPrimaryFieldMap();
+                EntityField primary = entityMap.getPrimaryFieldMap();
                 if (primary == null) return;
                 String column = SqlUtil.removeBackquote(primary.getColumn());
 

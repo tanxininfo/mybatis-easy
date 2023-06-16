@@ -21,16 +21,10 @@ import com.mybatiseasy.core.consts.Method;
 import com.mybatiseasy.core.consts.MethodParam;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.keygen.RecordKeyGenerator;
-import com.mybatiseasy.core.mapper.DbMapper;
-import com.mybatiseasy.core.type.RecordList;
 import com.mybatiseasy.core.typehandler.*;
-import com.mybatiseasy.core.utils.BeanMapUtil;
-import com.mybatiseasy.core.utils.ObjectUtil;
 import com.mybatiseasy.emums.TableIdType;
 import com.mybatiseasy.core.keygen.CustomKeyGenerator;
 import com.mybatiseasy.core.utils.SqlUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -81,15 +75,15 @@ public class MeConfiguration extends Configuration {
     private void buildResultMap(String mapperName) {
         if(hasResultMap(mapperName)) return;
 
-        String entityName = EntityMapKids.getEntityName(mapperName);
+        String entityName = EntityKids.getEntityName(mapperName);
         if(entityName==null) return;
 
-        EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
-        if(entityMap==null) return;
+        Entity entity = EntityKids.getEntityMap(entityName);
+        if(entity ==null) return;
 
         try {
             List<ResultMapping> resultMappingList = new ArrayList<>();
-            for (EntityFieldMap fieldMap: entityMap.getEntityFieldMapList()
+            for (EntityField fieldMap: entity.getEntityFieldMapList()
                  ) {
                 ResultMapping.Builder resultMapping = new ResultMapping.Builder(this, fieldMap.getName(), SqlUtil.removeBackquote(fieldMap.getColumn()), fieldMap.getJavaType());
                 Class<? extends TypeHandler> typeHandlerClass = fieldMap.getTypeHandler();
@@ -150,7 +144,7 @@ public class MeConfiguration extends Configuration {
             ms = this.replaceKeyGeneratorMappedStatement(mapperName, methodName, ms);
         }
 
-        String entityName = EntityMapKids.getEntityName(mapperName);
+        String entityName = EntityKids.getEntityName(mapperName);
         if (!entityMapperMap.containsKey(entityName)) {
             entityMapperMap.put(entityName, mapperName);
         }
@@ -166,19 +160,19 @@ public class MeConfiguration extends Configuration {
         boolean isDbMapper = mapperName.contains(".DbMapper");
 
         TableIdType primaryType = null;
-        EntityFieldMap primary = null;
+        EntityField primary = null;
         String keyProperty = "";
         String keyColumn = "";
         boolean isBatch = methodName.equals(Method.INSERT_BATCH);
 
         if(!isDbMapper) {
-            String entityName = EntityMapKids.getEntityName(mapperName);
+            String entityName = EntityKids.getEntityName(mapperName);
             if (entityName == null) return ms;
 
-            EntityMap entityMap = EntityMapKids.getEntityMap(entityName);
-            if (entityMap == null) return ms;
+            Entity entity = EntityKids.getEntityMap(entityName);
+            if (entity == null) return ms;
 
-            primary = entityMap.getPrimaryFieldMap();
+            primary = entity.getPrimaryFieldMap();
             if (primary == null) return ms;
 
             primaryType = primary.getIdType();
@@ -235,7 +229,7 @@ public class MeConfiguration extends Configuration {
         return statementBuilder.build();
     }
 
-    private void replaceSequenceMappedStatement(EntityFieldMap primary,String keyProperty, String keyColumn, String baseStatementId, MappedStatement ms){
+    private void replaceSequenceMappedStatement(EntityField primary, String keyProperty, String keyColumn, String baseStatementId, MappedStatement ms){
 
         String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
 

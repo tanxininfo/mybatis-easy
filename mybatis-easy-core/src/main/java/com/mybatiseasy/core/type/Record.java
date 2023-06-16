@@ -1,15 +1,9 @@
 package com.mybatiseasy.core.type;
 
 import com.mybatiseasy.core.base.Column;
-import com.mybatiseasy.core.session.EntityFieldMap;
-import com.mybatiseasy.core.session.EntityMap;
-import com.mybatiseasy.core.session.EntityMapKids;
 import com.mybatiseasy.core.utils.*;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.reflection.MetaObject;
 
 import java.io.Serializable;
-import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 
 

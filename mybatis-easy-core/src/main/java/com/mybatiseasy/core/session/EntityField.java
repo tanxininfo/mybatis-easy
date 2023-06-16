@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * 实体类字段映射成对象
  */
-public class EntityFieldMap {
+public class EntityField {
 
   /**
    * 字段的name
@@ -119,119 +119,119 @@ public class EntityFieldMap {
    */
   private String numericScale;
 
-  private EntityFieldMap() {
+  private EntityField() {
   }
 
   public static class Builder {
-    private final EntityFieldMap entityFieldMap = new EntityFieldMap();
+    private final EntityField entityField = new EntityField();
 
     public Builder(String name, String column) {
-      entityFieldMap.name = name;
-      entityFieldMap.column = column;
+      entityField.name = name;
+      entityField.column = column;
     }
 
     public Builder(String name, String column, boolean isLarge) {
       this(name, column);
-      entityFieldMap.isLarge = isLarge;
+      entityField.isLarge = isLarge;
     }
 
     public Builder(String name, String column, String insertDefault, String updateDefault) {
       this(name, column);
-      entityFieldMap.insertDefault = insertDefault;
-      entityFieldMap.updateDefault = updateDefault;
+      entityField.insertDefault = insertDefault;
+      entityField.updateDefault = updateDefault;
     }
 
     public Builder name(String name) {
-      entityFieldMap.name = name;
+      entityField.name = name;
       return this;
     }
     public Builder column(String column) {
-      entityFieldMap.column = column;
+      entityField.column = column;
       return this;
     }
     public Builder desc(String desc) {
-      entityFieldMap.desc = desc;
+      entityField.desc = desc;
       return this;
     }
     public Builder insertDefault(String insertDefault) {
-      entityFieldMap.insertDefault = insertDefault;
+      entityField.insertDefault = insertDefault;
       return this;
     }
     public Builder updateDefault(String updateDefault) {
-      entityFieldMap.updateDefault = updateDefault;
+      entityField.updateDefault = updateDefault;
       return this;
     }
     public Builder isLarge(boolean isLarge) {
-      entityFieldMap.isLarge = isLarge;
+      entityField.isLarge = isLarge;
       return this;
     }
     public Builder isVersion(boolean isVersion) {
-      entityFieldMap.isVersion = isVersion;
+      entityField.isVersion = isVersion;
       return this;
     }
     public Builder isLogicDelete(boolean isLogicDelete) {
-      entityFieldMap.isLogicDelete = isLogicDelete;
+      entityField.isLogicDelete = isLogicDelete;
       return this;
     }
     public Builder annatationList(List<Annotation> annotationList) {
-      entityFieldMap.annotationList = annotationList;
+      entityField.annotationList = annotationList;
       return this;
     }
     public Builder logicDeleteValue(String logicDeleteValue, String logicNotDeleteValue) {
-      entityFieldMap.logicDeleteValue = logicDeleteValue;
-      entityFieldMap.logicNotDeleteValue = logicNotDeleteValue;
+      entityField.logicDeleteValue = logicDeleteValue;
+      entityField.logicNotDeleteValue = logicNotDeleteValue;
       return this;
     }
     public Builder isTenantId(boolean isTenantId) {
-      entityFieldMap.isTenantId = isTenantId;
+      entityField.isTenantId = isTenantId;
       return this;
     }
     public Builder isForeign(boolean isForeign) {
-      entityFieldMap.isForeign = isForeign;
+      entityField.isForeign = isForeign;
       return this;
     }
     public Builder jdbcType(JdbcType jdbcType) {
-      entityFieldMap.jdbcType = jdbcType;
+      entityField.jdbcType = jdbcType;
       return this;
     }
     public Builder javaType(Class<?> javaType) {
-      entityFieldMap.javaType = javaType;
+      entityField.javaType = javaType;
       return this;
     }
     public Builder numericScale(String numericScale) {
-      entityFieldMap.numericScale = numericScale;
+      entityField.numericScale = numericScale;
       return this;
     }
     public Builder isId(boolean isId) {
-      entityFieldMap.isId = isId;
+      entityField.isId = isId;
       return this;
     }
     public Builder idType(TableIdType idType) {
-      entityFieldMap.idType = idType;
+      entityField.idType = idType;
       return this;
     }
     public Builder sequence(String sequence) {
-      entityFieldMap.sequence = sequence;
+      entityField.sequence = sequence;
       return this;
     }
     public Builder keyGenerator(Class<? extends IKeyGenerator> keyGenerator) {
-      entityFieldMap.keyGenerator = keyGenerator;
+      entityField.keyGenerator = keyGenerator;
       return this;
     }
     public Builder typeHandler(Class<? extends TypeHandler> typeHandler) {
-      entityFieldMap.typeHandler = typeHandler;
+      entityField.typeHandler = typeHandler;
       return this;
     }
 
-    public EntityFieldMap build() {
-      entityFieldMap.column = SqlUtil.addBackquote(entityFieldMap.column);
-      if(entityFieldMap.desc == null) entityFieldMap.desc = "";
-      if(entityFieldMap.typeHandler == null) entityFieldMap.typeHandler = UnknownTypeHandler.class;
-      if(entityFieldMap.jdbcType == null) entityFieldMap.jdbcType = JdbcType.UNDEFINED;
-      if(entityFieldMap.insertDefault == null) entityFieldMap.insertDefault = "";
-      if(entityFieldMap.updateDefault == null) entityFieldMap.updateDefault = "";
-      if(entityFieldMap.numericScale == null) entityFieldMap.numericScale = "";
-      return entityFieldMap;
+    public EntityField build() {
+      entityField.column = SqlUtil.addBackquote(entityField.column);
+      if(entityField.desc == null) entityField.desc = "";
+      if(entityField.typeHandler == null) entityField.typeHandler = UnknownTypeHandler.class;
+      if(entityField.jdbcType == null) entityField.jdbcType = JdbcType.UNDEFINED;
+      if(entityField.insertDefault == null) entityField.insertDefault = "";
+      if(entityField.updateDefault == null) entityField.updateDefault = "";
+      if(entityField.numericScale == null) entityField.numericScale = "";
+      return entityField;
     }
   }
 
@@ -313,7 +313,7 @@ public class EntityFieldMap {
       return false;
     }
 
-    EntityFieldMap that = (EntityFieldMap) o;
+    EntityField that = (EntityField) o;
 
     return name != null && name.equals(that.name);
   }
