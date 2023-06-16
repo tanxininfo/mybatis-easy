@@ -16,13 +16,11 @@
 
 package com.mybatiseasy.test.controller;
 
-import com.mybatiseasy.core.type.RecordList;
-import com.mybatiseasy.core.mapper.DbMapper;
 import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.tables.USER;
 import com.mybatiseasy.core.type.Record;
-import com.mybatiseasy.core.utils.DbUtil;
+import com.mybatiseasy.core.tool.DbTool;
 import com.mybatiseasy.core.utils.ObjectUtil;
 import com.mybatiseasy.test.entity.User;
 import com.mybatiseasy.test.enums.SexEnum;
@@ -62,7 +60,7 @@ public class OrderController {
 
     @GetMapping("query")
     public void query() {
-//        QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
+        QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
 //
 //        PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
 //        log.info("users={}", ObjectUtil.toJson(users));
@@ -72,8 +70,8 @@ public class OrderController {
 
         log.info("lists={}", ObjectUtil.toJson(list));
 
-//        PageList<User> userList = dbMapper.paginate(queryWrapper, 10, 1, User.class);
-//        log.info("list={}", ObjectUtil.toJson(userList));
+        PageList<User> userList = DbTool.paginate(queryWrapper, 10, 1, User.class);
+        log.info("list={}", ObjectUtil.toJson(userList));
     }
 
 
@@ -101,14 +99,14 @@ public class OrderController {
         Record record = new Record();
         record.set(USER.NAME(), "addName1");
         record.set("parent_id", 3);
-        int affectedRows = DbUtil.insert(record, User.class);
+        int affectedRows = DbTool.insert(record, User.class);
         log.info("affectedRows={}", affectedRows);
         log.info("userList={}", ObjectUtil.toJson(record));
         Record record2 = new Record();
         record2.set(USER.NAME(), "addName1");
         record2.set("parent_id", 3);
         record2.set("id", 1);
-        affectedRows = DbUtil.insert(record2, User.class);
+        affectedRows = DbTool.insert(record2, User.class);
         log.info("affectedRows={}", affectedRows);
         log.info("userList={}", ObjectUtil.toJson(record));
 

@@ -35,6 +35,7 @@ public class FreemarkerTemplate implements ITemplate{
     private Template dtoTemplate;
     private Template serviceTemplate;
     private Template serviceImplTemplate;
+    private Template baseServiceImplTemplate;
     private Template controllerTemplate;
 
     private GlobalConfig globalConfig;
@@ -73,6 +74,7 @@ public class FreemarkerTemplate implements ITemplate{
             dtoTemplate = config.getTemplate("dto.java.ftl", "utf-8");
             serviceTemplate = config.getTemplate("service.java.ftl", "utf-8");
             serviceImplTemplate = config.getTemplate("serviceImpl.java.ftl", "utf-8");
+            baseServiceImplTemplate = config.getTemplate("baseServiceImpl.java.ftl", "utf-8");
             controllerTemplate = config.getTemplate("controller.java.ftl", "utf-8");
 
             config.setDefaultEncoding("utf-8");
@@ -211,6 +213,29 @@ public class FreemarkerTemplate implements ITemplate{
         }
     }
 
+    public void writeBaseServiceImpl() {
+        String filePath = "";
+        try {
+            filePath = getFilePath(serviceImplConfig.getPackageName(), serviceImplConfig.getSuffix(), "base");
+
+            File file = new File(filePath);
+            if (!serviceImplConfig.isOverride() && file.exists()) return;
+
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+            Map<String, Object> paramsMap =new HashMap<>();
+            paramsMap.put("global", globalConfig);
+            paramsMap.put("dto", dtoConfig);
+            paramsMap.put("entity", entityConfig);
+            paramsMap.put("service", serviceConfig);
+            paramsMap.put("serviceImpl", serviceImplConfig);
+            paramsMap.put("mapper", mapperConfig);
+
+            baseServiceImplTemplate.process(paramsMap, out);
+            out.close();
+        } catch (Exception ex) {
+            throw new RuntimeException("文件生成失败["+ filePath +"]" + ex.getMessage());
+        }
+    }
 
     public void writeController(TableInfo tableInfo) {
         String filePath = "";

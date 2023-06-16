@@ -35,4 +35,5 @@ public interface ITemplate {
     void writeController(TableInfo tableInfo);
     void writeService(TableInfo tableInfo);
     void writeServiceImpl(TableInfo tableInfo);
+    void writeBaseServiceImpl();
 }

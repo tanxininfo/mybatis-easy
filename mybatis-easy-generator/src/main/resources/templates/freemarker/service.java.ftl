@@ -8,6 +8,9 @@ import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.paginate.Page;
 
 import info.tanxin.system.common.api.Sort;
+<#if service.supperClass??>
+import ${service.supperClass.name};
+</#if>
 
 /**
 * @author ${global.author!}

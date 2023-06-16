@@ -112,6 +112,10 @@ public class Generator {
         IDialect dialect = DialectFactory.getDialect(dataSourceConfig, globalConfig, entityConfig);
         List<TableInfo> tableList = dialect.getTableList(getConnection());
 
+        if (wantToWrite(TemplateType.SERVICE_IMPL)) {
+            this.templateEngine.writeBaseServiceImpl();
+        }
+
         for (TableInfo tableInfo : tableList
         ) {
             if (wantToWrite(TemplateType.ENTITY)) this.templateEngine.writeEntity(tableInfo);
@@ -119,7 +123,7 @@ public class Generator {
             if (wantToWrite(TemplateType.DTO)) this.templateEngine.writeDto(tableInfo);
             if (wantToWrite(TemplateType.CONTROLLER)) this.templateEngine.writeController(tableInfo);
             if (wantToWrite(TemplateType.SERVICE)) this.templateEngine.writeService(tableInfo);
-            if (wantToWrite(TemplateType.SERVICE_IMPL)) this.templateEngine.writeServiceImpl(tableInfo);
+            if (wantToWrite(TemplateType.SERVICE_IMPL)) {this.templateEngine.writeServiceImpl(tableInfo);}
         }
     }
 

@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 import com.mybatiseasy.core.paginate.Page;
 import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+
+<#if serviceImpl.supperClass??>
+import ${serviceImpl.supperClass.name};
+</#if>
+
 <#assign entityClassName="${table.name?cap_first}${entity.suffix}" />
 <#assign dtoClassName="${table.name?cap_first}${dto.suffix}" />
 <#assign mapperClassName="${table.name?cap_first}${mapper.suffix}" />
@@ -35,7 +40,11 @@ import ${global.packageName}.${mapper.packageName}.${table.name?cap_first}${mapp
 * @since ${global.commentDate!.now?string("yyyy-MM-dd")}
 */
 @Service
-public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${serviceImpl.supperClass!}<${mapperClassName}, ${entityClassName}></#if> implements ${serviceClassName} {
+<#if serviceImpl.supperClass??>
+public class ${serviceImplClassName} extends ${serviceImpl.supperClass!}<${mapperClassName}, ${entityClassName}> implements ${serviceClassName} {
+<#else>
+public class ${serviceImplClassName} extends BaseServiceImpl<${mapperClassName}, ${entityClassName}> implements ${serviceClassName} {
+</#if>
 
     /**
     * ${table.comment!}查询
@@ -56,7 +65,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
     public PageList<${entityClassName}> page(${dtoClassName} ${dtoClassName?uncap_first}, Sort sort, Page page) {
         QueryWrapper wrapper = new QueryWrapper();
 
-        sort.setColumn(DataUtil.getColumnByName(DevicePortDef.className, sort.getColumn()));
+        sort.setColumn(DataUtil.getColumnByName(${entityClassName?cap_first}Def.className, sort.getColumn()));
         Sort formattedSort = SortUtil.format(sort, "${priColumnName}");
         wrapper.orderBy(formattedSort.getFullColumn(), formattedSort.isDesc());
 
