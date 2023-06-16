@@ -98,7 +98,7 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
   @SuppressWarnings("unchecked")
   private E getEnumType(Object dbValue) {
     try {
-      return (E)GlobalConfig.getEnumType(this.type).get(dbValue);
+      return (E)GlobalConfig.getEnumTypeMap(this.type).get(dbValue);
     } catch (Exception ex) {
       throw new IllegalArgumentException(
               "Cannot convert " + dbValue + " to " + type.getSimpleName() + " by ordinal value.", ex);
@@ -109,18 +109,21 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
    * 第一次访问Enum, 反射并进行缓存
    */
   private void initEnum() {
-    if (GlobalConfig.existsEnumType(this.type)) return;
+    if (GlobalConfig.existsEnumTypeMap(this.type)) return;
 
     MetaClass metaClass = MetaObjectUtil.forClass(this.type);
     String name = getValueColumn();
     getInvoker = metaClass.getGetInvoker(name);
 
     Map<Object, E> enumTypeMap = new HashMap<>();
+    Map<String, Object> enumValueMap = new HashMap<>();
     for (E anEnum : this.enums) {
       Object value = getValue(anEnum);
       enumTypeMap.put(value, anEnum);
+      enumValueMap.put(anEnum.name(), value);
     }
-    GlobalConfig.addEnumType(this.type, enumTypeMap);
+    GlobalConfig.addEnumTypeMap(this.type, enumTypeMap);
+    GlobalConfig.addEnumValueMap(this.type, enumValueMap);
   }
 
 

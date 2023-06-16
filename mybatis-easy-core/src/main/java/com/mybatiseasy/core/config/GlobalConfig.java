@@ -24,7 +24,8 @@ import java.util.Map;
 public class GlobalConfig {
     private static ITenant tenantFactory;
 
-    private static  final  Map<Class<?>, Map<Object, ? extends Enum<?>>> enumTypeList = new HashMap<>();
+    private static  final  Map<Class<?>, Map<Object, ? extends Enum<?>>> enumTypeMapList = new HashMap<>();
+    private static  final  Map<Class<?>, Map<String, Object>> enumValueMapList = new HashMap<>();
 
     private static SqlSessionFactory sqlSessionFactory;
 
@@ -44,15 +45,27 @@ public class GlobalConfig {
         GlobalConfig.sqlSessionFactory = sqlSessionFactory;
     }
 
-    public static boolean existsEnumType(Class<?> clazz){
-        return enumTypeList.containsKey(clazz);
+    public static boolean existsEnumTypeMap(Class<?> clazz){
+        return enumTypeMapList.containsKey(clazz);
     }
 
-    public static Map<Object, ? extends Enum<?>> getEnumType(Class<?> clazz) {
-        return enumTypeList.get(clazz);
+    public static Map<Object, ? extends Enum<?>> getEnumTypeMap(Class<?> clazz) {
+        return enumTypeMapList.get(clazz);
     }
 
-    public static <E extends Enum<E>> void addEnumType(Class<?> clazz, Map<Object, E> enumType) {
-        GlobalConfig.enumTypeList.put((Class<?>) clazz, enumType);
+    public static void addEnumTypeMap(Class<?> clazz, Map<Object, ? extends Enum<?>> enumTypeMap) {
+        GlobalConfig.enumTypeMapList.put(clazz, enumTypeMap);
+    }
+
+    public static boolean existsEnumValueMap(Class<?> clazz){
+        return enumValueMapList.containsKey(clazz);
+    }
+
+    public static Map<String, Object> getEnumValueMap(Class<?> clazz) {
+        return enumValueMapList.get(clazz);
+    }
+
+    public static void addEnumValueMap(Class<?> clazz, Map<String, Object> enumValueMap) {
+        GlobalConfig.enumValueMapList.put(clazz, enumValueMap);
     }
 }

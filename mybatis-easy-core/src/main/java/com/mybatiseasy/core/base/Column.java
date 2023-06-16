@@ -16,11 +16,11 @@
 
 package com.mybatiseasy.core.base;
 
+import com.mybatiseasy.core.config.GlobalConfig;
 import com.mybatiseasy.core.consts.Sql;
 import com.mybatiseasy.core.sqlbuilder.Condition;
 import com.mybatiseasy.core.utils.SqlUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -137,10 +137,19 @@ public class Column {
     /**
      * 创建值替位符，如:#{value}
      * 注意new Integer[]{1,2,3} 而不能是new int[]{1, 2, 3}
-     * @return String
+     * @return String,如：#{column[0]}, #{column[1]}, #{column[2]}
      */
     private String getValueTagArray(Object[] array){
         String key = SqlUtil.getMapKey(this.column.getColumn());
+
+        //如果值为Enum，取得其值
+        for(int i=0;i<array.length;i++) {
+            Object item = array[i];
+            if (item.getClass().isEnum()) {
+                array[i] = getEnumValue(item);
+            }
+        }
+
         this.parameterMap.put(key, array);
 
         StringBuilder sb = new StringBuilder();
@@ -158,14 +167,25 @@ public class Column {
 
     /**
      * 创建值替位符，如:#{value}
-     * @return String
+     * @return String,如：#{column[0]}, #{column[1]}, #{column[2]}
      */
     private String getValueTagCollection(Collection<?> collection){
         String key = SqlUtil.getMapKey(this.column.getColumn());
         this.parameterMap.put(key, collection);
 
+        Iterator<?> iter = collection.iterator();
+        Collection<Object> newCollection  = new ArrayList<>();
+        while (iter.hasNext()) {
+            Object item = iter.next();
+            Object newItem = item;
+            if (item.getClass().isEnum()) {
+                newItem = getEnumValue(item);
+            }
+            newCollection.add(newItem);
+        }
+
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < collection.size(); i++) {
+        for (int i = 0; i < newCollection.size(); i++) {
             if (i > 0) {
                 sb.append(",");
             }
@@ -175,6 +195,21 @@ public class Column {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 取得枚举类型的值
+     * @param val 枚举
+     * @return 值
+     */
+    private Object getEnumValue(Object val){
+        Class<?> clazz = val.getClass();
+        for (Object enumConstant : clazz.getEnumConstants()) {
+            if(enumConstant.equals(val)){
+                return GlobalConfig.getEnumValueMap(clazz).get(enumConstant.toString());
+            }
+        }
+        throw new RuntimeException("can not get the enum type ["+ val +"] of "+clazz);
     }
 
     /**
@@ -195,6 +230,9 @@ public class Column {
         else if (val instanceof Column) {
             ((Column) val).removeLastColumn();
             nextConditionSql = ((Column) val).getFullColumn();
+        }
+        else if(val.getClass().isEnum()){
+            nextConditionSql = getValueTag(getEnumValue(val));
         }
         else {
             nextConditionSql = getValueTag(val.toString());

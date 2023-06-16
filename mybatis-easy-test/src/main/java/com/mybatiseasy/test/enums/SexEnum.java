@@ -24,7 +24,7 @@ import java.util.Map;
 
 public enum SexEnum {
 
-    PRIMARY(1, "男"), SECONDARY(2, "女"), HIGH(0, "未知");
+    PRIMARY(1, "男"), SECONDARY(2, "女"), THIRD(0, "未知");
 
     SexEnum(int code, String desc) {
         this.code = code;

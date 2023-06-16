@@ -17,10 +17,12 @@
 package com.mybatiseasy.core.session;
 
 import com.mybatiseasy.annotation.*;
+import com.mybatiseasy.core.typehandler.EnumTypeHandler;
 import com.mybatiseasy.core.utils.StringUtil;
 import com.mybatiseasy.core.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.annotation.ProviderContext;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -181,6 +183,8 @@ public class EntityMapKids {
         String column = StringUtil.camelToSnake(field.getName());
         EntityFieldMap.Builder builder = new EntityFieldMap.Builder(name, column).javaType(field.getType());
 
+        builder.typeHandler(getTypeHandle(field, tableField));
+
         if (tableField != null) {
             builder.desc(tableField.desc())
                     .insertDefault(tableField.insert())
@@ -188,8 +192,7 @@ public class EntityMapKids {
                     .jdbcType(tableField.jdbcType())
                     .isLarge(tableField.isLarge())
                     .annatationList(Arrays.stream(annotationList).toList())
-                    .numericScale(tableField.numericScale())
-                    .typeHandler(tableField.typeHandler());
+                    .numericScale(tableField.numericScale());
             if (!tableField.column().isEmpty()) builder.column(tableField.column());
         }
         if (tableId != null) builder.isId(true).keyGenerator(tableId.keyGenerator()).sequence(tableId.sequence()).idType(tableId.type());
@@ -200,6 +203,15 @@ public class EntityMapKids {
         }
         if(tenantId != null) builder.isTenantId(true);
         return builder.build();
+    }
 
+    private static Class<? extends TypeHandler> getTypeHandle(Field field, TableField tableField){
+        if(tableField!= null) return tableField.typeHandler();
+        Class<?> type = field.getType();
+        if(type.isEnum()){
+            boolean isMeEnum = Arrays.stream(type.getDeclaredFields()).anyMatch(item ->item.getAnnotation(EnumValue.class)!=null);
+            if(isMeEnum) return EnumTypeHandler.class;
+        }
+        return null;
     }
 }

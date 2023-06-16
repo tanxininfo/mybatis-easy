@@ -25,6 +25,7 @@ import com.mybatiseasy.core.type.Record;
 import com.mybatiseasy.core.utils.DbUtil;
 import com.mybatiseasy.core.utils.ObjectUtil;
 import com.mybatiseasy.test.entity.User;
+import com.mybatiseasy.test.enums.SexEnum;
 import com.mybatiseasy.test.mapper.OrderMapper;
 import com.mybatiseasy.test.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,7 @@ public class OrderController {
 //        PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
 //        log.info("users={}", ObjectUtil.toJson(users));
 
-        List<User> list = userMapper.list(QueryWrapper.create().from(USER.as()));
+        List<User> list = userMapper.list(QueryWrapper.create().from(USER.as()).where(USER.SEX().eq(SexEnum.PRIMARY)));
         log.info("toString={}", list.get(0).getSex().toString());
 
         log.info("lists={}", ObjectUtil.toJson(list));
