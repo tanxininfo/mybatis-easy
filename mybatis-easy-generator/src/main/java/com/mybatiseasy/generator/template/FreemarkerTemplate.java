@@ -22,9 +22,9 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.utility.StringUtil;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,12 +68,12 @@ public class FreemarkerTemplate implements ITemplate{
             Configuration config = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
             config.setClassForTemplateLoading(getClass(), "/templates/freemarker");
-            entityTemplate = config.getTemplate("entity.java.ftl");
-            mapperTemplate = config.getTemplate("mapper.java.ftl");
-            dtoTemplate = config.getTemplate("dto.java.ftl");
-            serviceTemplate = config.getTemplate("service.java.ftl");
-            serviceImplTemplate = config.getTemplate("serviceImpl.java.ftl");
-            controllerTemplate = config.getTemplate("controller.java.ftl");
+            entityTemplate = config.getTemplate("entity.java.ftl", "utf-8");
+            mapperTemplate = config.getTemplate("mapper.java.ftl", "utf-8");
+            dtoTemplate = config.getTemplate("dto.java.ftl", "utf-8");
+            serviceTemplate = config.getTemplate("service.java.ftl", "utf-8");
+            serviceImplTemplate = config.getTemplate("serviceImpl.java.ftl", "utf-8");
+            controllerTemplate = config.getTemplate("controller.java.ftl", "utf-8");
 
             config.setDefaultEncoding("utf-8");
         } catch (Exception ex) {
@@ -105,7 +105,7 @@ public class FreemarkerTemplate implements ITemplate{
             File file = new File(filePath);
             if (!entityConfig.isOverride() && file.exists()) return;
 
-            Writer out = new FileWriter(file);
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             Map<String, Object> paramsMap =new HashMap<>();
             paramsMap.put("global", globalConfig);
             paramsMap.put("entity", entityConfig);
@@ -127,7 +127,7 @@ public class FreemarkerTemplate implements ITemplate{
             File file = new File(filePath);
             if (!dtoConfig.isOverride() && file.exists()) return;
 
-            Writer out = new FileWriter(file);
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             Map<String, Object> paramsMap =new HashMap<>();
             paramsMap.put("global", globalConfig);
             paramsMap.put("dto", dtoConfig);
@@ -148,7 +148,7 @@ public class FreemarkerTemplate implements ITemplate{
             File file = new File(filePath);
             if (!mapperConfig.isOverride() && file.exists()) return;
 
-            Writer out = new FileWriter(file);
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             Map<String, Object> paramsMap =new HashMap<>();
             paramsMap.put("global", globalConfig);
             paramsMap.put("entity", entityConfig);
@@ -171,7 +171,7 @@ public class FreemarkerTemplate implements ITemplate{
             File file = new File(filePath);
             if (!serviceConfig.isOverride() && file.exists()) return;
 
-            Writer out = new FileWriter(file);
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             Map<String, Object> paramsMap =new HashMap<>();
             paramsMap.put("global", globalConfig);
             paramsMap.put("dto", dtoConfig);
@@ -194,7 +194,7 @@ public class FreemarkerTemplate implements ITemplate{
             File file = new File(filePath);
             if (!serviceImplConfig.isOverride() && file.exists()) return;
 
-            Writer out = new FileWriter(file);
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             Map<String, Object> paramsMap =new HashMap<>();
             paramsMap.put("global", globalConfig);
             paramsMap.put("dto", dtoConfig);
@@ -220,7 +220,7 @@ public class FreemarkerTemplate implements ITemplate{
             File file = new File(filePath);
             if (!controllerConfig.isOverride() && file.exists()) return;
 
-            Writer out = new FileWriter(file);
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             Map<String, Object> paramsMap =new HashMap<>();
             paramsMap.put("global", globalConfig);
             paramsMap.put("dto", dtoConfig);

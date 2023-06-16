@@ -84,7 +84,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
     */
     public int update(${priColumnType} ${priColumnName}, ${entityClassName} ${entityClassName?uncap_first}) {
         ${entityClassName?uncap_first}.set${priColumnName?cap_first}(${priColumnName});
-        ${entityClassName} old${entityClassName} = ${mapperClassName?uncap_first}.getById(${priColumnName});
+        ${entityClassName} old${entityClassName} = super.getById(${priColumnName});
         if(old${entityClassName} == null) throw new TanXinException("记录未找到");
         <#if entity.versionName?? && table.columnNames?seq_contains(entity.versionName) >
         ${entityClassName?uncap_first}.setVersion(old${entityClassName}.getVersion());
@@ -99,7 +99,7 @@ public class ${serviceImplClassName}<#if serviceImpl.supperClass??> extends ${se
     * @return 结果
     */
     public int remove(${priColumnType} ${priColumnName}) {
-        ${entityClassName} ${entityClassName?uncap_first} = ${mapperClassName?uncap_first}.getById(${priColumnName});
+        ${entityClassName} ${entityClassName?uncap_first} = super.getById(${priColumnName});
 
         if(${entityClassName?uncap_first} == null) return 0;
         return super.deleteById(${priColumnName});
