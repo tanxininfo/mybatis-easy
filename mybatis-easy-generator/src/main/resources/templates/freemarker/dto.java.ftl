@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 </#if>
 
+import java.io.Serializable;
+import java.io.Serial;
+
 <#if dto.enableLombok>
 import lombok.Data;
 <#if dto.chain>
@@ -61,7 +64,10 @@ import java.math.BigDecimal;
 <#if dto.swagger>
 @ApiModel(value = "${table.name?cap_first} Dto对象"<#if table.comment!?length gt 0>, description = "${table.comment!}"</#if>)
 </#if>
-public class ${table.name?cap_first}${dto.suffix} {
+public class ${table.name?cap_first}${dto.suffix}  implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
 <#-- ----------  字段循环遍历 开始  ---------->
 <#list table.columns as column>
@@ -102,5 +108,17 @@ public class ${table.name?cap_first}${dto.suffix} {
     }
 
     </#list>
+</#if>
+<#if !dto.enableLombok>
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("${table.name?cap_first} (");
+    <#list table.columns as column>
+        if (${column.name} != null) sb.append("${column.name}=").append(${column.name}).append(", ");
+    </#list>
+        String res = sb.toString();
+        if(!res.endsWidth("(")) res = res.substring(0, res.length() - 2);
+        return res + ")";
+    }
 </#if>
 }
