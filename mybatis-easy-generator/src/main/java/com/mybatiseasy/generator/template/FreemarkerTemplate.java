@@ -93,7 +93,6 @@ public class FreemarkerTemplate implements ITemplate{
 
         File file = new File(path);
         if (!file.exists()) file.mkdirs();
-        System.out.println("Utils.snakeToCamel("+tableName+")="+ Utils.snakeToCamel(tableName) +","+Utils.capitalize(Utils.snakeToCamel(tableName)));
         return path
                 +File.separator
                 + Utils.capitalize(Utils.snakeToCamel(tableName))
