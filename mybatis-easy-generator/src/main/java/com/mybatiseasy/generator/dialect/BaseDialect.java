@@ -153,7 +153,7 @@ public class BaseDialect {
                     }
                     if(Objects.equals(entityConfig.getLogicDeleteName(), columnInfo.getName())) {
                         columnInfo.setLogicDelete(true);
-                        columnInfo.setLogicDeleteValue(entityConfig.getLogicDeleteValue());
+                        columnInfo.setLogicDeleteValue(entityConfig.getLogicDeleteValue(), entityConfig.getLogicDeleteValue());
                     }
 
                     columnInfo.setColumnKey(Utils.isNotEmpty(this.columnKeyColumn) ? rs.getString(this.columnKeyColumn) : "");

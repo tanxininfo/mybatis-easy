@@ -135,6 +135,9 @@ public class EntityConfig {
     public String getLogicDeleteValue() {
         return logicDeleteValue;
     }
+    public String getLogicNotDeleteValue() {
+        return logicNotDeleteValue;
+    }
 
     public static class Builder{
 

@@ -117,7 +117,7 @@ public class ${table.name?cap_first}${dto.suffix}  implements Serializable {
         if (${column.name} != null) sb.append("${column.name}=").append(${column.name}).append(", ");
     </#list>
         String res = sb.toString();
-        if(!res.endsWidth("(")) res = res.substring(0, res.length() - 2);
+        if(!res.endsWith("(")) res = res.substring(0, res.length() - 2);
         return res + ")";
     }
 </#if>

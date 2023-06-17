@@ -66,6 +66,7 @@ public class ColumnInfo {
     private JavaDataType javaType;
     private String javaTypeName;
     private String logicDeleteValue;
+    private String logicNotDeleteValue;
 
     /**
      * 新增记录时自动填充的值
@@ -91,6 +92,9 @@ public class ColumnInfo {
 
     public String getLogicDeleteValue() {
         return logicDeleteValue;
+    }
+    public String getLogicNotDeleteValue() {
+        return logicNotDeleteValue;
     }
     public String getInsert() {
         return insert;
@@ -164,8 +168,9 @@ public class ColumnInfo {
     public void setLogicDelete(boolean logicDelete) {
         this.logicDelete = logicDelete;
     }
-    public void setLogicDeleteValue(String logicDeleteValue) {
+    public void setLogicDeleteValue(String logicDeleteValue, String logicNotDeleteValue) {
         this.logicDeleteValue = logicDeleteValue;
+        this.logicNotDeleteValue = logicNotDeleteValue;
     }
     public void setVersion(boolean version) {
         this.version = version;

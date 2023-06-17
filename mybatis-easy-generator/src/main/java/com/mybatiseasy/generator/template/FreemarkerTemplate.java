@@ -18,6 +18,7 @@ package com.mybatiseasy.generator.template;
 
 import com.mybatiseasy.generator.config.*;
 import com.mybatiseasy.generator.pojo.TableInfo;
+import com.mybatiseasy.generator.utils.Utils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.utility.StringUtil;
@@ -92,10 +93,10 @@ public class FreemarkerTemplate implements ITemplate{
 
         File file = new File(path);
         if (!file.exists()) file.mkdirs();
-
+        System.out.println("Utils.snakeToCamel("+tableName+")="+ Utils.snakeToCamel(tableName) +","+Utils.capitalize(Utils.snakeToCamel(tableName)));
         return path
                 +File.separator
-                + StringUtil.capitalize(tableName)
+                + Utils.capitalize(Utils.snakeToCamel(tableName))
                 + suffix
                 + ".java";
     }
