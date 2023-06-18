@@ -109,10 +109,10 @@ public class ${table.name?cap_first}${dto.suffix}  implements Serializable {
 
     </#list>
 </#if>
-<#if !dto.enableLombok>
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("${table.name?cap_first} (");
+        StringBuilder sb = new StringBuilder("${table.name?cap_first}(");
     <#list table.columns as column>
         if (${column.name} != null) sb.append("${column.name}=").append(${column.name}).append(", ");
     </#list>
@@ -120,5 +120,5 @@ public class ${table.name?cap_first}${dto.suffix}  implements Serializable {
         if(!res.endsWith("(")) res = res.substring(0, res.length() - 2);
         return res + ")";
     }
-</#if>
+
 }

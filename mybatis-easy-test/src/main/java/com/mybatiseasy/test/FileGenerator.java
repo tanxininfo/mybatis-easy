@@ -31,7 +31,7 @@ public class FileGenerator {
         String url = "jdbc:sqlite:mybatis-easy-test/sqlite/test.db";
         String username = "";
         String password = "";
- 
+
         String baseDir =  System.getProperty("user.dir") + "\\mybatis-easy-test\\src\\main\\java";
 
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(url, username, password).build();
