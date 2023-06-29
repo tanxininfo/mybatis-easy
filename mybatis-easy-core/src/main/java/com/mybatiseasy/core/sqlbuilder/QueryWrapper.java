@@ -165,8 +165,10 @@ public class QueryWrapper implements Serializable {
 
     public QueryWrapper where(boolean apply, Condition condition){
         if(apply) {
-            sqlStatement.where.add(condition.getSql());
-            sqlStatement.parameterMap.putAll(condition.getParameterMap());
+            if(TypeUtil.isNotEmpty(condition.getSql())) {
+                sqlStatement.where.add(condition.getSql());
+                sqlStatement.parameterMap.putAll(condition.getParameterMap());
+            }
         }
         return this;
     }

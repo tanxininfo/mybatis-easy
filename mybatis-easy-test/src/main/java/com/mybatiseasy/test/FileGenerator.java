@@ -32,6 +32,10 @@ public class FileGenerator {
         String username = "";
         String password = "";
 
+        url = "jdbc:mysql://dev.tanxin.info:3306/switch_data?allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true";
+        username  = "switch";
+        password = "jDieur#*(&3";
+
         String baseDir =  System.getProperty("user.dir") + "\\mybatis-easy-test\\src\\main\\java";
 
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(url, username, password).build();

@@ -267,18 +267,18 @@ public class Column {
     }
 
     private String formatLike(String value) {
-        if (value.startsWith("%") || value.endsWith("%")) return SqlUtil.addSingQuote(value);
-        return SqlUtil.addSingQuote("%" + value + "%");
+        if (value.startsWith("%") || value.endsWith("%")) return value;
+        return "%" + value + "%";
     }
 
     private String formatLeftLike(String value) {
-        if (value.startsWith("%")) return SqlUtil.addSingQuote(value);
-        return SqlUtil.addSingQuote("%" + value);
+        if (value.startsWith("%")) return value;
+        return "%" + value;
     }
 
     private String formatRightLike(String value) {
-        if (value.endsWith("%")) return SqlUtil.addSingQuote(value);
-        return SqlUtil.addSingQuote(value + "%");
+        if (value.endsWith("%")) return value;
+        return value + "%";
     }
 
     public Condition eq(Object val) {

@@ -128,7 +128,7 @@ public class SqlUtil {
         return str.replace(leftSymbol, "").replace(rightSymbol, "");
     }
 
-    public static String addSingQuote(String str) {
+    public static String addSingleQuote(String str) {
         return addSymbol(str, "'", "'");
     }
 

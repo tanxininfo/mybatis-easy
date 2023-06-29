@@ -29,7 +29,7 @@
 	</modules>
 	<groupId>com.mybatis-easy</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.7.0</version>
+	<version>0.7.2</version>
 	<name>mybatis-easy</name>
 	<url>https://mybatis-easy.com</url>
 	<description>Mybatis-Easy, a simplified and enhanced framework for mybatis.</description>
