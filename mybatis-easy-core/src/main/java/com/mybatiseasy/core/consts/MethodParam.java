@@ -24,7 +24,7 @@ public interface MethodParam {
     String CONDITION = "condition";
     String WRAPPER = "wrapper";
     String FORCE = "force";
-
     String RECORD = "record";
     String RECORD_LIST = "recordList";
+    String SQL = "sql";
 }

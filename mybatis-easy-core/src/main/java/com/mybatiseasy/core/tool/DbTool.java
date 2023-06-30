@@ -43,6 +43,10 @@ public class DbTool {
         return run(mapper -> mapper.insert(record, entityClass));
     }
 
+    public static int insertBySql(String sql) {
+        return run(mapper -> mapper.insertBySql(sql));
+    }
+
     public static int insertBatch(List<Record> recordList, Class<?> entityClass) {
         return run(mapper -> mapper.insertBatch(recordList, entityClass));
     }
@@ -55,6 +59,10 @@ public class DbTool {
         return run(mapper -> mapper.list(wrapper));
     }
 
+    public static RecordList listBySql(String sql) {
+        return run(mapper -> mapper.list(sql));
+    }
+
     public static Record getSingle(QueryWrapper wrapper) {
         return run(mapper -> mapper.getSingle(wrapper));
     }
@@ -62,6 +70,12 @@ public class DbTool {
     public static Record getOne(QueryWrapper wrapper) {
         return run(mapper -> mapper.getOne(wrapper));
     }
+
+
+    public static Record getBySql(String sql) {
+        return run(mapper -> mapper.getBySql(sql));
+    }
+
 
     public static long count(QueryWrapper wrapper) {
         return run(mapper -> mapper.count(wrapper));
@@ -71,12 +85,21 @@ public class DbTool {
         return run(mapper -> mapper.delete(wrapper));
     }
 
+    public static int deleteBySql(String sql) {
+        return run(mapper -> mapper.deleteBySql(sql));
+    }
+
     public static int delete(QueryWrapper wrapper, boolean force) {
         return run(mapper -> mapper.delete(wrapper, force));
     }
 
-    public static int update(Map<String, Object> record, QueryWrapper wrapper) {
+    public static int update(Record record, QueryWrapper wrapper) {
         return run(mapper -> mapper.update(record, wrapper));
+    }
+
+
+    public static int updateBySql(String sql) {
+        return run(mapper -> mapper.updateBySql(sql));
     }
 
 }

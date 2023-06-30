@@ -18,9 +18,11 @@ package com.mybatiseasy.test.controller;
 
 import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
+import com.mybatiseasy.core.tables.SYS_AREA;
 import com.mybatiseasy.core.tables.USER;
 import com.mybatiseasy.core.type.Record;
 import com.mybatiseasy.core.tool.DbTool;
+import com.mybatiseasy.core.type.RecordList;
 import com.mybatiseasy.core.utils.ObjectUtil;
 import com.mybatiseasy.test.entity.User;
 import com.mybatiseasy.test.enums.SexEnum;
@@ -34,7 +36,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author dudley
@@ -60,18 +64,8 @@ public class OrderController {
 
     @GetMapping("query")
     public void query() {
-        QueryWrapper queryWrapper = QueryWrapper.create().select(USER.NAME().CREATE_TIME().UPDATE_TIME()).from(USER.as());
-//
-//        PageList<User> users = userMapper.paginate(queryWrapper, 10, 1);
-//        log.info("users={}", ObjectUtil.toJson(users));
 
-        List<User> list = userMapper.list(QueryWrapper.create().from(USER.as()).where(USER.SEX().eq(SexEnum.PRIMARY)));
-        log.info("toString={}", list.get(0).getSex().toString());
 
-        log.info("lists={}", ObjectUtil.toJson(list));
-
-        PageList<User> userList = DbTool.paginate(queryWrapper, 10, 1, User.class);
-        log.info("list={}", ObjectUtil.toJson(userList));
     }
 
 

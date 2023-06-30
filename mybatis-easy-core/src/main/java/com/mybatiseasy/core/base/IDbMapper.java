@@ -22,6 +22,7 @@ import com.mybatiseasy.core.paginate.Page;
 import com.mybatiseasy.core.paginate.PageList;
 import com.mybatiseasy.core.paginate.Total;
 import com.mybatiseasy.core.provider.DbProvider;
+import com.mybatiseasy.core.provider.SqlProvider;
 import com.mybatiseasy.core.sqlbuilder.QueryWrapper;
 import com.mybatiseasy.core.type.Record;
 import com.mybatiseasy.core.type.RecordList;
@@ -45,6 +46,8 @@ public interface IDbMapper {
     @InsertProvider(type = DbProvider.class, method = Method.INSERT)
     int insert(@Param(MethodParam.RECORD) Record record, @Param(MethodParam.ENTITY_CLASS) Class<?> entityClass);
 
+    @InsertProvider(type = DbProvider.class, method = Method.EXECUTE_BY_SQL)
+    int insertBySql(@Param(MethodParam.SQL) String sql);
     /**
      * 插入一组实体
      * @param recordList 实例列表
@@ -61,11 +64,17 @@ public interface IDbMapper {
      * @return 影响条数
      */
     @UpdateProvider(type = DbProvider.class, method = Method.UPDATE_BY_WRAPPER)
-    int updateByWrapper(@Param(MethodParam.RECORD) Map<String, Object> record, @Param(MethodParam.WRAPPER) QueryWrapper queryWrapper);
+    int updateByWrapper(@Param(MethodParam.RECORD) Record record, @Param(MethodParam.WRAPPER) QueryWrapper queryWrapper);
+
+    @UpdateProvider(type = DbProvider.class, method = Method.EXECUTE_BY_SQL)
+    int updateBySql(@Param(MethodParam.SQL) String sql);
+
 
     @DeleteProvider(type = DbProvider.class, method = Method.DELETE_BY_WRAPPER)
     int deleteByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper queryWrapper, @Param(MethodParam.FORCE) boolean force);
 
+    @DeleteProvider(type = DbProvider.class, method = Method.EXECUTE_BY_SQL)
+    int deleteBySql(@Param(MethodParam.SQL) String sql);
 
     /**
      * 根据包装类查询一条实例
@@ -75,6 +84,9 @@ public interface IDbMapper {
     @SelectProvider(type = DbProvider.class, method = Method.GET_BY_WRAPPER)
     Record getByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
 
+    @SelectProvider(type = DbProvider.class, method = Method.EXECUTE_BY_SQL)
+    Record getBySql(@Param(MethodParam.SQL) String sql);
+
     /**
      * 根据包装类查询实例列表
      * @param wrapper 查询包装类
@@ -83,6 +95,8 @@ public interface IDbMapper {
     @SelectProvider(type = DbProvider.class, method = Method.LIST_BY_WRAPPER)
     List<Record> listByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper wrapper);
 
+    @SelectProvider(type = DbProvider.class, method = Method.EXECUTE_BY_SQL)
+    List<Record> listBySql(@Param(MethodParam.SQL) String sql);
 
     /**
      * 根据包装类统计实例数量
@@ -139,6 +153,11 @@ public interface IDbMapper {
         return new RecordList(recordList);
     }
 
+    default RecordList list(String sql){
+        List<Record> recordList = listBySql(sql);
+        return new RecordList(recordList);
+    }
+
     default Record getSingle(QueryWrapper wrapper) {
         List<Record> recordList = listByWrapper(wrapper);
         if (recordList.size() == 0) return null;
@@ -163,7 +182,7 @@ public interface IDbMapper {
         return deleteByWrapper(wrapper, force);
     }
 
-    default int update(Map<String, Object> record, QueryWrapper wrapper) {
+    default int update(Record record, QueryWrapper wrapper) {
         return updateByWrapper(record, wrapper);
     }
 }

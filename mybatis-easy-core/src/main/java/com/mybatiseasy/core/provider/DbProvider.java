@@ -111,7 +111,7 @@ public class DbProvider {
 
         // 乐观锁处理
         ProviderKid.versionHandle(map, entity, entityObj, wrapper);
-
+        String sql = wrapper.getSql();
         return wrapper.getSql();
     }
 
@@ -202,5 +202,9 @@ public class DbProvider {
        DbProviderKid.getQueryWrapper(StatementType.SELECT, wrapper);
 
         return wrapper.getSqlPaginate();
+    }
+
+    public static String executeBySql(Map<String, Object> map, ProviderContext context){
+        return map.get(MethodParam.SQL).toString();
     }
 }

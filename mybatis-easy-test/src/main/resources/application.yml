@@ -19,6 +19,7 @@ spring:
     username: test
     password: Pass3##a893
 
+
     # HikariCP连接池配置
     hikari:
       # 最小空闲连接数量

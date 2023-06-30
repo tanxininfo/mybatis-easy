@@ -60,6 +60,11 @@ public class QueryWrapper implements Serializable {
         return this;
     }
 
+    public QueryWrapper statementType(StatementType statementType){
+        sqlStatement.statementType = statementType;
+        return this;
+    }
+
     public QueryWrapper orderBy(String columnName, boolean isDesc){
         sqlStatement.orderBy.add(columnName+ Sql.SPACE + (isDesc? "DESC":"ASC"));
         return this;

@@ -19,6 +19,7 @@ package com.mybatiseasy.core.consts;
 public interface Method {
 
     String INSERT = "insert";
+    String EXECUTE_BY_SQL = "executeBySql";
     String INSERT_BATCH = "insertBatch";
     String DELETE_BY_ID = "deleteById";
     String GET_BY_ID = "getById";

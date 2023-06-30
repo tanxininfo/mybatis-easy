@@ -37,6 +37,7 @@ public class DbProviderKid {
     }
 
     public static QueryWrapper getQueryWrapper(StatementType statementType,  QueryWrapper wrapper) {
+        wrapper.statementType(statementType);
         if(statementType.equals(StatementType.SELECT)){
             if (!wrapper.hasSelect()) wrapper.select("*");
         }
