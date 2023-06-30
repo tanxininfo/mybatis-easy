@@ -67,6 +67,7 @@ public class SqlBuilder {
         String insertDefault;
         for (EntityField fieldMap: entity.getEntityFieldMapList()
         ) {
+            if(fieldMap.isForeign()) continue;;
             name = fieldMap.getName();
             value = null;
             if(entityObj.hasGetter(name)) value = entityObj.getValue(name);
@@ -108,6 +109,7 @@ public class SqlBuilder {
             List<String> joiner = new ArrayList<>();
             for (EntityField fieldMap : insertColumnList
             ) {
+                if(fieldMap.isForeign()) continue;
                 MetaObject entityObj = MetaObjectUtil.forObject(entityList.get(i));
                 key = fieldMap.getName();
                 value = null;
@@ -196,7 +198,12 @@ public class SqlBuilder {
     }
 
 
-
+    /**
+     * 取得要插入的columns
+     * @param entity 实体
+     * @param entityObj 数据
+     * @return List<EntityField>
+     */
     private static List<EntityField> getInsertColumnList(Entity entity, MetaObject entityObj) {
         List<EntityField> columnList = new ArrayList<>();
 
@@ -206,6 +213,7 @@ public class SqlBuilder {
 
         for (EntityField fieldMap : entity.getEntityFieldMapList()
         ) {
+            if(fieldMap.isForeign()) continue;;
             key = fieldMap.getName();
             value = null;
             if(entityObj.hasGetter(key)) value = entityObj.getValue(key);
