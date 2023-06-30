@@ -66,7 +66,7 @@ public interface IMapper<T> {
      * @return 影响条数
      */
     @UpdateProvider(type = SqlProvider.class, method = Method.UPDATE_BY_CONDITION)
-    int updateByCondition(@Param(MethodParam.ENTITY) T entity, Condition condition);
+    int updateByCondition(@Param(MethodParam.ENTITY) T entity, @Param(MethodParam.CONDITION) Condition condition);
 
     /**
      * 修改一个实体
@@ -74,7 +74,7 @@ public interface IMapper<T> {
      * @return 影响条数
      */
     @UpdateProvider(type = SqlProvider.class, method = Method.UPDATE_BY_WRAPPER)
-    int updateByWrapper(@Param(MethodParam.ENTITY) T entity, QueryWrapper queryWrapper);
+    int updateByWrapper(@Param(MethodParam.ENTITY) T entity, @Param(MethodParam.WRAPPER) QueryWrapper queryWrapper);
 
     /**
      * 插入一组实体

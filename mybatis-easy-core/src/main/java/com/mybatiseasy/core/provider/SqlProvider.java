@@ -137,17 +137,17 @@ public class SqlProvider {
      */
     public static String updateByWrapper(Map<String, Object> map, ProviderContext context) {
         Entity entity = EntityKids.getEntityMapByContext(context);
-        Condition condition = (Condition) map.get(MethodParam.CONDITION);
-        map.putAll(condition.getParameterMap());
 
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapper.getParameterMap());
+
         ProviderKid.getQueryWrapper(StatementType.UPDATE, entity, wrapper);
 
         SqlBuilder builder = new SqlBuilder();
-        builder.generateUpdateParts(map, entity);
+        builder.generateUpdateParts(map, entity, MethodParam.RECORD);
         wrapper.setValues(builder.getUpdateValueList());
 
-        MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
+        MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.RECORD));
 
         // 乐观锁处理
         ProviderKid.versionHandle(map, entity, entityObj, wrapper);

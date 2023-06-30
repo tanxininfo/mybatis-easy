@@ -61,7 +61,7 @@ public interface IDbMapper {
      * @return 影响条数
      */
     @UpdateProvider(type = DbProvider.class, method = Method.UPDATE_BY_WRAPPER)
-    int updateByWrapper(@Param(MethodParam.RECORD) Map<String, Object> record, QueryWrapper queryWrapper);
+    int updateByWrapper(@Param(MethodParam.RECORD) Map<String, Object> record, @Param(MethodParam.WRAPPER) QueryWrapper queryWrapper);
 
     @DeleteProvider(type = DbProvider.class, method = Method.DELETE_BY_WRAPPER)
     int deleteByWrapper(@Param(MethodParam.WRAPPER) QueryWrapper queryWrapper, @Param(MethodParam.FORCE) boolean force);

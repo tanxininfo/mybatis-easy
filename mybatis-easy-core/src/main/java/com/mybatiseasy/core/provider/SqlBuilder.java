@@ -240,9 +240,12 @@ public class SqlBuilder {
         insertSymbolList = getInsertColumnSymbolList(insertColumnList);
     }
 
-
     public   void generateUpdateParts(Map<String, Object> map, Entity entity) {
-        MetaObject entityObject = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
+        generateUpdateParts(map, entity, MethodParam.ENTITY);
+    }
+
+    public   void generateUpdateParts(Map<String, Object> map, Entity entity, Object entityKey) {
+        MetaObject entityObject = MetaObjectUtil.forObject(map.get(entityKey));
 
         List<String> valueList = new ArrayList<>();
 
@@ -253,13 +256,14 @@ public class SqlBuilder {
         for (EntityField fieldMap : entity.getEntityFieldMapList()
         ) {
             //主键不参与更新
-            if(fieldMap.isId()) continue;;
+            if (fieldMap.isId()) continue;
+            ;
 
             name = fieldMap.getName();
             value = entityObject.getValue(name);
 
             // 只有本数据表字段需要更新,isForeign表示非本数据表字段,比如多表连接时，其他表字段。
-            if(!fieldMap.isForeign()) {
+            if (!fieldMap.isForeign()) {
                 if (value != null) {
                     map.put(name, value);
                     valueList.add(formatUpdateItem(fieldMap, name, ""));

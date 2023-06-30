@@ -93,16 +93,13 @@ public class DbProvider {
      */
     public static String updateByWrapper(Map<String, Object> map, ProviderContext context) {
         QueryWrapper wrapper = (QueryWrapper) map.get(MethodParam.WRAPPER);
+        map.putAll(wrapper.getParameterMap());
 
         List<Table> tableList = wrapper.getTableList();
         assert tableList.size()>0;
 
         Entity entity = EntityKids.getEntityMap(tableList.get(0).getColumn().getEntityName());
         assert entity != null;
-
-        Condition condition = (Condition) map.get(MethodParam.CONDITION);
-        map.putAll(condition.getParameterMap());
-
 
         DbProviderKid.getQueryWrapper(StatementType.UPDATE, wrapper);
 
