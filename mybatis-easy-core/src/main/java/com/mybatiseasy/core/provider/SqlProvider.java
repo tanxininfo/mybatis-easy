@@ -144,10 +144,10 @@ public class SqlProvider {
         ProviderKid.getQueryWrapper(StatementType.UPDATE, entity, wrapper);
 
         SqlBuilder builder = new SqlBuilder();
-        builder.generateUpdateParts(map, entity, MethodParam.RECORD);
+        builder.generateUpdateParts(map, entity, MethodParam.ENTITY);
         wrapper.setValues(builder.getUpdateValueList());
 
-        MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.RECORD));
+        MetaObject entityObj = MetaObjectUtil.forObject(map.get(MethodParam.ENTITY));
 
         // 乐观锁处理
         ProviderKid.versionHandle(map, entity, entityObj, wrapper);
